@@ -9,23 +9,9 @@
  * Description: 
  */
 
-#define _GNU_LINUX
 #include <errno.h>
 #include "shared_memory.h"
 
-#define    ONERROR      (-1)
-#define    ONSUCCESS    ( 0)
-
-
-/*
- *  Lorem Ipsum
- */
-static inline int 
-error(const char* n)
-{
-	perror(n);
-	return -1;
-}
 
 
 /*
@@ -51,7 +37,17 @@ ipcShmAt (char* ftokPathName, size_t shmSize) {
 int 
 ipcShmDt (char* shmAddr) {
     int res = shmdt(shmAddr);
-    if( ONERROR == res )
-        return error("ipcShmDt");
-    return res;
+    if( ON_ERROR == res )
+        return printError("ipcShmDt");
+    return ON_SUCCESS;
+}
+
+
+
+int 
+ipcShmCtl (int shmId) {
+    int res = shmctl(shmId,IPC_RMID,NULL); 
+    if( ON_ERROR == res )
+        return printError("ipcShmCtl");
+    return ON_SUCCESS;
 }

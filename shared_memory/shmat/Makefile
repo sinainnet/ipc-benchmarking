@@ -2,10 +2,10 @@ CC      := gcc
 CCFLAGS := -I
 LDFLAGS :=
 
-TARGETS:= writer reader
+TARGETS:= shmat 
 MAINS  := $(addsuffix .o, $(TARGETS) )
-OBJ    := ../shared_memory.o 
-DEPS   := # command.h
+OBJ    := ../shared_memory.o ../../commons/commons.o
+DEPS   := .#./commons/commons.h
 
 BUILDPATH	:= ./build
 

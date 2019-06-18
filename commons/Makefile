@@ -2,9 +2,9 @@ CC      := gcc
 CCFLAGS := -I
 LDFLAGS :=
 
-TARGETS:= shared_memory
+TARGETS:= commons
 MAINS  := $(addsuffix .o, $(TARGETS) )
-OBJ    := ../commons/commons.o # kbd.o command.o display.o $(MAINS)
+OBJ    := # kbd.o command.o display.o $(MAINS)
 DEPS   := # defs.h command.h
 LIBS   := 	
 

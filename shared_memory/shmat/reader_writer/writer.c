@@ -3,29 +3,27 @@
  * (C) 2019-2020 - Amir Hossein Sorouri - Sina Mahmoodi
  ****************************************************************************
  *
- *      File: shared_memory/shared_memory.h
+ *      File: shmat/writer.c
  *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
  *
  * Description: 
  */
 
+#include <stdio.h> 
+#include "../shared_memory.h"
 
-#include <sys/ipc.h> 
-#include <sys/shm.h> 
-#include "../commons/commons.h"
-
-/*
- *  Lorem Ipsum
- */
-const char* ipcShmAt (char* ftokPathName, size_t shmSize);
-
+#define SHMSIZE     1024*100000    
 
 /*
  *  Lorem Ipsum
  */
-int ipcShmDt (char* shmAddr);
+int 
+main() {
+    char* shm = ipcShmAt("shmfile", SHMSIZE);
 
-/*
- *  Lorem Ipsum
- */
-int ipcShmCtl (int shmId);
+    printf("Data written in memory: %s\n","done");
+    
+    ipcShmDt(shm);
+    
+    return 0;
+}

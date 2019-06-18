@@ -2,13 +2,12 @@ CC      := gcc
 CCFLAGS := -I
 LDFLAGS :=
 
-TARGETS:= shared_memory
+TARGETS:= reader writer 
 MAINS  := $(addsuffix .o, $(TARGETS) )
-OBJ    := ../commons/commons.o # kbd.o command.o display.o $(MAINS)
-DEPS   := # defs.h command.h
-LIBS   := 	
+OBJ    := ../shared_memory.o
+DEPS   := # command.h
 
-BUILDPATH	:= ./build/
+BUILDPATH	:= ./build
 
 .PHONY: all clean
 
@@ -18,8 +17,8 @@ clean:
 	rm -f $(TARGETS) $(OBJ)
 
 $(OBJ): %.o : %.c $(DEPS)
-	$(CC) -o $@ $< $(CCFLAGS) 
+	$(CC) -c -o $@ $< $(CCFLAGS) $(BUILDPATH)
 
 $(TARGETS): % : $(filter-out $(MAINS), $(OBJ)) %.o
-	$(CC) -c -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS)
+	$(CC) -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS)
 	echo Build Done
