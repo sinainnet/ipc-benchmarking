@@ -33,12 +33,15 @@ main() {
     fd = ipcb_open_shm("myshm", memSize);
     str = ipcb_map_memory_to_fd(memSize, fd, 0);
 
-    ipcb_get_time(&start, "\nparent:start: ");
+    ipcb_get_time(&start, "\nparent:start: "); /* Start. */
+
     for (int i = 0; i < SHM_ROW_SIZE; i++)
         memcpy(str, buf[1], SHM_COL_SIZE);
-    ipcb_get_time(&end, "\nparent:end: ");
+    
+    ipcb_get_time(&end, "\nparent:end: ");  /* End. */
     
     printf("\nWriting Data into memory is done.\n");
+    
     printf("Time in microseconds: %ld microseconds\n",
             ((end.tv_sec - start.tv_sec)*1000000L
            +end.tv_usec) - start.tv_usec
