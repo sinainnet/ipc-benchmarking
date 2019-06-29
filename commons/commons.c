@@ -76,9 +76,9 @@ void
 ipcb_random_char_generator (char* ch)
 {
     time_t t;
-    srand((unsigned) time(&t));
-    int chars [58]= {};
+    int chars [58];
 
+    srand((unsigned) time(&t));
     for (int i = 0; i < 58; i++){
         chars[i] = (rand() % 58) + 65;
         ch[i] = chars[i];
@@ -92,12 +92,13 @@ ipcb_random_char_generator (char* ch)
  */
 void 
 ipcb_initializer (char** buffer, unsigned long int row, unsigned long int col) {
-    char ch[58] = {};
-    ipcb_random_char_generator(ch);
-
+    char ch[58];
+    
+	ipcb_random_char_generator(ch);
 	for (int i = 0; i < row; i++){
 		memset(buffer[i], ch[(rand() % 58)], col);
 	}
+	return;
 }
 
 
@@ -106,11 +107,11 @@ ipcb_initializer (char** buffer, unsigned long int row, unsigned long int col) {
  */
 char** 
 ipcb_empty_allocator (unsigned long int row, unsigned long int col) {
-	printf("2");
-    char** buf =  malloc(row);
-	printf("3");	
+    char** buf;
+	
+	buf =  malloc(sizeof(char*) * row);
     for(int i = 0; i < row ;i++)
-        buf[i] = malloc(col);
+        buf[i] = malloc(sizeof(char) * col);
     return buf;
 }
 
@@ -120,8 +121,9 @@ ipcb_empty_allocator (unsigned long int row, unsigned long int col) {
  */
 char** 
 ipcb_fake_data_generator (unsigned long int row, unsigned long int col) {
-	printf("1");
-    char** buf = ipcb_empty_allocator(row, col);
+	char** buf;
+
+    buf = ipcb_empty_allocator(row, col);
     ipcb_initializer(buf, row, col);
 	return buf;
 }

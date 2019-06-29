@@ -30,20 +30,20 @@ main() {
     struct timeval start, end;
 
     buf = ipcb_fake_data_generator(SHM_ROW_SIZE, SHM_COL_SIZE);
-    fd = ipcb_open_shm("shmfile", (SHM_ROW_SIZE*SHM_COL_SIZE));
+    fd = ipcb_open_shm("myshm", memSize);
     str = ipcb_map_memory_to_fd(memSize, fd, 0);
 
-    ipcb_get_time(&start, "parent:start: ");
+    ipcb_get_time(&start, "\nparent:start: ");
     for (int i = 0; i < SHM_ROW_SIZE; i++)
-        memcpy(str, buf[i], SHM_COL_SIZE);
-    ipcb_get_time(&end, "parent:end: ");
+        memcpy(str, buf[1], SHM_COL_SIZE);
+    ipcb_get_time(&end, "\nparent:end: ");
     
-    printf("Data written in memory: %s\n","done");
+    printf("\nWriting Data into memory is done.\n");
     printf("Time in microseconds: %ld microseconds\n",
-            ((start.tv_sec - end.tv_sec)*1000000L
-           +start.tv_usec) - end.tv_usec
+            ((end.tv_sec - start.tv_sec)*1000000L
+           +end.tv_usec) - start.tv_usec
           ); // Added semicolon
 
-    ipcb_unlink_shm("shmfile");
+    ipcb_unlink_shm("myshm");
     return 0;
 }
