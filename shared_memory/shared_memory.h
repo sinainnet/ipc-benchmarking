@@ -1,6 +1,6 @@
 
 /****************************************************************************
- * (C) 2019-2020 - Amir Hossein Sorouri - Sina Mahmoodi
+ * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
  ****************************************************************************
  *
  *      File: shared_memory/shared_memory.h

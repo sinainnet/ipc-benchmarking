@@ -1,6 +1,6 @@
 
 /****************************************************************************
- * (C) 2019-2020 - Iran University of Science and Technology@DSLab
+ * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
  ****************************************************************************
  *
  *      File: shmat/shmat.c
