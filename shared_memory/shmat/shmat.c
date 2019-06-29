@@ -10,21 +10,40 @@
  */
 
 #include <stdio.h> 
+#include <string.h>
 #include "../shared_memory.h"
 
+#define SHM_ROW_SIZE     ((1ull) << 10)
+#define SHM_COL_SIZE     ((1ull) << 20)
 
-#define SHMSIZE     1024*100000
+const unsigned long int memSize = ( SHM_ROW_SIZE * SHM_COL_SIZE );
+
 
 /*
  *  Lorem Ipsum
  */
 int 
 main() {
-    const char* shm = ipcb_attach_shm("shmfile", SHMSIZE);
+    int fd;
+    char* str;
+    char** buf;
+    struct timeval start, end;
 
+    buf = ipcb_fake_data_generator(SHM_ROW_SIZE, SHM_COL_SIZE);
+    fd = ipcb_open_shm("shmfile", (SHM_ROW_SIZE*SHM_COL_SIZE));
+    str = ipcb_map_memory_to_fd(memSize, fd, 0);
+
+    ipcb_get_time(&start, "parent:start: ");
+    for (int i = 0; i < SHM_ROW_SIZE; i++)
+        memcpy(str, buf[i], SHM_COL_SIZE);
+    ipcb_get_time(&end, "parent:end: ");
+    
     printf("Data written in memory: %s\n","done");
-    
-    ipcb_dettach_shm(shm);
-    
+    printf("Time in microseconds: %ld microseconds\n",
+            ((start.tv_sec - end.tv_sec)*1000000L
+           +start.tv_usec) - end.tv_usec
+          ); // Added semicolon
+
+    ipcb_unlink_shm("shmfile");
     return 0;
 }

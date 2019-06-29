@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/mman.h>        /* For POSIX memory map constants */
+#include <sys/stat.h>        /* For mode constants */
 #include "shared_memory.h"
 
 
@@ -39,6 +40,7 @@ ipcb_attach_shm (char* ftokPathName, size_t shmSize) {
 int 
 ipcb_dettach_shm (const char* shmAddr) {
     int res = shmdt(shmAddr);
+    
     if( ON_ERROR == res )
         return ipcb_print_error("ipcShmDt");
     return ON_SUCCESS;
@@ -69,7 +71,7 @@ ipcb_open_shm (const char* name, unsigned long long truncationSize) {
     fd = shm_open("myshm", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1) ipcb_print_error("ipcb_open_shm:shm_open");
     
-    if((ftruncate(fd, 2ull * truncationSize)<0)) {
+    if((ftruncate(fd, 10ull * truncationSize)<0)) {
             printf("Ftruncate failed\n");
             return -1;
     }
@@ -83,6 +85,7 @@ ipcb_open_shm (const char* name, unsigned long long truncationSize) {
 char*
 ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
     char* str;
+
     str = mmap(NULL, 2ull * memorySize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, offset);
     if (!str) ipcb_print_error("ipcb_map_memory_to_fd: mmap");
     return str;
@@ -95,9 +98,20 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
 int 
 ipcb_unmapp_memory (void *addr, size_t length) {
     int res;
+
     res = munmap(addr, length);
     if (0 != res) ipcb_print_error("ipcb_unmapp_memory:munmap");
     return res;    
+}
+
+int 
+ipcb_unlink_shm (const char* name) {
+    int res;
+    
+    res = shm_unlink(name); 
+    if( ON_ERROR == res )
+        return ipcb_print_error("ipcb_unlink_shm:shm_unlink");
+    return ON_SUCCESS;
 }
 
 

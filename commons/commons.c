@@ -9,6 +9,9 @@
  * Description: 
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "commons.h"
 
 
@@ -16,7 +19,7 @@
  *  Lorem Ipsum
  */
 static int 
-__ipcb_check_pipe(int pfd) {
+__ipcb_check_pipe (int pfd) {
 	struct stat sb;
 
 	if (fstat(pfd, &sb) < 0)
@@ -32,7 +35,7 @@ __ipcb_check_pipe(int pfd) {
  *  Lorem Ipsum
  */
 static int 
-ipcb_check_input_pipe(void) {
+ipcb_check_input_pipe (void) {
 	if (!__ipcb_check_pipe(STDIN_FILENO))
 		return 0;
 	fprintf(stderr, "stdin must be a pipe\n");
@@ -40,12 +43,11 @@ ipcb_check_input_pipe(void) {
 }
 
 
-
 /*
  *  Lorem Ipsum
  */
 static int 
-ipcb_check_output_pipe(void) {
+ipcb_check_output_pipe (void) {
 	if (!__ipcb_check_pipe(STDOUT_FILENO))
 		return 0;
 	fprintf(stderr, "stdout must be a pipe\n");
@@ -53,16 +55,73 @@ ipcb_check_output_pipe(void) {
 }
 
 
-
 /*
  *  Lorem Ipsum
  */
 void 
-ipcb_test_string_to_askii() {
+ipcb_test_string_to_askii () {
     int a = 'a';
     int A = 'A';
     int z = 'z';
     int Z = 'Z';
     printf("a = %d, A = %d, z = %d, Z = %d\n", a,A,z,Z);
     return;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+void 
+ipcb_random_char_generator (char* ch)
+{
+    time_t t;
+    srand((unsigned) time(&t));
+    int chars [58]= {};
+
+    for (int i = 0; i < 58; i++){
+        chars[i] = (rand() % 58) + 65;
+        ch[i] = chars[i];
+    }
+    return;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+void 
+ipcb_initializer (char** buffer, unsigned long int row, unsigned long int col) {
+    char ch[58] = {};
+    ipcb_random_char_generator(ch);
+
+	for (int i = 0; i < row; i++){
+		memset(buffer[i], ch[(rand() % 58)], col);
+	}
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+char** 
+ipcb_empty_allocator (unsigned long int row, unsigned long int col) {
+	printf("2");
+    char** buf =  malloc(row);
+	printf("3");	
+    for(int i = 0; i < row ;i++)
+        buf[i] = malloc(col);
+    return buf;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+char** 
+ipcb_fake_data_generator (unsigned long int row, unsigned long int col) {
+	printf("1");
+    char** buf = ipcb_empty_allocator(row, col);
+    ipcb_initializer(buf, row, col);
+	return buf;
 }

@@ -1,6 +1,6 @@
 CC      := gcc
 CCFLAGS := -I
-LDFLAGS :=
+LDFLAGS := -lrt
 
 TARGETS:= shmat 
 MAINS  := $(addsuffix .o, $(TARGETS) )
