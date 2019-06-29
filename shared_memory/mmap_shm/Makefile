@@ -2,7 +2,7 @@ CC      := gcc
 CCFLAGS := -I
 LDFLAGS := -lrt
 
-TARGETS:= shmat 
+TARGETS:= mmap_shm 
 MAINS  := $(addsuffix .o, $(TARGETS) )
 OBJ    := ../shared_memory.o ../../commons/commons.o
 DEPS   := #./commons/commons.h
