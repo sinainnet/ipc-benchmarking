@@ -18,7 +18,7 @@
  *  Lorem Ipsum
  */
 const char*
-ipcShmAt (char* ftokPathName, size_t shmSize) {
+ipcb_attach_shm (char* ftokPathName, size_t shmSize) {
     // ftok to generate unique key                       
     key_t key = ftok(ftokPathName, 65); 
   
@@ -35,19 +35,19 @@ ipcShmAt (char* ftokPathName, size_t shmSize) {
  *  Lorem Ipsum
  */
 int 
-ipcShmDt (const char* shmAddr) {
+ipcb_dettach_shm (const char* shmAddr) {
     int res = shmdt(shmAddr);
     if( ON_ERROR == res )
-        return printError("ipcShmDt");
+        return ipcb_print_error("ipcShmDt");
     return ON_SUCCESS;
 }
 
 
 
 int 
-ipcShmCtl (int shmId) {
+ipcb_cntrl_shm (int shmId) {
     int res = shmctl(shmId,IPC_RMID,NULL); 
     if( ON_ERROR == res )
-        return printError("ipcShmCtl");
+        return ipcb_print_error("ipcShmCtl");
     return ON_SUCCESS;
 }
