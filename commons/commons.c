@@ -15,16 +15,6 @@
 /*
  *  Lorem Ipsum
  */
-static inline int 
-printError(const char* n) {
-	perror(n);
-	return -1;
-}
-
-
-/*
- *  Lorem Ipsum
- */
 static int 
 __CheckPipe(int pfd) {
 	struct stat sb;
@@ -41,7 +31,7 @@ __CheckPipe(int pfd) {
 /*
  *  Lorem Ipsum
  */
-static inline int 
+static int 
 checkInputPipe(void) {
 	if (!__CheckPipe(STDIN_FILENO))
 		return 0;
@@ -55,7 +45,7 @@ checkInputPipe(void) {
 /*
  *  Lorem Ipsum
  */
-static inline int 
+static int 
 checkOutputPipe(void) {
 	if (!__CheckPipe(STDOUT_FILENO))
 		return 0;
@@ -69,7 +59,7 @@ checkOutputPipe(void) {
 /*
  *  Lorem Ipsum
  */
-static inline void 
+void 
 testStringAskii() {
     int a = 'a';
     int A = 'A';

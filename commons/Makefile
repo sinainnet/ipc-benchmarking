@@ -18,8 +18,8 @@ clean:
 	rm -f $(TARGETS) $(OBJ)
 
 $(OBJ): %.o : %.c $(DEPS)
-	$(CC) -o $@ $< $(CCFLAGS) 
+	$(CC) -c -o $@ $< $(CCFLAGS)
 
 $(TARGETS): % : $(filter-out $(MAINS), $(OBJ)) %.o
-	$(CC) -c -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS)
+	$(CC) -c -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS) 
 	echo Build Done

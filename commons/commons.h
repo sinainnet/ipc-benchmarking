@@ -3,7 +3,7 @@
  * (C) 2019-2020 - Amir Hossein Sorouri - Sina Mahmoodi
  ****************************************************************************
  *
- *      File: shmat/commons.h
+ *      File: commons/commons.h
  *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
  *
  * Description: 
@@ -23,12 +23,18 @@
 #define    ON_SUCCESS    ( 0)
 
 
-static inline int printError(const char* n);
+//inline int printError(const char* n) __attribute__((always_inline));
+
+static inline int
+printError(const char* n) {
+        perror(n);
+        return -1;
+}
 
 static int __CheckPipe(int pfd);
 
-static inline int checkInputPipe(void);
+static int checkInputPipe(void);
 
-static inline int checkOutputPipe(void);
+static int checkOutputPipe(void);
 
-static inline void testStringAskii();
+static void testStringAskii();
