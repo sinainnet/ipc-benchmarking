@@ -35,7 +35,7 @@ ipcShmAt (char* ftokPathName, size_t shmSize) {
  *  Lorem Ipsum
  */
 int 
-ipcShmDt (char* shmAddr) {
+ipcShmDt (const char* shmAddr) {
     int res = shmdt(shmAddr);
     if( ON_ERROR == res )
         return printError("ipcShmDt");

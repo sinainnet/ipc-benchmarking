@@ -4,8 +4,8 @@ LDFLAGS :=
 
 TARGETS:= shared_memory
 MAINS  := $(addsuffix .o, $(TARGETS) )
-OBJ    := ../commons/commons.o # kbd.o command.o display.o $(MAINS)
-DEPS   := # defs.h command.h
+OBJ    := #../commons/commons.o # kbd.o command.o display.o $(MAINS)
+DEPS   := ../commons/commons.h # defs.h command.h
 LIBS   := 	
 
 BUILDPATH	:= ./build/

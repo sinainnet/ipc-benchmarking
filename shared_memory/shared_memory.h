@@ -23,7 +23,7 @@ const char* ipcShmAt (char* ftokPathName, size_t shmSize);
 /*
  *  Lorem Ipsum
  */
-int ipcShmDt (char* shmAddr);
+int ipcShmDt (const char* shmAddr);
 
 /*
  *  Lorem Ipsum
