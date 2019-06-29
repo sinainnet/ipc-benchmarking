@@ -11,7 +11,6 @@
 
 #include <stdio.h> 
 #include "../shared_memory.h"
-#include "../../commons/commons.h"
 
 
 #define SHMSIZE     1024*100000
@@ -21,7 +20,7 @@
  */
 int 
 main() {
-    char* shm = ipcShmAt("shmfile", SHMSIZE);
+    const char* shm = ipcShmAt("shmfile", SHMSIZE);
 
     printf("Data written in memory: %s\n","done");
     

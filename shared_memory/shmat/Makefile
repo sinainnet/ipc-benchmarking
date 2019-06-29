@@ -5,7 +5,7 @@ LDFLAGS :=
 TARGETS:= shmat 
 MAINS  := $(addsuffix .o, $(TARGETS) )
 OBJ    := ../shared_memory.o ../../commons/commons.o
-DEPS   := .#./commons/commons.h
+DEPS   := #./commons/commons.h
 
 BUILDPATH	:= ./build
 
