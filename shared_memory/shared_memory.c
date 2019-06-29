@@ -40,7 +40,7 @@ ipcb_attach_shm (char* ftokPathName, size_t shmSize) {
 int 
 ipcb_dettach_shm (const char* shmAddr) {
     int res = shmdt(shmAddr);
-    
+
     if( ON_ERROR == res )
         return ipcb_print_error("ipcShmDt");
     return ON_SUCCESS;
@@ -68,14 +68,14 @@ int
 ipcb_open_shm (const char* name, unsigned long long truncationSize) {
     int fd;
     
-    fd = shm_open("myshm", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    fd = shm_open(name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1) ipcb_print_error("ipcb_open_shm:shm_open");
     
     if((ftruncate(fd, 10ull * truncationSize)<0)) {
             printf("Ftruncate failed\n");
             return -1;
     }
-    else{ return 1; }
+    else{ return fd; }
 }
 
 
@@ -87,7 +87,7 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
     char* str;
 
     str = mmap(NULL, 2ull * memorySize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, offset);
-    if (!str) ipcb_print_error("ipcb_map_memory_to_fd: mmap");
+    if (MAP_FAILED == str) ipcb_print_error("ipcb_map_memory_to_fd: mmap");
     return str;
 }
 
@@ -104,6 +104,10 @@ ipcb_unmapp_memory (void *addr, size_t length) {
     return res;    
 }
 
+
+/*
+ *  Lorem Ipsum
+ */
 int 
 ipcb_unlink_shm (const char* name) {
     int res;
