@@ -14,18 +14,20 @@
 #include <sys/shm.h> 
 #include "../commons/commons.h"
 
+
 /*
  *  Lorem Ipsum
  */
-const char* ipcShmAt (char* ftokPathName, size_t shmSize);
+const char* ipcb_attach_shm (char* ftokPathName, size_t shmSize);
 
 
 /*
  *  Lorem Ipsum
  */
-int ipcShmDt (const char* shmAddr);
+int ipcb_dettach_shm (const char* shmAddr);
+
 
 /*
  *  Lorem Ipsum
  */
-int ipcShmCtl (int shmId);
+int ipcb_cntrl_shm (int shmId);

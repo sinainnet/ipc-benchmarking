@@ -16,11 +16,11 @@
  *  Lorem Ipsum
  */
 static int 
-__CheckPipe(int pfd) {
+__ipcb_check_pipe(int pfd) {
 	struct stat sb;
 
 	if (fstat(pfd, &sb) < 0)
-		return printError("stat");
+		return ipcb_print_error("stat");
 	if (!S_ISFIFO(sb.st_mode))
 		return 1;
 
@@ -32,10 +32,9 @@ __CheckPipe(int pfd) {
  *  Lorem Ipsum
  */
 static int 
-checkInputPipe(void) {
-	if (!__CheckPipe(STDIN_FILENO))
+ipcb_check_input_pipe(void) {
+	if (!__ipcb_check_pipe(STDIN_FILENO))
 		return 0;
-
 	fprintf(stderr, "stdin must be a pipe\n");
 	return 1;
 }
@@ -46,10 +45,9 @@ checkInputPipe(void) {
  *  Lorem Ipsum
  */
 static int 
-checkOutputPipe(void) {
-	if (!__CheckPipe(STDOUT_FILENO))
+ipcb_check_output_pipe(void) {
+	if (!__ipcb_check_pipe(STDOUT_FILENO))
 		return 0;
-
 	fprintf(stderr, "stdout must be a pipe\n");
 	return 1;
 }
@@ -60,7 +58,7 @@ checkOutputPipe(void) {
  *  Lorem Ipsum
  */
 void 
-testStringAskii() {
+ipcb_test_string_to_askii() {
     int a = 'a';
     int A = 'A';
     int z = 'z';

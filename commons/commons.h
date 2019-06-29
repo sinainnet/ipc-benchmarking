@@ -26,15 +26,15 @@
 //inline int printError(const char* n) __attribute__((always_inline));
 
 static inline int
-printError(const char* n) {
+ipcb_print_error(const char* n) {
         perror(n);
         return -1;
 }
 
-static int __CheckPipe(int pfd);
+static int __ipcb_check_pipe(int pfd);
 
-static int checkInputPipe(void);
+static int ipcb_check_input_pipe(void);
 
-static int checkOutputPipe(void);
+static int ipcb_check_output_pipe(void);
 
-static void testStringAskii();
+static void ipcb_string_to_askii();

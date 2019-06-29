@@ -1,6 +1,6 @@
 
 /****************************************************************************
- * (C) 2019-2020 - Amir Hossein Sorouri - Sina Mahmoodi
+ * (C) 2019-2020 - Iran University of Science and Technology@DSLab
  ****************************************************************************
  *
  *      File: shmat/shmat.c
@@ -20,11 +20,11 @@
  */
 int 
 main() {
-    const char* shm = ipcShmAt("shmfile", SHMSIZE);
+    const char* shm = ipcb_attach_shm("shmfile", SHMSIZE);
 
     printf("Data written in memory: %s\n","done");
     
-    ipcShmDt(shm);
+    ipcb_dettach_shm(shm);
     
     return 0;
 }
