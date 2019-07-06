@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "commons.h"
 
 
@@ -20,12 +23,12 @@
  */
 static int 
 __ipcb_check_pipe (int pfd) {
-	struct stat sb;
+struct stat sb;
 
-	if (fstat(pfd, &sb) < 0)
-		return ipcb_print_error("stat");
+if (fstat(pfd, &sb) < 0)
+	return ipcb_print_error("stat");
 	if (!S_ISFIFO(sb.st_mode))
-		return 1;
+	return 1;
 
 	return 0;
 }
@@ -126,4 +129,32 @@ ipcb_fake_data_generator (unsigned long int row, unsigned long int col) {
     buf = ipcb_empty_allocator(row, col);
     ipcb_initializer(buf, row, col);
 	return buf;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+pid_t 
+ipcb_fork() {
+	pid_t childPid;
+	
+	if((childPid = fork()) == ON_ERROR) {
+                ipcb_print_error("fork");
+		exit(1);
+	}
+	return childPid;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int 
+ipcb_pipe(int* pip) {
+	if (pipe(pip) < 0) {
+                ipcb_print_error("pipe");
+		exit(1);
+	}
+	return ON_SUCCESS;
 }

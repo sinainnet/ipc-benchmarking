@@ -62,3 +62,9 @@ char** ipcb_empty_allocator (unsigned long row, unsigned long col);
 
 
 char** ipcb_fake_data_generator (unsigned long row, unsigned long col);
+
+
+pid_t ipcb_fork();
+
+
+int ipcb_pipe(int* pip);
