@@ -68,3 +68,6 @@ pid_t ipcb_fork();
 
 
 int ipcb_pipe(int* pip);
+
+
+void ipcb_free_memory(char** mem, unsigned long int row);
