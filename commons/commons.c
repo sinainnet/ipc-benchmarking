@@ -158,3 +158,16 @@ ipcb_pipe(int* pip) {
 	}
 	return ON_SUCCESS;
 }
+
+
+/*
+ *  Lorem Ipsum
+ */
+void 
+ipcb_free_memory(char** mem, unsigned long int row) {
+    for(int i = 0; i < row; i++){
+        mem[i];
+    }
+    free(mem);
+    return;
+}
