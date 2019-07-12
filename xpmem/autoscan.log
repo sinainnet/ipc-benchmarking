@@ -1,0 +1,16 @@
+autoscan: warning: missing AC_CHECK_FUNCS([munmap]) wanted by: 
+	test/xpmem_master.c:99
+	test/include/xpmem_test.h:45
+autoscan: warning: missing AC_CHECK_FUNCS([strtol]) wanted by: 
+	test/xpmem_proc2.c:36
+	test/xpmem_proc2.c:77
+	test/xpmem_proc2.c:126
+	test/xpmem_proc2.c:128
+	test/xpmem_proc2.c:183
+autoscan: warning: missing AC_FUNC_FORK wanted by: 
+	test/xpmem_master.c:60
+	test/xpmem_master.c:76
+	test/xpmem_proc1.c:184
+autoscan: warning: missing AC_TYPE_UINT32_T wanted by: 
+	kernel/xpmem_private.h:67
+	kernel/xpmem_misc.c:19
