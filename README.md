@@ -11,3 +11,6 @@
 * https://en.wikipedia.org/wiki/Inline_function
 * https://stackoverflow.com/questions/34997795/inline-function-multiple-definition
 * https://stackoverflow.com/questions/33381744/gcc-multiple-definition-errors-when-linking-with-external-library
+* http://mij.oltrelinux.com/devel/autoconf-automake/
+* https://www.gnu.org/software/autoconf/
+* https://code.google.com/archive/p/xpmem/source/default/source
