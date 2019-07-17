@@ -10,7 +10,7 @@ $ make
 $ ./two
 ````
 
-### Shell Number One
+### Shell Number Two
 ````
 $ ./one
 ````
