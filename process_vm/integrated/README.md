@@ -1,6 +1,6 @@
 # ipc-benchmarking
 
-## Run
+## compile
 ````
 $ make
 
