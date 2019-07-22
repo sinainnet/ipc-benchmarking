@@ -1,8 +1,8 @@
 CC      := gcc
 CCFLAGS := -I
-LDFLAGS := -lrt
+LDFLAGS := -lrt -lpthread
 
-TARGETS:= mmap_shm 
+TARGETS:= mmap_writer_shm mmap_reader_shm 
 MAINS  := $(addsuffix .o, $(TARGETS) )
 OBJ    := ../shared_memory.o ../../commons/commons.o
 DEPS   := #./commons/commons.h

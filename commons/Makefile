@@ -1,6 +1,6 @@
 CC      := gcc
 CCFLAGS := -I
-LDFLAGS :=
+LDFLAGS := -lrt -lpthread
 
 TARGETS:= commons
 MAINS  := $(addsuffix .o, $(TARGETS) )

@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <semaphore.h>
+
 
 
 #endif /* COMMONS_H */
@@ -29,7 +31,7 @@
 static inline int
 ipcb_print_error (const char* n) {
         perror(n);
-        return -1;
+        return ON_ERROR;
 }
 
 
@@ -71,3 +73,22 @@ int ipcb_pipe(int* pip);
 
 
 void ipcb_free_memory(char** mem, unsigned long int row);
+
+
+sem_t* ipcb_open_semaphore();
+sem_t* ipcb_open_semaphore_other();
+
+
+int ipcb_close_semaphore(sem_t* semaphore);
+
+
+int ipcb_unlink_semaphore(char* semName);
+
+
+int ipcb_post_semaphore(sem_t* semaphore);
+
+
+int ipcb_wait_semaphore(sem_t* semaphore);
+
+
+int ipcb_destroy_semaphore(sem_t *semaphore);
