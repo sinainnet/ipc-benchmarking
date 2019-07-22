@@ -10,7 +10,7 @@
 
 #include "psvm.h"
 
-#define PS_VM_ROW_SIZE     ((1ull) << 10)
+#define PS_VM_ROW_SIZE     ((1ull) << 11)
 #define PS_VM_COL_SIZE     ((1ull) << 20)
 
 const unsigned long int memSize = ( PS_VM_ROW_SIZE * PS_VM_COL_SIZE );
@@ -22,13 +22,12 @@ const unsigned long int memSize = ( PS_VM_ROW_SIZE * PS_VM_COL_SIZE );
 int
 main() {
 	int fdOne,
-	    fdTwo, 
-            nread;
+	    fdTwo;
 	int pidPipe[2], 
 	    bufPipe[2];
 	char *str, 
 	     **buf, 
-	     **emptyBuf;
+	     *emptyBuf;
 	pid_t childPid, 
 	      childOnePid;
     	struct timeval start, 
@@ -43,23 +42,21 @@ main() {
 
         pid_t otherChildId = 0;
 
-	buf = ipcb_empty_allocator(PS_VM_ROW_SIZE, PS_VM_COL_SIZE);
+	buf = ipcb_fake_data_generator(PS_VM_ROW_SIZE, PS_VM_COL_SIZE);
 
 	read(fdOne, &otherChildId, sizeof(pid_t));
-	int size = read(fdTwo, &emptyBuf, sizeof(char**));
+	int size = read(fdTwo, &emptyBuf, sizeof(char*));
 
         printf("OCPID: %d, size = %d, pointer: %p, row = %lld\n", otherChildId, size, emptyBuf, PS_VM_ROW_SIZE);
 	ipcb_get_time(&start, "\nfirst_child:start: "); /* Start. */
-	// strcpy(emptyBuf[0], "end");
-        // printf("%c", buf[0][0]);
-        // printf("%s", emptyBuf[0]);
-	nread = ipcb_process_vm_readv(otherChildId, buf, 
+
+	long long int nread = ipcb_process_vm_writev(otherChildId, buf, 
 						PS_VM_ROW_SIZE, PS_VM_COL_SIZE,
 						emptyBuf, PS_VM_ROW_SIZE, PS_VM_COL_SIZE);
 
 	ipcb_get_time(&end, "\nfirst_child:end: ");  /* End. */
 
-
+	printf("number of written chars in other ps: %lld", nread);
 	printf("\nWriting Data into memory is done.\n");
     	printf("Time in microseconds: %ld microseconds\n",
             		((end.tv_sec - start.tv_sec)*1000000L
