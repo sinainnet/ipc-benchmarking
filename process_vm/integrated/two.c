@@ -10,7 +10,7 @@
 
 #include "psvm.h"
 
-#define PS_VM_ROW_SIZE     ((1ull) << 11)
+#define PS_VM_ROW_SIZE     ((1ull) << 10)
 #define PS_VM_COL_SIZE     ((1ull) << 20)
 
 const unsigned long int memSize = ( PS_VM_ROW_SIZE * PS_VM_COL_SIZE );
