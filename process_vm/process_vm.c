@@ -20,7 +20,7 @@
  */
 size_t
 ipcb_process_vm_readv (pid_t pid,
-                                char** localData,
+                                char* localData,
                                 unsigned long lDataRow,
 				unsigned long lDataCol,
                                 char** remoteData,
@@ -39,7 +39,8 @@ ipcb_process_vm_readv (pid_t pid,
 	
 	struct iovec localIov[] = {
                 {
-                        .iov_base = localData[pageCounter - 1],
+                        .iov_base = localData,
+                        // .iov_base = localData[pageCounter - 1],
                         .iov_len = lReverseColSize,
                 },
         };
@@ -50,7 +51,7 @@ ipcb_process_vm_readv (pid_t pid,
                 },
         };
         
-        while (0 <= lReverseRowCnt)
+        while (0 <= pageCounter)
     	{
 		written = process_vm_readv(pid, localIov, 1, remoteIov, 1, 0);
 		if (written <= 0)
@@ -60,7 +61,8 @@ ipcb_process_vm_readv (pid_t pid,
 		        nread+=written;
                         pageCounter - 1;
                         localIov[idx].iov_len = lReverseColSize;
-                        localIov[idx].iov_base = localData[pageCounter];
+                        localIov[idx].iov_base = localData;
+                        // localIov[idx].iov_base = localData[pageCounter];
                         remoteIov[idx].iov_len = lReverseColSize;
 	                remoteIov[idx].iov_base = remoteData[pageCounter];
                 } 
@@ -88,15 +90,15 @@ ipcb_process_vm_writev (pid_t pid,
                                 char** localData,
                                 unsigned long lDataRow,
                                 unsigned long lDataCol,
-                                char** remoteData,
+                                char* remoteData,
                                 unsigned long rDataRow,
                                 unsigned long rDataCol) {
-        printf("me\n");
+        // printf("me\n");
         long int written, idx = 0, nread = 0;
         unsigned long lReverseRowCnt = lDataRow, lReverseColSize = lDataCol;
         unsigned long rReverseRowCnt = rDataRow, rReverseColSize = rDataCol;
 	long int pageCounter = lReverseRowCnt - 1;
-        printf("me2, pagec: %ld.\n", pageCounter);
+        // printf("me2, pagec: %ld.\n", pageCounter);
         if (lDataRow > rDataRow && lDataCol > rDataCol ||
                         lDataRow * lDataCol > rDataRow * rDataCol)
                 ipcb_print_error("process_vm_writev:size");
@@ -110,14 +112,14 @@ ipcb_process_vm_writev (pid_t pid,
         };
         struct iovec remoteIov[] = {
                 {
-                        .iov_base = remoteData[pageCounter-1],
+                        .iov_base = remoteData,
                         .iov_len = lReverseColSize,
                 },
         };
 	
 	while (0 <= pageCounter)
         {
-        	printf("%ld",pageCounter);
+        	// printf("%ld",pageCounter);
 		written = process_vm_writev(pid, localIov, 1, remoteIov, 1, 0);
                 if (written <= 0)
                         return ipcb_print_error("process_vm_writev:writev");
@@ -128,7 +130,7 @@ ipcb_process_vm_writev (pid_t pid,
                         localIov[idx].iov_len = lReverseColSize;
                         localIov[idx].iov_base = localData[pageCounter];
                         remoteIov[idx].iov_len = lReverseColSize;
-                        remoteIov[idx].iov_base = remoteData[pageCounter];
+                        remoteIov[idx].iov_base += written;
                 }
                 else {
                         nread+=written;

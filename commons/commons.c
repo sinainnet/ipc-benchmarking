@@ -14,8 +14,16 @@
 #include <time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 #include "commons.h"
+
+
+#define SEM_NAME "/semaphore_example25"
+#define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
+#define INITIAL_VALUE 1
 
 
 /*
@@ -170,4 +178,97 @@ ipcb_free_memory(char** mem, unsigned long int row) {
     }
     free(mem);
     return;
+}
+
+ 
+/*
+ *  Lorem Ipsum
+ */
+sem_t*
+ipcb_open_semaphore() {
+    /* We initialize the semaphore counter to 1 (INITIAL_VALUE) */
+    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT | O_EXCL, SEM_PERMS, INITIAL_VALUE);
+    if (semaphore == SEM_FAILED) {
+        ipcb_print_error("ipcb_open_semaphore:sem_open(3) error\n");
+        exit(EXIT_FAILURE);
+    }
+    return semaphore;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+sem_t*
+ipcb_open_semaphore_other() {
+    /* We initialize the semaphore counter to 1 (INITIAL_VALUE) */
+    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
+    if (semaphore == SEM_FAILED) {
+        ipcb_print_error("ipcb_open_semaphore:sem_open(3) error\n");
+        exit(EXIT_FAILURE);
+    }
+    return semaphore;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int 
+ipcb_close_semaphore(sem_t* semaphore) {
+    /* Close the semaphore as we won't be using it in the parent process */
+    if (sem_close(semaphore) < 0) {
+        /* We ignore possible sem_unlink(3) errors here */
+        sem_unlink(SEM_NAME);
+
+        return ipcb_print_error("ipcb_open_semaphore:sem_close(3) failed\n");
+    }
+    return ON_SUCCESS;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int
+ipcb_unlink_semaphore(char* semName) {
+    if (sem_unlink(SEM_NAME) < 0)
+        return ipcb_print_error("ipcb_unlink_semaphore:sem_unlink(3) failed\n");
+    return ON_SUCCESS;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int
+ipcb_post_semaphore(sem_t* semaphore) {
+    if (sem_post(semaphore) < 0) {
+        return ipcb_print_error("ipcb_post_semaphore:sem_post(3) error on child\n");
+    }
+    return ON_SUCCESS;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int
+ipcb_wait_semaphore(sem_t* semaphore) {
+    if (sem_wait(semaphore) < 0) {
+        return ipcb_print_error("ipcb_wait_semaphore:sem_wait(3) failed on child\n");
+    }
+    return ON_SUCCESS;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
+int 
+ipcb_destroy_semaphore(sem_t *semaphore) {
+    if (sem_destroy(semaphore) < 0) {
+        return ipcb_print_error("ipcb_destory_semaphore:sem_destroy(3) failed on child\n");
+    }
+    return ON_SUCCESS;
 }

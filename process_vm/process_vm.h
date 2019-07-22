@@ -16,7 +16,7 @@
  *  Lorem Ipsum
  */
 size_t ipcb_process_vm_readv (pid_t pid,
-                                char** localData,
+                                char* localData,
                                 unsigned long lDataRow,
                                 unsigned long lDataCol,
                                 char** remoteData,
@@ -31,7 +31,7 @@ size_t ipcb_process_vm_writev (pid_t pid,
                                 char** localData,
                                 unsigned long lDataRow,
                                 unsigned long lDataCol,
-                                char** remoteData,
+                                char* remoteData,
                                 unsigned long rDataRow,
                                 unsigned long rDataCol);
 
