@@ -1,0 +1,15 @@
+
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+default_bindir=@default_bindir@
+default_fomdir=@default_fomdir@
+default_prefix=/usr/local
+default_shlibdir=@default_shlibdir@
+
+Cflags: -I${includedir}
+Description: XPMEM
+Libs: -L${libdir} -lxpmem
+Name: cray-xpmem
+Version: 0.1
+

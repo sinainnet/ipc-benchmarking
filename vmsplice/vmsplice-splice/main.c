@@ -17,10 +17,13 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
 
 #include "../vmsplice.h"
 
-#define SPLICERS_ROW_SIZE     ((1ull) << 2)
+#define SPLICERS_ROW_SIZE     ((1ull) << 10)
 #define SPLICERS_COL_SIZE     ((1ull) << 20)
 
 const unsigned long int memSize = ( SPLICERS_ROW_SIZE * SPLICERS_COL_SIZE );
