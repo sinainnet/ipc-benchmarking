@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 	printf("XPMEM version = %x\n\n", xpmem_version());
 
-	if ((fd = open("/tmp/xpmem.share", O_RDWR)) == -1) {
+	if ((fd = open("/tmp/xpmem.share", O_RDWR | O_CREAT)) == -1) {
 		perror("open xpmem.share");
 		return -1;
 	}

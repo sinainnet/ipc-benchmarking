@@ -1,6 +1,6 @@
 CC      := gcc
 CCFLAGS := -I
-LDFLAGS := -lrt
+LDFLAGS := -lpthread -lrt
 
 TARGETS:= main
 MAINS  := $(addsuffix .o, $(TARGETS) )
