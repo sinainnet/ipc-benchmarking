@@ -52,7 +52,6 @@ main(int argc, char **argv) {
 
 
 
-
     ipcb_get_time(&start, "\n shm_writer:start: "); /* Start. */
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
         memcpy(str, buf[i], XPMEM_COL_SIZE);

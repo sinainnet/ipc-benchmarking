@@ -3,6 +3,8 @@
         "errno.h": "c",
         "shared_memory.h": "c",
         "stdio.h": "c",
-        "mmap_shm.h": "c"
+        "mmap_shm.h": "c",
+        "xpmem_test.h": "c",
+        "xpmem.h": "c"
     }
 }
