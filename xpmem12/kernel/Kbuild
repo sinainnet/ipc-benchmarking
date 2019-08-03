@@ -1,9 +1,0 @@
-
-obj-m		:= xpmem.o
-xpmem-objs	:= xpmem_main.o xpmem_make.o xpmem_get.o \
-		   xpmem_attach.o xpmem_pfn.o xpmem_misc.o \
-		   xpmem_mmu_notifier.o
-				
-
-EXTRA_CFLAGS = -DKERNEL_2_6 \
-               -I$(obj)/../include

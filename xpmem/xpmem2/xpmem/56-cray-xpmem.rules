@@ -1,3 +1,0 @@
-# Cray xpmem device rules
-
-KERNEL=="xpmem", OWNER="root", GROUP="root", MODE="0666"
