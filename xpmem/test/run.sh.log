@@ -1,0 +1,35 @@
+xpmem_make: No such file or directory
+xpmem_get: No such file or directory
+xpmem_attach: Invalid argument
+xpmem_make: No such file or directory
+xpmem_get: No such file or directory
+xpmem_get: No such file or directory
+xpmem_attach: No such file or directory
+xpmem_make: No such file or directory
+xpmem_get: No such file or directory
+xpmem_get: No such file or directory
+xpmem_attach: No such file or directory
+xpmem_make: No such file or directory
+xpmem_attach: No such file or directory
+XPMEM version = ffffffff
+
+==== test_base STARTS ====
+==== test_base FAILED ====
+
+==== test_two_attach STARTS ====
+==== test_two_attach FAILED ====
+
+==== test_two_shares STARTS ====
+==== test_two_shares FAILED ====
+
+==== test_fork STARTS ====
+==== test_fork FAILED ====
+
+==== test_mem_leak STARTS ====
+grep: /proc/xpmem/*: No such file or directory
+grep: /proc/xpmem/*: No such file or directory
+all pinned pages = 
+all unpinned pages = 
+./run.sh: line 21: [: : integer expression expected
+==== test_mem_leak FAILED ====
+PASS run.sh (exit status: 0)
