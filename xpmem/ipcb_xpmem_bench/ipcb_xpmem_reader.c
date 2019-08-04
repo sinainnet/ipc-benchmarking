@@ -3,16 +3,16 @@
  * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
  ****************************************************************************
  *
- *      File: ipcb_xpmem_bench/ipcb_xpmem_writer.c
+ *      File: ipcb_xpmem_bench/ipcb_xpmem_reader.c
  *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
  *
  * Description: 
  */
 
 #include <xpmem.h>
-#include <stdio.h>
-#include <fcntl.h>
+#include <stdio.h> 
 #include <string.h>
+#include <fcntl.h>
 
 #include "ipcb_xpmem.h"
 
@@ -24,7 +24,6 @@ int test_base_one(test_args* t) { return 0; }
 int test_two_attach(test_args* t) { return 0; }
 int test_two_shares(test_args* t) { return 0; }
 int test_fork(test_args* t) { return 0; }
-
 
 /*
  *  Lorem Ipsum
@@ -47,11 +46,20 @@ main(int argc, char **argv) {
 	
 	ipcb_xpmem_arg_generator(memSize, xpmem_args);
     memset(xpmem_args->share, '\0', TMP_SHARE_SIZE);
-    xpmem_args->buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
-
+    xpmem_args->buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+    
+    sem_t *mutex = ipcb_open_semaphore_other();    
+    ipcb_wait_semaphore(mutex);
+    
     printf("==== %s STARTS ====\n", xpmem_test[0].name);
 
-    return (*xpmem_test[test_nr].function)(xpmem_args);
+    int ret = (*xpmem_test[test_nr].function)(xpmem_args);
+
+    ipcb_post_semaphore(mutex);
+    ipcb_close_semaphore(mutex);
+    ipcb_destroy_semaphore(mutex);
+
+    return ret;
 }
 
 
@@ -62,44 +70,42 @@ main(int argc, char **argv) {
  *	to attach to the shared address and increment its value.
  * Return Values:
  *	Success: 0
- *	Failure: -1
+ *	Failure: -2
  */
 int 
 ipcb_test_base_one (test_args *xpmem_args)
 {
-	int i, ret=0, *data, expected;
 	xpmem_segid_t segid;
+	xpmem_apid_t apid;
+	int i, ret=0, *data;
 
-	segid = make_share(&data, SHARE_SIZE);
-	if (segid == -1) {
-		perror("xpmem_make");
-		// xpmem_args->share[LOCK_INDEX] = 1;
-		return -1;
+	segid = strtol(xpmem_args->share, NULL, 16);
+	data = attach_segid(segid, &apid);
+	if (data == (void *)-1) {
+		perror("xpmem_attach");
+		return -2;
 	}
 
-	printf("xpmem_proc_writer: mypid = %d\n", getpid());
-	printf("xpmem_proc_writer: sharing %ld bytes\n", SHARE_SIZE);
-	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
+	printf("xpmem_proc_reader: mypid = %d\n", getpid());
+	printf("xpmem_proc_reader: segid = %llx\n", segid);
+	printf("xpmem_proc_reader: attached at %p\n", data);
 
-	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
 	/* Copy data to mmap share */
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
-        memcpy((data + (i * XPMEM_COL_SIZE) ), xpmem_args->buf[i], 
+        memcpy(xpmem_args->buf[i], (data + (i * XPMEM_COL_SIZE) ),  
 				XPMEM_COL_SIZE);
+    ipcb_get_time(&end, "\ntest_base_one:end: "); /* Start. */
 
-	sprintf(xpmem_args->share, "%llx", segid);
+	// sprintf(xpmem_args->share, "%llx", segid);
 
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;
+	printf("Read: done.\n");
 
-
-
-	unmake_share(segid, data, SHARE_SIZE);
-
+	xpmem_detach(data);
+	xpmem_release(apid);
 	return ret;
 }
-
-
 
 /*
  *  Lorem Ipsum
@@ -131,31 +137,3 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
         ipcb_print_error("ipcb_master:ipcb_map_memory_to_fd: mmap");    
     return str;
 }
-
-
-    // write(fdTime, &start.tv_sec, sizeof(long int));
-    // write(fdTime, &start.tv_usec, sizeof(long int));
-    
-    // printf("\nWriting Data into memory is done.\n");
-    // printf("Time in microseconds: %ld microseconds\n",
-    //         ((end.tv_sec - start.tv_sec)*1000000L
-    //        +end.tv_usec) - start.tv_usec
-    //       ); // Added semicolon
-
-
-
-
-
-	/* Wait for xpmem_proc2 to finish */
-	// lockf(xpmem_args->lock, F_LOCK, 0);
-	// lockf(xpmem_args->lock, F_ULOCK, 0);
-
-	// printf("xpmem_proc1: verifying data...");
-	// expected = (xpmem_args->add == 2 ? 2 : 1); /* Slightly hackish */
-	// for (i = 0; i < SHARE_INT_SIZE; i++) {
-	// 	if (*(data + i) != i + expected) {
-	// 		printf("xpmem_proc1: ***mismatch at %d: expected %d "
-	// 			"got %d\n", i, i + expected, *(data + i));
-	// 		ret = -1;
-	// 	}
-	// }

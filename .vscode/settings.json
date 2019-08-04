@@ -5,6 +5,11 @@
         "stdio.h": "c",
         "mmap_shm.h": "c",
         "xpmem_test.h": "c",
-        "xpmem.h": "c"
+        "xpmem.h": "c",
+        "fcntl.h": "c",
+        "string.h": "c",
+        "commons.h": "c",
+        "mman.h": "c",
+        "xpmem_internal.h": "c"
     }
 }

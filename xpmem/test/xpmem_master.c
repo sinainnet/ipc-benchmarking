@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 		}
 
 		/* Wait for xpmem_proc1 to finish processing */
-		while (share[LOCK_INDEX] == 0) { usleep(1000); }
+		// while (share[LOCK_INDEX] == 0) { usleep(1000); }
 
 		p2 = fork();
 		if (p2 == -1) {
@@ -92,11 +92,11 @@ int main(int argc, char** argv)
 		lockf(lock, F_ULOCK, 0);
 		waitpid(p1, &status[0], 0);
 		status[0] = WEXITSTATUS(status[0]);
-		printf("\nWriting Data into memory is done. %ld, %ld .\n", end.tv_sec, start.tv_sec);
-    	printf("Time in microseconds: %ld microseconds\n",
-            		((end.tv_sec - start.tv_sec)*1000000L
-	           	+end.tv_usec) - start.tv_usec
-          		); // Added semicolon
+		// printf("\nWriting Data into memory is done. %ld, %ld .\n", end.tv_sec, start.tv_sec);
+    	// printf("Time in microseconds: %ld microseconds\n",
+        //     		((end.tv_sec - start.tv_sec)*1000000L
+	    //        	+end.tv_usec) - start.tv_usec
+        //   		); // Added semicolon
 		test_result(xpmem_test[i].name, status[0], status[1]);
 		break;
 	}

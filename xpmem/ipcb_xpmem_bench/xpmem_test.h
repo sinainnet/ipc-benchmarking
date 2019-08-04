@@ -1,9 +1,12 @@
+#include <sys/mman.h>
+
 #ifndef _XPMEM_TEST_H
 #define _XPMEM_TEST_H
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <unistd.h>
+// #include "../../commons/commons.h"
+
 
 
 #define NR_TEST_PAGES 	4
@@ -13,7 +16,7 @@
 #define SHARE_INT_SIZE	(SHARE_SIZE / sizeof(int))
 
 /* Used to specify size of /tmp/xpmem.share */
-#define TMP_SHARE_SIZE	((1ull) << 20)
+#define TMP_SHARE_SIZE	((1ull) << 10)
 #define LOCK_INDEX	TMP_SHARE_SIZE - 1
 #define COW_LOCK_INDEX	TMP_SHARE_SIZE - 2
 
@@ -88,6 +91,7 @@ typedef struct {
  * 	each function is implemented by both xpmem_proc1.c and xpmem_proc2.c
  */
 int test_base(test_args*);
+int test_base_one(test_args*);
 int test_two_attach(test_args*);
 int test_two_shares(test_args*);
 int test_fork(test_args*);
@@ -104,8 +108,9 @@ int test_fork(test_args*);
 // 	{ NULL }
 // };
 test_struct xpmem_test[] = {
-	add_test(test_base),
+	add_test(test_base_one),
 	{ NULL }
 };
+
 
 #endif /* _XPMEM_TEST_H */

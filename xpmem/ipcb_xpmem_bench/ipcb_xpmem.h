@@ -3,28 +3,57 @@
  * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
  ****************************************************************************
  *
- *      File: ipcb_xpmem_bench/ipcb_xpmem.c
+ *      File: ipcb_xpmem_bench/ipcb_xpmem.h
  *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
  *
  * Description: 
  */
 
-#include <xpmem_test.h>
+#include "xpmem_test.h"
+#include "../../commons/commons.h"
 
-#define XPMEM_ROW_SIZE        ((1ull) << 10)
-#define XPMEM_COL_SIZE        ((1ull) << 20)
+#define ull                   unsigned long long
+#define XPMEM_ROW_SIZE        ((1ull) << 5)
+#define XPMEM_COL_SIZE        ((1ull) << 5)
+#define FIFO_FILE_TIME        "/tmp/fifo_starttime-shm"
 #define XPMEM_FILE            "ipcb-xpmem-file"
-#define FIFO_FILE           "/tmp/fifo_twoway-shm"
-#define FIFO_FILE_TIME      "/tmp/fifo_starttime-shm"
+#define FIFO_FILE             "/tmp/fifo_twoway-shm"
+#define LOCK_FILE             "/tmp/ipcb_xpmem.lock"
+#define SHARE_FILE            "/tmp/ipcb_xpmem.share"
 
-#define SHARE_FILE          "/tmp/ipcb_xpmem.share"
-#define LOCK_FILE           "/tmp/ipcb_xpmem.lock"
+extern struct timeval start, end;
 
 
 /*
  *  Lorem Ipsum
  */
-char* ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset);
+char* ipcb_map_memory_to_fd (ull memorySize, int fd, off_t offset);
 
 
+/*
+ *  Lorem Ipsum
+ */
 int ipcb_test_base_one (test_args *xpmem_args);
+
+
+/*
+ *  Lorem Ipsum
+ */
+int ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args);
+
+
+// /*
+//  *  Lorem Ipsum
+//  */
+// int
+// ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
+
+// 	if ((xpmem_args->fd = open(SHARE_FILE, O_RDWR)) == -1)
+// 		return ipcb_print_error("open ipcb_xpmem.share");
+
+// 	if ((xpmem_args->lock = open(LOCK_FILE, O_RDWR)) == -1)
+// 		return ipcb_print_error("open ipcb_xpmem.lock");
+
+// 	xpmem_args->share = ipcb_map_memory_to_fd(memSize, xpmem_args->fd, 0); 
+//     return 1;
+// }

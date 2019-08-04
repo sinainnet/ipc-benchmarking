@@ -21,7 +21,7 @@
 #include "commons.h"
 
 
-#define SEM_NAME "/semaphore_example25"
+#define SEM_NAME "/semaphore_example"
 #define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
 #define INITIAL_VALUE 1
 
