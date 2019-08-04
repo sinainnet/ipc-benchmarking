@@ -53,7 +53,6 @@ int test_base(test_args *xpmem_args)
 		}
 		*(data + i) += 1;
 	}
-	ipcb_get_time(&end, "\ntest_base:end: "); /* Start. */
 
 	xpmem_detach(data);
 	xpmem_release(apid);

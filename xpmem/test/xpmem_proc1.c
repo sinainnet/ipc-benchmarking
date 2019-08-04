@@ -43,7 +43,6 @@ int test_base(test_args *xpmem_args)
 	printf("xpmem_proc1: sharing %lld bytes\n", SHARE_SIZE);
 	printf("xpmem_proc1: segid = %llx at %p\n\n", segid, data);
 
-	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
 	/* Copy data to mmap share */
 	sprintf(xpmem_args->share, "%llx", segid);
 
