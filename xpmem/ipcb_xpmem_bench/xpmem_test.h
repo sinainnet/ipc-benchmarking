@@ -91,7 +91,7 @@ typedef struct {
  * 	each function is implemented by both xpmem_proc1.c and xpmem_proc2.c
  */
 int test_base(test_args*);
-int test_base_one(test_args*);
+int ipcb_test_base_one(test_args*);
 int test_two_attach(test_args*);
 int test_two_shares(test_args*);
 int test_fork(test_args*);
@@ -108,7 +108,7 @@ int test_fork(test_args*);
 // 	{ NULL }
 // };
 test_struct xpmem_test[] = {
-	add_test(test_base_one),
+	add_test(ipcb_test_base_one),
 	{ NULL }
 };
 

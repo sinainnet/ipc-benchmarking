@@ -9,6 +9,7 @@
  * Description: 
  */
 
+
 #include <xpmem.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -20,7 +21,6 @@ const ull memSize = ( XPMEM_ROW_SIZE * XPMEM_COL_SIZE );
 struct timeval start, end;
 
 int test_base(test_args* t) { return 0; }
-int test_base_one(test_args* t) { return 0; }
 int test_two_attach(test_args* t) { return 0; }
 int test_two_shares(test_args* t) { return 0; }
 int test_fork(test_args* t) { return 0; }
@@ -35,23 +35,25 @@ main(int argc, char **argv) {
     char *str;
     char **buf;
     pid_t otherChildId;
-	test_args* xpmem_args;
+	test_args xpmem_args;
     struct timeval start, end;
     int fd, fdSync, fdTime, test_nr;
 
     if (argc < 2) {
-		printf("Usage: %s <test number>\n", argv[0]);
+		printf("In Writer: Usage: %s <test number>\n", argv[0]);
 		return -1;
 	}
 	test_nr = atoi(argv[1]);
 	
-	ipcb_xpmem_arg_generator(memSize, xpmem_args);
-    memset(xpmem_args->share, '\0', TMP_SHARE_SIZE);
-    xpmem_args->buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
+    memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
+    xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
 
     printf("==== %s STARTS ====\n", xpmem_test[0].name);
 
-    return (*xpmem_test[test_nr].function)(xpmem_args);
+    int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
+	printf("Fuuuuuucj\n");
+	return ret;
 }
 
 
@@ -69,7 +71,6 @@ ipcb_test_base_one (test_args *xpmem_args)
 {
 	int i, ret=0, *data, expected;
 	xpmem_segid_t segid;
-
 	segid = make_share(&data, SHARE_SIZE);
 	if (segid == -1) {
 		perror("xpmem_make");
@@ -86,15 +87,15 @@ ipcb_test_base_one (test_args *xpmem_args)
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
         memcpy((data + (i * XPMEM_COL_SIZE) ), xpmem_args->buf[i], 
 				XPMEM_COL_SIZE);
-
+	// printf("In Writer: testbase one before sprintf\n");
 	sprintf(xpmem_args->share, "%llx", segid);
 
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;
 
+	printf("\nIn Writer: testbase one done.\n");
 
-
-	unmake_share(segid, data, SHARE_SIZE);
+	// unmake_share(segid, data, SHARE_SIZE);
 
 	return ret;
 }
