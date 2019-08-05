@@ -28,7 +28,7 @@ const ull memSize = ( XPMEM_ROW_SIZE * XPMEM_COL_SIZE );
 struct timeval start, end;
 
 int test_base(test_args* t) { return 0; }
-int test_base_one(test_args* t) { return 0; }
+int ipcb_test_base_one(test_args* t) { return 0; }
 int test_two_attach(test_args* t) { return 0; }
 int test_two_shares(test_args* t) { return 0; }
 int test_fork(test_args* t) { return 0; }
@@ -42,27 +42,29 @@ main(){
     pid_t p1, p2;
 	char *share, test_nr[4];
 	int i, fd, lock, status[2];
-	test_args* xpmem_args;
+	test_args xpmem_args;
 
-    ipcb_xpmem_arg_generator(memSize, xpmem_args);
+    ipcb_xpmem_arg_generator(memSize, &xpmem_args);
 
     printf(" ======== %s STARTS ======== \n", "MASTER");
-    memset(xpmem_args->share, '\0', TMP_SHARE_SIZE);
+    memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     // lockf(lock, F_LOCK, 0);
     
     p1 = ipcb_fork();
     if (p1 == 0) {
         sem_t *mutex = ipcb_open_semaphore();
         ipcb_wait_semaphore(mutex);
-        if (execl("./ipcb_xpmem_writer", "xpmem_proc1", test_nr,
-                NULL) == -1) {
+        printf("here3\n");
+        int ex = execl("./ipcb_xpmem_writer", "xpmem_proc1", test_nr, NULL);
+        printf("Write: done.\n");
+        ipcb_post_semaphore(mutex);
+        if (ex == -1) {
             perror("execl p1");
             return -1;
         }
-        ipcb_post_semaphore(mutex);
+        printf("Write: done after.\n");
         ipcb_unlink_semaphore("alaki");
         ipcb_close_semaphore(mutex);
-        printf("Write: done.\n");
     }
 
     p2 = ipcb_fork();
@@ -117,10 +119,10 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
  */
 int
 ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
-    printf("hre");
+    // printf("hre");
 	if ((xpmem_args->fd = open(SHARE_FILE, O_RDWR)) == -1)
 		return ipcb_print_error("open ipcb_xpmem.share");
-    else{printf("xpmem fd=%d", xpmem_args->fd);}
+    // else{printf("xpmem fd=%d", xpmem_args->fd);}
 
 	if ((xpmem_args->lock = open(LOCK_FILE, O_RDWR)) == -1)
 		return ipcb_print_error("open ipcb_xpmem.lock");

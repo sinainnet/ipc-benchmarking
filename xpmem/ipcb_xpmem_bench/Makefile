@@ -22,7 +22,7 @@ $(OBJ): %.o : %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CCFLAGS) $(BUILDPATH)
 
 $(TARGETS): % : $(filter-out $(MAINS), $(OBJ)) %.o
-	$(CC) -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS) $(XPMEM)
+	$(CC) -g -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS) $(XPMEM)
 	echo Build Done
 
 

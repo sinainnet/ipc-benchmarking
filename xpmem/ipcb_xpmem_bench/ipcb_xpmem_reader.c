@@ -11,8 +11,8 @@
 
 #include <xpmem.h>
 #include <stdio.h> 
-#include <string.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "ipcb_xpmem.h"
 
@@ -20,40 +20,45 @@ const ull memSize = ( XPMEM_ROW_SIZE * XPMEM_COL_SIZE );
 struct timeval start, end;
 
 int test_base(test_args* t) { return 0; }
-int test_base_one(test_args* t) { return 0; }
 int test_two_attach(test_args* t) { return 0; }
 int test_two_shares(test_args* t) { return 0; }
 int test_fork(test_args* t) { return 0; }
+
 
 /*
  *  Lorem Ipsum
  */
 int 
 main(int argc, char **argv) {
-
+	printf("IN Reader\n");
     char *str;
     char **buf;
     pid_t otherChildId;
-	test_args* xpmem_args;
+	test_args xpmem_args;
     struct timeval start, end;
     int fd, fdSync, fdTime, test_nr;
 
     if (argc < 2) {
-		printf("Usage: %s <test number>\n", argv[0]);
+		printf("In Reader: Usage: %s <test number>\n", argv[0]);
 		return -1;
 	}
 	test_nr = atoi(argv[1]);
+	printf("IN Reader 1\n");
 	
-	ipcb_xpmem_arg_generator(memSize, xpmem_args);
-    memset(xpmem_args->share, '\0', TMP_SHARE_SIZE);
-    xpmem_args->buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
+	printf("IN Reader 2\n");
+    memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
+	printf("IN Reader 3\n");
+    xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+	printf("IN Reader 4\n");
     
     sem_t *mutex = ipcb_open_semaphore_other();    
+	printf("IN Reader 5\n");
     ipcb_wait_semaphore(mutex);
     
     printf("==== %s STARTS ====\n", xpmem_test[0].name);
 
-    int ret = (*xpmem_test[test_nr].function)(xpmem_args);
+    int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 
     ipcb_post_semaphore(mutex);
     ipcb_close_semaphore(mutex);
@@ -61,7 +66,6 @@ main(int argc, char **argv) {
 
     return ret;
 }
-
 
 /**
  * test_base - a simple test to share and attach
@@ -75,8 +79,8 @@ main(int argc, char **argv) {
 int 
 ipcb_test_base_one (test_args *xpmem_args)
 {
-	xpmem_segid_t segid;
 	xpmem_apid_t apid;
+	xpmem_segid_t segid;
 	int i, ret=0, *data;
 
 	segid = strtol(xpmem_args->share, NULL, 16);
