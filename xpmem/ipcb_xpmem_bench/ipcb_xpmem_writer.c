@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
 
 #include "ipcb_xpmem.h"
 
@@ -31,14 +33,14 @@ int test_fork(test_args* t) { return 0; }
  */
 int 
 main(int argc, char **argv) {
-
     char *str;
     char **buf;
     pid_t otherChildId;
 	test_args xpmem_args;
     struct timeval start, end;
     int fd, fdSync, fdTime, test_nr;
-
+	sem_t *mutex = ipcb_open_semaphore();
+	ipcb_wait_semaphore(mutex);
     if (argc < 2) {
 		printf("In Writer: Usage: %s <test number>\n", argv[0]);
 		return -1;
@@ -46,13 +48,16 @@ main(int argc, char **argv) {
 	test_nr = atoi(argv[1]);
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
-    memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
+    // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
 
     printf("==== %s STARTS ====\n", xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
-	printf("Fuuuuuucj\n");
+	ipcb_post_semaphore(mutex);
+	// printf("Write: done after.\n");
+	ipcb_unlink_semaphore("alaki");
+	ipcb_close_semaphore(mutex);
 	return ret;
 }
 
@@ -79,7 +84,7 @@ ipcb_test_base_one (test_args *xpmem_args)
 	}
 
 	printf("xpmem_proc_writer: mypid = %d\n", getpid());
-	printf("xpmem_proc_writer: sharing %ld bytes\n", SHARE_SIZE);
+	printf("xpmem_proc_writer: sharing %lld bytes\n", SHARE_SIZE);
 	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
 
 	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
@@ -90,6 +95,7 @@ ipcb_test_base_one (test_args *xpmem_args)
 	// printf("In Writer: testbase one before sprintf\n");
 	sprintf(xpmem_args->share, "%llx", segid);
 
+	printf("%s\n", xpmem_args->share);
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;
 

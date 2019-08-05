@@ -10,7 +10,7 @@
  */
 
 #include <xpmem.h>
-#include <stdio.h> 
+#include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
 
@@ -30,7 +30,7 @@ int test_fork(test_args* t) { return 0; }
  */
 int 
 main(int argc, char **argv) {
-	printf("IN Reader\n");
+	// printf("IN Reader\n");
     char *str;
     char **buf;
     pid_t otherChildId;
@@ -43,17 +43,17 @@ main(int argc, char **argv) {
 		return -1;
 	}
 	test_nr = atoi(argv[1]);
-	printf("IN Reader 1\n");
+	// printf("IN Reader 1\n");
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
-	printf("IN Reader 2\n");
+	// printf("IN Reader 2\n");
     memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
-	printf("IN Reader 3\n");
+	// printf("IN Reader 3\n");
     xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
-	printf("IN Reader 4\n");
+	// printf("IN Reader 4\n");
     
     sem_t *mutex = ipcb_open_semaphore_other();    
-	printf("IN Reader 5\n");
+	// printf("IN Reader 5\n");
     ipcb_wait_semaphore(mutex);
     
     printf("==== %s STARTS ====\n", xpmem_test[0].name);
@@ -84,6 +84,7 @@ ipcb_test_base_one (test_args *xpmem_args)
 	int i, ret=0, *data;
 
 	segid = strtol(xpmem_args->share, NULL, 16);
+	printf("xpmem_proc_reader: segid = %llx\n", segid);
 	data = attach_segid(segid, &apid);
 	if (data == (void *)-1) {
 		perror("xpmem_attach");
@@ -91,7 +92,7 @@ ipcb_test_base_one (test_args *xpmem_args)
 	}
 
 	printf("xpmem_proc_reader: mypid = %d\n", getpid());
-	printf("xpmem_proc_reader: segid = %llx\n", segid);
+
 	printf("xpmem_proc_reader: attached at %p\n", data);
 
 	/* Copy data to mmap share */
@@ -99,7 +100,7 @@ ipcb_test_base_one (test_args *xpmem_args)
         memcpy(xpmem_args->buf[i], (data + (i * XPMEM_COL_SIZE) ),  
 				XPMEM_COL_SIZE);
     ipcb_get_time(&end, "\ntest_base_one:end: "); /* Start. */
-
+	printf("%ls", data);
 	// sprintf(xpmem_args->share, "%llx", segid);
 
 	/* Give control back to xpmem_master */

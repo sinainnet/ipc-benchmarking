@@ -52,21 +52,11 @@ main(){
     
     p1 = ipcb_fork();
     if (p1 == 0) {
-        sem_t *mutex = ipcb_open_semaphore();
-        ipcb_wait_semaphore(mutex);
-        printf("here3\n");
-        int ex = execl("./ipcb_xpmem_writer", "xpmem_proc1", test_nr, NULL);
-        printf("Write: done.\n");
-        ipcb_post_semaphore(mutex);
-        if (ex == -1) {
+        if (execl("./ipcb_xpmem_writer", "xpmem_proc1", test_nr, NULL) == -1) {
             perror("execl p1");
             return -1;
         }
-        printf("Write: done after.\n");
-        ipcb_unlink_semaphore("alaki");
-        ipcb_close_semaphore(mutex);
     }
-
     p2 = ipcb_fork();
     if (p2 == 0) {
         if (execl("./ipcb_xpmem_reader", "xpmem_proc2", test_nr,
