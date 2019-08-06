@@ -13,7 +13,7 @@
 #include "../../commons/commons.h"
 
 #define ull                   unsigned long long
-#define XPMEM_ROW_SIZE        ((1ull) << 20)
+#define XPMEM_ROW_SIZE        ((1ull) << 10)
 #define XPMEM_COL_SIZE        ((1ull) << 10)
 #define FIFO_FILE_TIME        "/tmp/fifo_starttime-shm"
 #define XPMEM_FILE            "ipcb-xpmem-file"

@@ -46,7 +46,7 @@ main(){
 
     ipcb_xpmem_arg_generator(memSize, &xpmem_args);
 
-    printf(" ======== %s STARTS ======== \n", "MASTER");
+    printf("===============  %s STARTS  =============== \n", "MASTER");
     memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     // lockf(lock, F_LOCK, 0);
     
