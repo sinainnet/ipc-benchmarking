@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include "ipcb_xpmem.h"
-
+/* */
 const ull memSize = ( XPMEM_ROW_SIZE * XPMEM_COL_SIZE );
 struct timeval start, end;
 
@@ -30,7 +30,6 @@ int test_fork(test_args* t) { return 0; }
  */
 int 
 main(int argc, char **argv) {
-	// printf("IN Reader\n");
     char *str;
     char **buf;
     pid_t otherChildId;
@@ -43,29 +42,28 @@ main(int argc, char **argv) {
 		return -1;
 	}
 	test_nr = atoi(argv[1]);
-	// printf("IN Reader 1\n");
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
-	// printf("IN Reader 2\n");
-    memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
-	// printf("IN Reader 3\n");
+    // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
-	// printf("IN Reader 4\n");
     
-    sem_t *mutex = ipcb_open_semaphore_other();    
-	// printf("IN Reader 5\n");
+	printf("IN Reader 5\n");
+    sem_t *mutex = ipcb_open_semaphore_other();
     ipcb_wait_semaphore(mutex);
     
-    printf("==== %s STARTS ====\n", xpmem_test[0].name);
+    // char* upper_name = ipcb_upper_string(xpmem_test[0].name);
+    // printf("   \n\n==== %s STARTS ====\n",  upper_name);
+	printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 
     ipcb_post_semaphore(mutex);
     ipcb_close_semaphore(mutex);
-    ipcb_destroy_semaphore(mutex);
+    // ipcb_destroy_semaphore(mutex);
 
     return ret;
 }
+
 
 /**
  * test_base - a simple test to share and attach
@@ -100,8 +98,8 @@ ipcb_test_base_one (test_args *xpmem_args)
         memcpy(xpmem_args->buf[i], (data + (i * XPMEM_COL_SIZE) ),  
 				XPMEM_COL_SIZE);
     ipcb_get_time(&end, "\ntest_base_one:end: "); /* Start. */
-	printf("%ls", data);
-	// sprintf(xpmem_args->share, "%llx", segid);
+	// printf("%ls", data);
+	sprintf(xpmem_args->share, "%llx", segid);
 
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;

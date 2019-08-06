@@ -2,6 +2,7 @@
 
 test -e /tmp/ipcb_xpmem.share && rm -f /tmp/ipcb_xpmem.share
 test -e /tmp/ipcb_xpmem.lock && rm -f /tmp/ipcb_xpmem.lock
+test -e /dev/shm/sem.ipcb_semaphore_example && rm -f /dev/shm/sem.ipcb_semaphore_example
 
 # create TMP_SHARE_SIZE bytes defined in xpmem_test.h
 for i in `seq 0 31` ; do
@@ -29,4 +30,7 @@ if [ -e "/tmp/ipcb_xpmem.share" ]; then
 fi
 if [ -e "/tmp/ipcb_xpmem.lock" ]; then
 	rm /tmp/ipcb_xpmem.lock
+fi
+if [ -e "/dev/shm/sem.ipcb_semaphore_example" ]; then
+	sudo rm /dev/shm/sem.ipcb_semaphore_example
 fi

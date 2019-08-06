@@ -50,8 +50,8 @@ main(int argc, char **argv) {
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
     // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
-
-    printf("==== %s STARTS ====\n", xpmem_test[0].name);
+	// char* upper_name = ipcb_upper_string(xpmem_test[0].name);
+    printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 	ipcb_post_semaphore(mutex);
@@ -84,7 +84,7 @@ ipcb_test_base_one (test_args *xpmem_args)
 	}
 
 	printf("xpmem_proc_writer: mypid = %d\n", getpid());
-	printf("xpmem_proc_writer: sharing %lld bytes\n", SHARE_SIZE);
+	printf("xpmem_proc_writer: sharing %lld bytes\n", TMP_SHARE_SIZE);
 	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
 
 	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
@@ -100,7 +100,6 @@ ipcb_test_base_one (test_args *xpmem_args)
 	// xpmem_args->share[LOCK_INDEX] = 1;
 
 	printf("\nIn Writer: testbase one done.\n");
-
 	// unmake_share(segid, data, SHARE_SIZE);
 
 	return ret;
