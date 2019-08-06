@@ -39,7 +39,7 @@ main(int argc, char **argv) {
 	test_args xpmem_args;
     struct timeval start, end;
     int fd, fdSync, fdTime, test_nr;
-	
+
 	sem_t *mutex = ipcb_open_semaphore();
 	ipcb_wait_semaphore(mutex);
     if (argc < 2) {
@@ -47,21 +47,22 @@ main(int argc, char **argv) {
 		return -1;
 	}
 	test_nr = atoi(argv[1]);
+
+	printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
+        
+	xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, 
+		XPMEM_COL_SIZE);
     
-	// memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
-    
-	xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
-	// char* upper_name = ipcb_upper_string(xpmem_test[0].name);
-    printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
-
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 
 	ipcb_post_semaphore(mutex);
 	printf("\nSemaphore Posted.\n");
+	
 	ipcb_unlink_semaphore("alaki");
 	ipcb_close_semaphore(mutex);
+	
 	return ret;
 }
 
@@ -69,7 +70,8 @@ main(int argc, char **argv) {
 /**
  * test_base - a simple test to share and attach
  * Description:
- *      Creates a share (initialized to a random value), calls a second process
+ *      Creates a share (initialized to a random value), calls a 
+ * 			second process
  *	to attach to the shared address and increment its value.
  * Return Values:
  *	Success: 0
@@ -82,27 +84,22 @@ ipcb_test_base_one (test_args *xpmem_args) {
 	segid = make_share(&data, SHARE_SIZE);
 	if (segid == -1) {
 		perror("xpmem_make");
-		// xpmem_args->share[LOCK_INDEX] = 1;
 		return -1;
 	}
 
 	printf("xpmem_proc_writer: mypid = %d\n", getpid());
-	printf("xpmem_proc_writer: sharing %lld bytes\n", TMP_SHARE_SIZE);
+	printf("xpmem_proc_writer: sharing %d bytes\n", TMP_SHARE_SIZE);
 	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
+	
+	sprintf(xpmem_args->share, "%llx", segid);
 
 	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
+	
 	/* Copy data to mmap share */
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
         memcpy((data + (i * XPMEM_COL_SIZE) ), xpmem_args->buf[i], 
 				XPMEM_COL_SIZE);
-	sprintf(xpmem_args->share, "%llx", segid);
 
-	// printf("i wrote it.it is = %lld:%s\n", segid, xpmem_args->share);
-	
-	/* Give control back to xpmem_master */
-	// xpmem_args->share[LOCK_INDEX] = 1;
-
-	// printf("\nIn Writer: testbase one done.\n");
 	unmake_share(segid, data, SHARE_SIZE);
 
 	return ret;
@@ -131,13 +128,16 @@ ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
  *  Lorem Ipsum
  */
 char*
-ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
-    char* str;
-
-    str = mmap(NULL, 2ull * memorySize, PROT_READ|PROT_WRITE, 
+ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, 
+	off_t offset) { 
+	
+	char* str;
+    
+	str = mmap(NULL, 2ull * memorySize, PROT_READ|PROT_WRITE, 
                 MAP_SHARED, fd, offset);
     if (MAP_FAILED == str) 
         ipcb_print_error("ipcb_master:ipcb_map_memory_to_fd: mmap");    
+   
     return str;
 }
 
