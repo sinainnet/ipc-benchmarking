@@ -51,7 +51,7 @@ main(int argc, char **argv) {
     sem_t *mutex = ipcb_open_semaphore_other();
     ipcb_wait_semaphore(mutex);
 
-	printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
+	printf("   \n\n==== READER: %s STARTS ====\n",  xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 
