@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include "ipcb_xpmem.h"
-/* */
+
 const ull memSize = ( XPMEM_ROW_SIZE * XPMEM_COL_SIZE );
 struct timeval start, end;
 
@@ -45,16 +45,12 @@ main(int argc, char **argv) {
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
 
-    // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
     
 	xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
     
-	// printf("IN Reader 5\n");
     sem_t *mutex = ipcb_open_semaphore_other();
     ipcb_wait_semaphore(mutex);
-    
-    // char* upper_name = ipcb_upper_string(xpmem_test[0].name);
-    // printf("   \n\n==== %s STARTS ====\n",  upper_name);
+
 	printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
@@ -99,16 +95,13 @@ ipcb_test_base_one (test_args *xpmem_args) {
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
         memcpy(xpmem_args->buf[i], (data + (i * XPMEM_COL_SIZE) ),  
 				XPMEM_COL_SIZE);
-    ipcb_get_time(&end, "\ntest_base_one:end: "); /* Start. */
-
-	/* Give control back to xpmem_master */
-	// xpmem_args->share[LOCK_INDEX] = 1;
-	// printf("Read: done.\n");
+    ipcb_get_time(&end, "\ntest_base_one:end: "); /* End. */
 
 	xpmem_detach(data);
 	xpmem_release(apid);
 	return ret;
 }
+
 
 /*
  *  Lorem Ipsum

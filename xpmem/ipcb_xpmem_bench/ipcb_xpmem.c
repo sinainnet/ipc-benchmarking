@@ -108,10 +108,8 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
  */
 int
 ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
-    // printf("hre");
 	if ((xpmem_args->fd = open(SHARE_FILE, O_RDWR)) == -1)
 		return ipcb_print_error("open ipcb_xpmem.share");
-    // else{printf("xpmem fd=%d", xpmem_args->fd);}
 
 	if ((xpmem_args->lock = open(LOCK_FILE, O_RDWR)) == -1)
 		return ipcb_print_error("open ipcb_xpmem.lock");
