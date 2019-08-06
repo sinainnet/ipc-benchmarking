@@ -48,7 +48,7 @@ main(int argc, char **argv) {
 	}
 	test_nr = atoi(argv[1]);
 
-	printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
+	printf("   \n\n==== WRITER: %s STARTS ====\n",  xpmem_test[0].name);
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
         
