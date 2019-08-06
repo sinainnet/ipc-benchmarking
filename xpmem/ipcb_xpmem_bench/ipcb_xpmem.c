@@ -83,8 +83,7 @@ main(){
     
     test_result(xpmem_test[0].name, status[0], status[1]);
 
-
-	munmap(share, TMP_SHARE_SIZE);
+	munmap(xpmem_args.share, TMP_SHARE_SIZE);
 	return 0;
 }
 
@@ -121,18 +120,3 @@ ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
     return 1;
 }
 
-
-
-
-
-
-	// if ((xpmem_args.fd = open(SHARE_FILE, O_RDWR)) == -1) {
-	// 	perror("open ipcb_xpmem.share");
-	// 	return -1;
-	// }
-	// if ((xpmem_args.lock = open(LOCK_FILE, O_RDWR)) == -1) {
-	// 	perror("open ipcb_xpmem.lock");
-	// 	return -1;
-	// }
-
-	// xpmem_args.share = ipcb_map_memory_to_fd(memSize, xpmem_args.fd, 0); 
