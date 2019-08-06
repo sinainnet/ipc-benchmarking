@@ -44,10 +44,12 @@ main(int argc, char **argv) {
 	test_nr = atoi(argv[1]);
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
+
     // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
-    xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
     
-	printf("IN Reader 5\n");
+	xpmem_args.buf = ipcb_empty_allocator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+    
+	// printf("IN Reader 5\n");
     sem_t *mutex = ipcb_open_semaphore_other();
     ipcb_wait_semaphore(mutex);
     
@@ -59,7 +61,7 @@ main(int argc, char **argv) {
 
     ipcb_post_semaphore(mutex);
     ipcb_close_semaphore(mutex);
-    // ipcb_destroy_semaphore(mutex);
+    ipcb_destroy_semaphore(mutex);
 
     return ret;
 }
@@ -75,14 +77,15 @@ main(int argc, char **argv) {
  *	Failure: -2
  */
 int 
-ipcb_test_base_one (test_args *xpmem_args)
-{
+ipcb_test_base_one (test_args *xpmem_args) {
 	xpmem_apid_t apid;
 	xpmem_segid_t segid;
 	int i, ret=0, *data;
 
 	segid = strtol(xpmem_args->share, NULL, 16);
+	printf("%s\n", xpmem_args->share);
 	printf("xpmem_proc_reader: segid = %llx\n", segid);
+
 	data = attach_segid(segid, &apid);
 	if (data == (void *)-1) {
 		perror("xpmem_attach");
@@ -90,7 +93,6 @@ ipcb_test_base_one (test_args *xpmem_args)
 	}
 
 	printf("xpmem_proc_reader: mypid = %d\n", getpid());
-
 	printf("xpmem_proc_reader: attached at %p\n", data);
 
 	/* Copy data to mmap share */
@@ -98,12 +100,10 @@ ipcb_test_base_one (test_args *xpmem_args)
         memcpy(xpmem_args->buf[i], (data + (i * XPMEM_COL_SIZE) ),  
 				XPMEM_COL_SIZE);
     ipcb_get_time(&end, "\ntest_base_one:end: "); /* Start. */
-	// printf("%ls", data);
-	sprintf(xpmem_args->share, "%llx", segid);
 
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;
-	printf("Read: done.\n");
+	// printf("Read: done.\n");
 
 	xpmem_detach(data);
 	xpmem_release(apid);

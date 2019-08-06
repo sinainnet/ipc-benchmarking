@@ -39,6 +39,7 @@ main(int argc, char **argv) {
 	test_args xpmem_args;
     struct timeval start, end;
     int fd, fdSync, fdTime, test_nr;
+	
 	sem_t *mutex = ipcb_open_semaphore();
 	ipcb_wait_semaphore(mutex);
     if (argc < 2) {
@@ -48,14 +49,17 @@ main(int argc, char **argv) {
 	test_nr = atoi(argv[1]);
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
-    // memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
-    xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
+    
+	// memset(xpmem_args.share, '\0', TMP_SHARE_SIZE);
+    
+	xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, XPMEM_COL_SIZE);
 	// char* upper_name = ipcb_upper_string(xpmem_test[0].name);
     printf("   \n\n==== %s STARTS ====\n",  xpmem_test[0].name);
 
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
+
 	ipcb_post_semaphore(mutex);
-	// printf("Write: done after.\n");
+	printf("\nSemaphore Posted.\n");
 	ipcb_unlink_semaphore("alaki");
 	ipcb_close_semaphore(mutex);
 	return ret;
@@ -72,8 +76,7 @@ main(int argc, char **argv) {
  *	Failure: -1
  */
 int 
-ipcb_test_base_one (test_args *xpmem_args)
-{
+ipcb_test_base_one (test_args *xpmem_args) {
 	int i, ret=0, *data, expected;
 	xpmem_segid_t segid;
 	segid = make_share(&data, SHARE_SIZE);
@@ -92,15 +95,15 @@ ipcb_test_base_one (test_args *xpmem_args)
     for (int i = 0; i < XPMEM_ROW_SIZE; i++)
         memcpy((data + (i * XPMEM_COL_SIZE) ), xpmem_args->buf[i], 
 				XPMEM_COL_SIZE);
-	// printf("In Writer: testbase one before sprintf\n");
 	sprintf(xpmem_args->share, "%llx", segid);
 
-	printf("%s\n", xpmem_args->share);
+	// printf("i wrote it.it is = %lld:%s\n", segid, xpmem_args->share);
+	
 	/* Give control back to xpmem_master */
 	// xpmem_args->share[LOCK_INDEX] = 1;
 
-	printf("\nIn Writer: testbase one done.\n");
-	// unmake_share(segid, data, SHARE_SIZE);
+	// printf("\nIn Writer: testbase one done.\n");
+	unmake_share(segid, data, SHARE_SIZE);
 
 	return ret;
 }
@@ -138,30 +141,3 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd, off_t offset) {
     return str;
 }
 
-
-    // write(fdTime, &start.tv_sec, sizeof(long int));
-    // write(fdTime, &start.tv_usec, sizeof(long int));
-    
-    // printf("\nWriting Data into memory is done.\n");
-    // printf("Time in microseconds: %ld microseconds\n",
-    //         ((end.tv_sec - start.tv_sec)*1000000L
-    //        +end.tv_usec) - start.tv_usec
-    //       ); // Added semicolon
-
-
-
-
-
-	/* Wait for xpmem_proc2 to finish */
-	// lockf(xpmem_args->lock, F_LOCK, 0);
-	// lockf(xpmem_args->lock, F_ULOCK, 0);
-
-	// printf("xpmem_proc1: verifying data...");
-	// expected = (xpmem_args->add == 2 ? 2 : 1); /* Slightly hackish */
-	// for (i = 0; i < SHARE_INT_SIZE; i++) {
-	// 	if (*(data + i) != i + expected) {
-	// 		printf("xpmem_proc1: ***mismatch at %d: expected %d "
-	// 			"got %d\n", i, i + expected, *(data + i));
-	// 		ret = -1;
-	// 	}
-	// }
