@@ -3,27 +3,28 @@
  * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
  ****************************************************************************
  *
- *      File: shmat/commons.c
+ *      File: commons/commons.c
  *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
  *
  * Description: 
  */
 
+#include <time.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
-#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/types.h>
 
 #include "commons.h"
 
 
-#define SEM_NAME "/semaphore_example"
-#define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
-#define INITIAL_VALUE 1
+#define SEM_NAME            "/ipcb_semaphore_example"
+#define SEM_PERMS           (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
+#define INITIAL_VALUE       1
+#define INITIAL_VALUE_OTHER 1
 
 
 /*
@@ -107,7 +108,7 @@ ipcb_initializer (char** buffer, unsigned long int row, unsigned long int col) {
     
     ipcb_random_char_generator(ch);
     for (int i = 0; i < row; i++){
-	memset(buffer[i], ch[(rand() % 58)], col);
+	    memset(buffer[i], ch[(rand() % 58)], col);
     }
     return;
 }
@@ -143,6 +144,22 @@ ipcb_fake_data_generator (unsigned long int row, unsigned long int col) {
 /*
  *  Lorem Ipsum
  */
+char* ipcb_upper_string(char s[]) {
+   int c = 0;
+   
+   while (s[c] != '\0') {
+      if (s[c] >= 'a' && s[c] <= 'z') {
+         s[c] = s[c] - 32;
+      }
+      c++;
+   }
+   return s;
+}
+
+
+/*
+ *  Lorem Ipsum
+ */
 pid_t 
 ipcb_fork() {
 	pid_t childPid;
@@ -161,7 +178,7 @@ ipcb_fork() {
 int 
 ipcb_pipe(int* pip) {
 	if (pipe(pip) < 0) {
-                ipcb_print_error("pipe");
+        ipcb_print_error("pipe");
 		exit(1);
 	}
 	return ON_SUCCESS;
@@ -173,9 +190,9 @@ ipcb_pipe(int* pip) {
  */
 void 
 ipcb_free_memory(char** mem, unsigned long int row) {
-    for(int i = 0; i < row; i++){
+    for(int i = 0; i < row; i++)
         mem[i];
-    }
+
     free(mem);
     return;
 }
@@ -187,9 +204,10 @@ ipcb_free_memory(char** mem, unsigned long int row) {
 sem_t*
 ipcb_open_semaphore() {
     /* We initialize the semaphore counter to 1 (INITIAL_VALUE) */
-    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT | O_EXCL, SEM_PERMS, INITIAL_VALUE);
+    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT | O_EXCL, SEM_PERMS,
+        INITIAL_VALUE);
     if (semaphore == SEM_FAILED) {
-        ipcb_print_error("ipcb_open_semaphore:sem_open(3) error\n");
+        ipcb_print_error("ipcb_open_semaphore_first:sem_open:\n");
         exit(EXIT_FAILURE);
     }
     return semaphore;
@@ -201,10 +219,11 @@ ipcb_open_semaphore() {
  */
 sem_t*
 ipcb_open_semaphore_other() {
-    /* We initialize the semaphore counter to 1 (INITIAL_VALUE) */
-    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT, SEM_PERMS, INITIAL_VALUE);
+    /* We initialize the semaphore counter to 0 (INITIAL_VALUE) */
+    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT, SEM_PERMS,
+        INITIAL_VALUE_OTHER);
     if (semaphore == SEM_FAILED) {
-        ipcb_print_error("ipcb_open_semaphore:sem_open(3) error\n");
+        ipcb_print_error("ipcb_open_semaphore_other:sem_open:\n");
         exit(EXIT_FAILURE);
     }
     return semaphore;
@@ -216,12 +235,15 @@ ipcb_open_semaphore_other() {
  */
 int 
 ipcb_close_semaphore(sem_t* semaphore) {
-    /* Close the semaphore as we won't be using it in the parent process */
+    /* Close the semaphore as we won't be using it 
+        in the parent process 
+    */
     if (sem_close(semaphore) < 0) {
         /* We ignore possible sem_unlink(3) errors here */
         sem_unlink(SEM_NAME);
 
-        return ipcb_print_error("ipcb_open_semaphore:sem_close(3) failed\n");
+        return ipcb_print_error("ipcb_open_semaphore:sem_close(3)\
+            failed\n");
     }
     return ON_SUCCESS;
 }
@@ -233,7 +255,8 @@ ipcb_close_semaphore(sem_t* semaphore) {
 int
 ipcb_unlink_semaphore(char* semName) {
     if (sem_unlink(SEM_NAME) < 0)
-        return ipcb_print_error("ipcb_unlink_semaphore:sem_unlink(3) failed\n");
+        return ipcb_print_error("ipcb_unlink_semaphore:sem_unlink(3)\
+            failed\n");
     return ON_SUCCESS;
 }
 
@@ -244,7 +267,8 @@ ipcb_unlink_semaphore(char* semName) {
 int
 ipcb_post_semaphore(sem_t* semaphore) {
     if (sem_post(semaphore) < 0) {
-        return ipcb_print_error("ipcb_post_semaphore:sem_post(3) error on child\n");
+        return ipcb_print_error("ipcb_post_semaphore:sem_post(3) \
+            error on child\n");
     }
     return ON_SUCCESS;
 }
@@ -256,7 +280,8 @@ ipcb_post_semaphore(sem_t* semaphore) {
 int
 ipcb_wait_semaphore(sem_t* semaphore) {
     if (sem_wait(semaphore) < 0) {
-        return ipcb_print_error("ipcb_wait_semaphore:sem_wait(3) failed on child\n");
+        return ipcb_print_error("ipcb_wait_semaphore:sem_wait(3) \
+            failed on child\n");
     }
     return ON_SUCCESS;
 }
@@ -268,7 +293,8 @@ ipcb_wait_semaphore(sem_t* semaphore) {
 int 
 ipcb_destroy_semaphore(sem_t *semaphore) {
     if (sem_destroy(semaphore) < 0) {
-        return ipcb_print_error("ipcb_destory_semaphore:sem_destroy(3) failed on child\n");
+        return ipcb_print_error("ipcb_destory_semaphore:sem_destroy(3)\
+            failed on child\n");
     }
     return ON_SUCCESS;
 }

@@ -16,7 +16,7 @@
 #define SHARE_INT_SIZE	(SHARE_SIZE / sizeof(int))
 
 /* Used to specify size of /tmp/xpmem.share */
-#define TMP_SHARE_SIZE	31
+#define TMP_SHARE_SIZE	32
 #define LOCK_INDEX	TMP_SHARE_SIZE - 1
 #define COW_LOCK_INDEX	TMP_SHARE_SIZE - 2
 
