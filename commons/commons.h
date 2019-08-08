@@ -92,3 +92,6 @@ int ipcb_wait_semaphore(sem_t* semaphore);
 
 
 int ipcb_destroy_semaphore(sem_t *semaphore);
+
+
+char* ipcb_upper_string(char []);

@@ -52,8 +52,8 @@ main(int argc, char **argv) {
 	
 	ipcb_xpmem_arg_generator(memSize, &xpmem_args);
         
-	xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, 
-		XPMEM_COL_SIZE);
+	xpmem_args.buf = ipcb_fake_data_generator(1, 
+		32);
     
     int ret = (*xpmem_test[test_nr].function)(&xpmem_args);
 
@@ -106,7 +106,6 @@ ipcb_test_base_one (test_args *xpmem_args) {
 }
 
 
-
 /*
  *  Lorem Ipsum
  */
@@ -119,7 +118,8 @@ ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
 	if ((xpmem_args->lock = open(LOCK_FILE, O_RDWR)) == -1)
 		return ipcb_print_error("open ipcb_xpmem.lock");
 
-	xpmem_args->share = ipcb_map_memory_to_fd(memSize, xpmem_args->fd, 0); 
+	// xpmem_args->share = ipcb_map_memory_to_fd(memSize, xpmem_args->fd, 0); 
+	xpmem_args->share = ipcb_map_memory_to_fd(TMP_SHARE_SIZE, xpmem_args->fd, 0); 
     return 1;
 }
 
@@ -133,7 +133,7 @@ ipcb_map_memory_to_fd (unsigned long long memorySize, int fd,
 	
 	char* str;
     
-	str = mmap(NULL, 2ull * memorySize, PROT_READ|PROT_WRITE, 
+	str = mmap(NULL,  memorySize, PROT_READ|PROT_WRITE, 
                 MAP_SHARED, fd, offset);
     if (MAP_FAILED == str) 
         ipcb_print_error("ipcb_master:ipcb_map_memory_to_fd: mmap");    
