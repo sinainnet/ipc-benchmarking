@@ -6,66 +6,46 @@
 #include <sys/types.h>
 // #include <sys/ipc.h>
 #include <wait.h>
-#include "sem.h"
 
-#include "../../commons/commons.h"
+#include "ipcb_xpmem.h"
 
+int ipcb_test_base_one(test_args* t) { return 0; }
 
 int 
-main()
-{
-    int pid, lock, status[2];
-    pid =  fork();
-    srand(pid);
-    if ((lock = open("/tmp/xpmem.lock", O_RDWR | O_CREAT)) == -1) {
+main(int argc, char **argv) {
+    int pid, pid2,
+		id,
+		lock,
+		status[2];
+	union semun u;
+	u.val = 1;
+
+    if ((lock = open(MW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
         perror("open xpmem.lock");
         return -1;
 	}
-    if(pid < 0)
-	{
-        perror("fork"); exit(1);
-    }
-    else if(pid)
+	
+	pid =  ipcb_fork();
+    srand(pid);
+
+	if(pid)
     {   
 		lockf(lock, F_LOCK, 0);
-        // if (execl("./ipcb_xpmem_writer", "1", "proc1", (char*)NULL) == -1) {
-        //     perror("execl p1");
-        //     return -1;
-        // }
-		int id = semget(KEY, 1, 0666 | IPC_CREAT);
-		if(id < 0)
-		{
-			perror("semget"); exit(11);
-		}
-		union semun u;
-		u.val = 1;
-		if(semctl(id, 0, SETVAL, u) < 0)
-		{
-			perror("semctl"); exit(12);
-		}
-		if(semop(id, &p, 1) < 0){
-			perror("semop p"); exit(15);
-		}
+		id = ipcb_get_semaphore(shared_sem_key, 1, 0666 | IPC_CREAT);
+
+		ipcb_control_semaphore(id, 0, SETVAL, u);
+		ipcb_operate_semaphore(id, &decrease, 1);
+		
 		system("./ipcb_xpmem_writer 1 proc1");
-		if(semop(id, &v, 1) < 0){
-			perror("semop p"); exit(16);
-		}
+
+		ipcb_operate_semaphore(id, &increase, 1);
     }
     else
     {
-		int pid2;
-			pid2 =  fork();
+		pid2 =  ipcb_fork();
 		srand(pid2);
-		if(pid2 < 0)
-    	{
-        	perror("fork"); exit(1);
-    	}
-    	else if(pid2)
-    	{
-        	// if (execl("./ipcb_xpmem_reader", "2", "proc2", (char*)NULL) == -1) {
-            // 		perror("execl p2");
-            // 		return -1;
-        	// }
+		if(pid2) {
+			// printf("hellowwwww");
 			system("./ipcb_xpmem_reader 2 proc2");
     	}
 		else{
