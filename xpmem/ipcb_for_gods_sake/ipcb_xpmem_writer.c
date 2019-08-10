@@ -36,7 +36,7 @@ main(int argc, char **argv) {
         	perror("semctl"); exit(12);
     	}
 	
-	char *s = "abcdefgh";
+	char *s = "abcdefghkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkddkdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdsdsdsds";
     int l = strlen(s);
     if(semop(id, &p, 1) < 0){
         perror("semop p"); 
