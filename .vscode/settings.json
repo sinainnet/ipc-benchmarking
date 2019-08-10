@@ -11,6 +11,9 @@
         "commons.h": "c",
         "mman.h": "c",
         "xpmem_internal.h": "c",
-        "wait.h": "c"
+        "wait.h": "c",
+        "types.h": "c",
+        "sem.h": "c",
+        "ipcb_semaphore.h": "c"
     }
 }
