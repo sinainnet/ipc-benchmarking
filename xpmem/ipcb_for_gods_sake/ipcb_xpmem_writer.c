@@ -6,11 +6,9 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 
-#include "sem.h"
+#include "ipcb_xpmem.h"
 
-#include "../../commons/commons.h"
-
-
+struct timeval start, end;
 
 int 
 main(int argc, char **argv) {
@@ -19,45 +17,81 @@ main(int argc, char **argv) {
 	// 	return -1;
 	// }
 	// char *name = atoi(argv[1]);
-    int lock;
-    if ((lock = open("/tmp/xpmem.lock", O_RDWR | O_CREAT)) == -1) {
+
+    int masterWriterlock, writerReaderLock;
+    if ((masterWriterlock = open(MW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
 		perror("open xpmem.lock");
 		return -1;
 	}
-    int id = semget(KEY, 1, 0666 | IPC_CREAT);
-    	if(id < 0)
-    	{
-        	perror("semget"); exit(11);
-    	}
+
+    if ((writerReaderLock = open(RW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
+		perror("open xpmem.lock");
+		return -1;
+	}
+    int id = ipcb_get_semaphore(KEY, 1, 0666 | IPC_CREAT);
+
     	union semun u;
     	u.val = 1;
-   	if(semctl(id, 0, SETVAL, u) < 0)
-    	{
-        	perror("semctl"); exit(12);
-    	}
+   	ipcb_control_semaphore(id, 0, SETVAL, u);
 	
-	char *s = "abcdefghkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkdkddkdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdsdsdsds";
+	char *s = "abcdefghkdkdkdk";
     int l = strlen(s);
-    if(semop(id, &p, 1) < 0){
-        perror("semop p"); 
-        exit(15);
-    }
+    ipcb_operate_semaphore(id, &decrease, 1);
+    
 	printf("   \n\n==== WRITER(SMALL): STARTS ====\n");
 
     for(int i = 0; i < l; ++i)
     {
         putchar(s[i]);
         fflush(stdout);
-        // sleep(rand() % 2);
         putchar(s[i]);
         fflush(stdout);
-        // sleep(rand() % 2);
     }
-	lockf(lock, F_ULOCK, 0);
+	lockf(masterWriterlock, F_ULOCK, 0);
+    ipcb_operate_semaphore(id, &increase, 1);
 
-    if(semop(id, &v, 1) < 0){
-        perror("semop p"); exit(16);
-    }
+
 	printf("   \n\n==== WRITER(SMALL): Ends ====\n");
+    
     return 0;
+}
+
+
+
+/**
+ * test_base - a simple test to share and attach
+ * Description:
+ *      Creates a share (initialized to a random value), calls a 
+ * 			second process
+ *	to attach to the shared address and increment its value.
+ * Return Values:
+ *	Success: 0
+ *	Failure: -1
+ */
+int 
+ipcb_test_base_one (test_args *xpmem_args) {
+	int i, ret=0, *data, expected;
+	xpmem_segid_t segid;
+	segid = make_share(&data, SHARE_SIZE);
+	if (segid == -1) {
+		perror("xpmem_make");
+		return -1;
+	}
+
+	printf("xpmem_proc_writer: mypid = %d\n", getpid());
+	printf("xpmem_proc_writer: sharing %d bytes\n", TMP_SHARE_SIZE);
+	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
+	
+	sprintf(xpmem_args->share, "%llx", segid);
+
+	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
+	
+	/* Copy data to mmap share */
+    for (int i = 0; i < XPMEM_ROW_SIZE; i++)
+        memcpy((data + (i * XPMEM_COL_SIZE) ), xpmem_args->buf[i], 
+				XPMEM_COL_SIZE);
+
+	unmake_share(segid, data, SHARE_SIZE);
+
+	return ret;
 }

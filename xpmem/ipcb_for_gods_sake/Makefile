@@ -4,10 +4,10 @@ LDFLAGS := -lrt -lpthread
 
 TARGETS:= ipcb_xpmem_master ipcb_xpmem_writer ipcb_xpmem_reader
 MAINS  := $(addsuffix .o, $(TARGETS) )
-# OBJ    := ../../commons/commons.o
-XPMEM  := #../lib/.libs/libxpmem.so  #../lib/.libs/libxpmem.a #
+OBJ    := ../../semaphore_lib/ipcb_semaphore.o ../../commons/commons.o
+XPMEM  := ../lib/.libs/libxpmem.so  #../lib/.libs/libxpmem.a #
 LIBS := #-L ../lib/.libs/libxpmem.so.0
-DEPS   := #./commons/commons.h
+DEPS   := #../../semaphore_lib/ipcb_semaphore.h#./commons/commons.h
 
 BUILDPATH       := ../.
 
@@ -22,6 +22,6 @@ $(OBJ): %.o : %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CCFLAGS) $(BUILDPATH)
 
 $(TARGETS): % : $(filter-out $(MAINS), $(OBJ)) %.o
-	$(CC) -g -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS)
+	$(CC) -g -o $@ $(LIBS) $^ $(CCFLAGS) $(BUILDPATH) $(LDFLAGS) $(XPMEM)
 	echo Build Done
 

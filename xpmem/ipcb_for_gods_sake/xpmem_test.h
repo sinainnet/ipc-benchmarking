@@ -1,13 +1,16 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif /* _GNU_SOURCE */
+
 #include <sys/mman.h>
+#include <xpmem.h>
 
 #ifndef _XPMEM_TEST_H
 #define _XPMEM_TEST_H
+#define MAP_ANONYMOUS	0x20		/* don't use a file */
 
 #include <stdlib.h>
 #include <unistd.h>
-// #include "../../commons/commons.h"
-
-
 
 #define NR_TEST_PAGES 	4
 #define PAGE_SIZE	sysconf(_SC_PAGE_SIZE)
