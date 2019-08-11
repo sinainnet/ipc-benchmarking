@@ -12,11 +12,25 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NR_TEST_PAGES 	4
+// #define NR_TEST_PAGES 	5
+
 #define PAGE_SIZE	sysconf(_SC_PAGE_SIZE)
-#define SHARE_SIZE	NR_TEST_PAGES * PAGE_SIZE
-#define PAGE_INT_SIZE	(PAGE_SIZE / sizeof(int))
-#define SHARE_INT_SIZE	(SHARE_SIZE / sizeof(int))
+// #define SHARE_SIZE	NR_TEST_PAGES * PAGE_SIZE
+
+// #define PAGE_INT_SIZE	(PAGE_SIZE / sizeof(int))
+// #define SHARE_INT_SIZE	(SHARE_SIZE / sizeof(int))
+
+/* ------------------- */
+
+#define XPMEM_ROW_SIZE        ((1ull) << 18)
+#define XPMEM_COL_SIZE        ((1ull) << 3)
+
+// // #define PAGE_SIZE	          XPMEM_COL_SIZE
+#define SHARE_SIZE            XPMEM_ROW_SIZE*PAGE_SIZE
+
+#define PAGE_INT_SIZE	      (PAGE_SIZE / sizeof(int))
+#define SHARE_INT_SIZE	      (SHARE_SIZE / sizeof(int))
+
 
 /* Used to specify size of /tmp/xpmem.share */
 #define TMP_SHARE_SIZE	32
@@ -79,9 +93,10 @@ void *attach_segid(xpmem_segid_t segid, xpmem_apid_t *apid)
 
 /* Structs for test functions */
 typedef struct {
-	int fd, lock;
+	int fd, RWLock, MWLock;
 	char *share;
 	char** buf;
+	char** emptyAlloc;
 	int add;
 } test_args;
 
@@ -95,6 +110,7 @@ typedef struct {
  */
 int test_base(test_args*);
 int ipcb_test_base_one(test_args*);
+int ipcb_test_base_two(test_args*);
 int test_two_attach(test_args*);
 int test_two_shares(test_args*);
 int test_fork(test_args*);
@@ -112,6 +128,7 @@ int test_fork(test_args*);
 // };
 test_struct xpmem_test[] = {
 	add_test(ipcb_test_base_one),
+	add_test(ipcb_test_base_two),
 	{ NULL }
 };
 
