@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-test -e /tmp/xpmem.share && rm -f /tmp/xpmem.share
+test -e /tmp/ipcb_xpmem.share && rm -f /tmp/ipcb_xpmem.share
 test -e /tmp/ipcb_mw_xpmem.lock && rm -f /tmp/ipcb_mw_xpmem.lock
 test -e /tmp/ipcb_rw_xpmem.lock && rm -f /tmp/ipcb_rw_xpmem.lock
 test -e /dev/shm/sem.ipcb_semaphore_example && rm -f /dev/shm/sem.ipcb_semaphore_example
 
 # create TMP_SHARE_SIZE bytes defined in xpmem_test.h
-#for i in `seq 0 31` ; do
-#	echo -n 0 >> /tmp/ipcb_xpmem.share
-#done
+for i in `seq 0 31` ; do
+	echo -n 0 >> /tmp/ipcb_xpmem.share
+done
 echo 0 > /tmp/ipcb_mw_xpmem.lock
 echo 0 > /tmp/ipcb_rw_xpmem.lock
 
@@ -27,8 +27,8 @@ $PWD/ipcb_xpmem_master
 #	echo "==== test_mem_leak FAILED ===="
 #fi
 
-if [ -e "/tmp/xpmem.share" ]; then
-	rm /tmp/xpmem.share
+if [ -e "/tmp/ipcb_xpmem.share" ]; then
+	rm /tmp/ipcb_xpmem.share
 fi
 if [ -e "/tmp/ipcb_mw_xpmem.lock" ]; then
 	rm /tmp/ipcb_mw_xpmem.lock
@@ -39,3 +39,5 @@ fi
 if [ -e "/dev/shm/sem.ipcb_semaphore_example" ]; then
 	sudo rm /dev/shm/sem.ipcb_semaphore_example
 fi
+
+# sudo kill $(pidof ipcb_xpmem_master)

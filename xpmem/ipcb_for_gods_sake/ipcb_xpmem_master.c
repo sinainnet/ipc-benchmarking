@@ -10,27 +10,25 @@
 #include "ipcb_xpmem.h"
 
 int ipcb_test_base_one(test_args* t) { return 0; }
+int ipcb_test_base_two(test_args* t) { return 0; }
 
 int 
 main(int argc, char **argv) {
     int pid, pid2,
-		id,
+		id, fd,
 		lock,
 		status[2];
 	union semun u;
 	u.val = 1;
 
-    if ((lock = open(MW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
-        perror("open xpmem.lock");
-        return -1;
-	}
+	test_args xpmem_args;
+	ipcb_xpmem_arg_generator(TMP_SHARE_SIZE, &xpmem_args);
 	
 	pid =  ipcb_fork();
     srand(pid);
 
 	if(pid)
     {   
-		lockf(lock, F_LOCK, 0);
 		id = ipcb_get_semaphore(shared_sem_key, 1, 0666 | IPC_CREAT);
 
 		ipcb_control_semaphore(id, 0, SETVAL, u);
@@ -41,11 +39,10 @@ main(int argc, char **argv) {
 		ipcb_operate_semaphore(id, &increase, 1);
     }
     else
-    {
+    {			
 		pid2 =  ipcb_fork();
 		srand(pid2);
 		if(pid2) {
-			// printf("hellowwwww");
 			system("./ipcb_xpmem_reader 2 proc2");
     	}
 		else{

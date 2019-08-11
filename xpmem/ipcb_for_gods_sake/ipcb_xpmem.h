@@ -10,13 +10,41 @@
 
 #define KEY                   0x1111
 #define ull                   unsigned long long
-#define MW_LOCK_FILE             "/tmp/ipcb_mw_xpmem.lock"
-#define RW_LOCK_FILE             "/tmp/ipcb_rw_xpmem.lock"
-#define XPMEM_ROW_SIZE        ((1ull) << 3)
-#define XPMEM_COL_SIZE        ((1ull) << 3)
-
+#define MW_LOCK_FILE          "/tmp/ipcb_mw_xpmem.lock"
+#define RW_LOCK_FILE          "/tmp/ipcb_rw_xpmem.lock"
+#define RW_SHARE_FILE         "/tmp/ipcb_xpmem.share"
  
 key_t shared_sem_key = KEY;
 struct sembuf decrease = DECREASE_SEM;
 struct sembuf increase = INCREASE_SEM;
 
+
+
+/*
+ *  Lorem Ipsum
+ */
+int
+ipcb_xpmem_arg_generator (ull memorySize, test_args* xpmem_args) {
+    if ((xpmem_args->fd = open(RW_SHARE_FILE, O_RDWR)) == -1) {
+		perror("open xpmem.share");
+		return -1;
+	}
+    xpmem_args->share = mmap(0, TMP_SHARE_SIZE, PROT_READ|PROT_WRITE,
+			MAP_SHARED, xpmem_args->fd, 0);
+    if (xpmem_args->share == MAP_FAILED) {
+		perror("mmap");
+		return -1;
+	}
+
+    if ((xpmem_args->MWLock = open(MW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
+		perror("open xpmem.lock");
+		return -1;
+	}
+
+    if ((xpmem_args->RWLock = open(RW_LOCK_FILE, O_RDWR | O_CREAT)) == -1) {
+		perror("open xpmem.lock");
+		return -1;
+	}
+
+    return 1;
+}
