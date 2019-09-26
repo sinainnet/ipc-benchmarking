@@ -1,3 +1,13 @@
+/****************************************************************************
+ * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
+ ****************************************************************************
+ *
+ *      File: xpmem/ipcb_sem_bench/ipcb_xpmem_.h
+ *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
+ *
+ * Description: 
+ */
+
 #if __STDC_VERSION__ >= 199901L
 #define _XOPEN_SOURCE 600
 #else

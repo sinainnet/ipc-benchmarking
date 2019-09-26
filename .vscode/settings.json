@@ -14,6 +14,7 @@
         "wait.h": "c",
         "types.h": "c",
         "sem.h": "c",
-        "ipcb_semaphore.h": "c"
+        "ipcb_semaphore.h": "c",
+        "sstream": "c"
     }
 }

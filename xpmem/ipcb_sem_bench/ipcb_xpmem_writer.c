@@ -1,3 +1,13 @@
+/****************************************************************************
+ * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
+ ****************************************************************************
+ *
+ *      File: xpmem/ipcb_sem_bench/ipcb_xpmem_writer.c
+ *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
+ *
+ * Description: 
+ */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,7 +94,7 @@ ipcb_test_base_one (test_args *xpmem_args) {
     ipcb_operate_semaphore(id, &increase, 1);
 
 
-	int id_2 = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+	int id_2 = ipcb_get_semaphore(shared_ums_key, 1, 0666);
     ipcb_operate_semaphore(id_2, &decrease, 1);
 	ipcb_operate_semaphore(id_2, &increase, 1);
 
