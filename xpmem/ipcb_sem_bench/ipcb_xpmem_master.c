@@ -2,9 +2,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-// #include <string.h>
 #include <sys/types.h>
-// #include <sys/ipc.h>
 #include <wait.h>
 
 #include "ipcb_xpmem.h"
@@ -17,7 +15,7 @@ main(int argc, char **argv) {
     int pid, pid2,
 		id, fd,
 		lock,
-		status[2];
+		status[2] = {0,0};
 	union semun u;
 	u.val = 1;
 
@@ -35,8 +33,8 @@ main(int argc, char **argv) {
 		ipcb_operate_semaphore(id, &decrease, 1);
 		
 		system("./ipcb_xpmem_writer 1 proc1");
-
-		ipcb_operate_semaphore(id, &increase, 1);
+		printf("writer: Goodbye.\n");
+		exit(1);
     }
     else
     {			
@@ -44,6 +42,8 @@ main(int argc, char **argv) {
 		srand(pid2);
 		if(pid2) {
 			system("./ipcb_xpmem_reader 2 proc2");
+			printf("reader: Goodbye.\n");
+			exit(1);
     	}
 		else{
 			waitpid(pid2, &status[1], 0);
@@ -51,6 +51,11 @@ main(int argc, char **argv) {
 
 			waitpid(pid, &status[0], 0);
 			status[0] = WEXITSTATUS(status[0]);
+			if ( WIFEXITED(status[1]) && WIFEXITED(status[0]) ) {
+                printf("Both have Exited normally with status %d\n", status[1]);
+            }
+			printf("master: Goodbye.\n");
+
 			return 0;
 		}
     }

@@ -9,6 +9,7 @@
 #include "ipcb_xpmem.h"
 
 struct timeval start, end;
+
 // 
 int 
 main(int argc, char **argv) {
@@ -18,17 +19,14 @@ main(int argc, char **argv) {
 	u.val = 1;
 	
 	ipcb_xpmem_arg_generator(TMP_SHARE_SIZE, &xpmem_args);
-    
-	int id = ipcb_get_semaphore(KEY, 1, 0666 | IPC_CREAT);
-   	ipcb_control_semaphore(id, 0, SETVAL, u);
-    ipcb_operate_semaphore(id, &decrease, 1);
-
 	xpmem_args.buf = ipcb_fake_data_generator(XPMEM_ROW_SIZE, PAGE_SIZE);
-
+	
+	// check what is in the buf
+	// for (int i = 0; i < XPMEM_ROW_SIZE; i++)
+	// 	printf("%s", xpmem_args.buf[i]);
+	
 	ipcb_test_base_one(&xpmem_args);
 	// ipcb_test_base_two(&xpmem_args);
-
-    ipcb_operate_semaphore(id, &increase, 1);
 
     return 0;
 }
@@ -59,43 +57,40 @@ ipcb_test_base_one (test_args *xpmem_args) {
 
 	printf("   \n\n==== WRITER: STARTS ====\n");
 	
-	printf("xpmem_proc_writer: mypid = %d\n", getpid());
-	printf("xpmem_proc_writer: sharing %d bytes\n", TMP_SHARE_SIZE);
-	printf("xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
+	printf("1- xpmem_proc_writer: mypid = %d\n", getpid());
+	printf("2- xpmem_proc_writer: sharing %d bytes\n", TMP_SHARE_SIZE);
+	printf("3- xpmem_proc_writer: segid = %llx at %p\n\n", segid, data);
 	
-
-	ipcb_get_time(&start, "\ntest_base:start: "); /* Start. */
+	ipcb_get_time(&start, "\ntest_base_one:start: "); /* Start. */
 	
 	/* Copy data to mmap share */
     for (i = 0; i < XPMEM_ROW_SIZE; i++){
-		// if (i > 65000)
-			// printf(" %d ", i);
         memcpy((data), xpmem_args->buf[i],
 				PAGE_SIZE);
-		// memcpy((data + (i * PAGE_SIZE)), xpmem_args->buf[i], 
-		// PAGE_SIZE);
 	}
-	// printf("%s", xpmem_args->buf[i-1]);
-
-		// memcpy((data + (i * PAGE_SIZE)), xpmem_args->buf[i], 
-		// 		PAGE_SIZE);
 
 	printf("   \n\n==== WRITER: Ends ====\n");
 
+	// check what has been wrote on data.
+	printf("%ls\n\n", data);
 
 	/* Give control back to xpmem_master */
-	printf("give control back to reader\n");
-	xpmem_args->share[LOCK_INDEX] = '1';
+	// printf("give control back to reader\n");
+	// xpmem_args->share[LOCK_INDEX] = '1';
 
-	printf("writer i want to lock file.\n");
-	int tmp;
-	/* Wait for xpmem_proc1 to finish processing */
-	while ((tmp = strtol(xpmem_args->share+LOCK_INDEX, NULL, 16)) == 1) { 
-		usleep(100); }
-	printf("writer i finally lockd and unlocked the file\n");
+	// printf("writer i want to lock file.\n");
+
+	int id = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+    ipcb_operate_semaphore(id, &increase, 1);
+
+
+	int id_2 = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+    ipcb_operate_semaphore(id_2, &decrease, 1);
+	ipcb_operate_semaphore(id_2, &increase, 1);
+
+	printf("writer: I'm gonna unmake what i've shared before.\n");
 
 	unmake_share(segid, data, SHARE_SIZE);
-
 	return ret;
 }
 
@@ -128,8 +123,8 @@ int ipcb_test_base_two(test_args *xpmem_args) {
 	printf("   \n\n==== WRITER(SMALL): Ends ====\n");
 
 	/* Give control back to xpmem_master */
-	printf("give control back to reader\n");
-	xpmem_args->share[LOCK_INDEX] = '1';
+	// printf("give control back to reader\n");
+	// xpmem_args->share[LOCK_INDEX] = '1';
 
 	printf("writer i want to lock file.\n");
 	int tmp;

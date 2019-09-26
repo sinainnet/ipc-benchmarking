@@ -9,6 +9,7 @@
 #include "ipcb_xpmem.h"
 
 extern struct timeval start, end;
+
 // 
 int 
 main(int argc, char **argv) {
@@ -19,24 +20,30 @@ main(int argc, char **argv) {
 
     u.val = 1;
 
+	int id_2 = ipcb_get_semaphore(shared_ums_key, 1, 0666 | IPC_CREAT);
+	ipcb_control_semaphore(id_2, 0, SETVAL, u);
+	ipcb_operate_semaphore(id_2, &decrease, 1);
+
 	ipcb_xpmem_arg_generator(TMP_SHARE_SIZE, &xpmem_args);
 
 	xpmem_args.emptyAlloc = ipcb_fake_data_generator(XPMEM_ROW_SIZE, PAGE_SIZE);
 
 	/* Wait for xpmem_proc1 to finish processing */
-	while ((tmp = strtol(xpmem_args.share+LOCK_INDEX, NULL, 16)) == 0) { 
-		usleep(100); }
+	// while ((tmp = strtol(xpmem_args.share+LOCK_INDEX, NULL, 16)) == 0) { 
+	// 	usleep(100); }
 
-    int id = ipcb_get_semaphore(KEY, 1, 0666 | IPC_CREAT);
-   	ipcb_control_semaphore(id, 0, SETVAL, u);    
+    int id = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+   	// ipcb_control_semaphore(id, 0, SETVAL, u);    
     ipcb_operate_semaphore(id, &decrease, 1);
 
 	ipcb_test_base_one(&xpmem_args);
 	// ipcb_test_base_two(&xpmem_args);
 
     ipcb_operate_semaphore(id, &increase, 1);
+    ipcb_operate_semaphore(id_2, &increase, 1);
 	
-	xpmem_args.share[LOCK_INDEX] = '0';
+	
+	// xpmem_args.share[LOCK_INDEX] = '0';
     return 0;
 }
 
@@ -55,37 +62,48 @@ ipcb_test_base_one (test_args *xpmem_args) {
 	xpmem_apid_t apid;
 	xpmem_segid_t segid;
 	int i, ret=0, *data;
-	printf("Reader sharesize = %lld:%lld\n", SHARE_SIZE, PAGE_SIZE);
 
 	segid = strtol(xpmem_args->share, NULL, 16);
-	printf("%s\n", xpmem_args->share);
-	printf("xpmem_proc_reader: segid = %llx\n", segid);
 
 	data = attach_segid(segid, &apid);
 	if (data == (void *)-1) {
 		perror("xpmem_attach");
 		return -2;
 	}
+	else{
+		printf("   \n\n==== Reader: STARTS ====\n");
+		printf("1- Reader sharesize = %lld:%lld\n", SHARE_SIZE, PAGE_SIZE);
+		printf("2- The thing've been shared in the shared file now is = %s\n", xpmem_args->share);
+		printf("3- xpmem_proc_reader: segid = %llx\n\n", segid);
+		
+		printf("4- xpmem_proc_reader: mypid = %d\n", getpid());
+		printf("5- xpmem_proc_reader: attached at %p\n", data);
 
-	printf("   \n\n==== Reader: STARTS ====\n");
-	
-	printf("xpmem_proc_reader: mypid = %d\n", getpid());
-	printf("xpmem_proc_reader: attached at %p\n", data);
+		char* tmp = (char*)data;
+		/* Copy data to mmap share */
+		for (i = 0; i < XPMEM_ROW_SIZE-1; i++)
+			memcpy(xpmem_args->emptyAlloc[i], tmp,  
+					PAGE_SIZE);
+		// test if read strings match to the one writer wrote.
+		// printf("\n%s", xpmem_args->emptyAlloc[0]);
+		// printf("%s", xpmem_args->emptyAlloc[1]);
+		// printf("%s", xpmem_args->emptyAlloc[2]);
+		// printf("%s", xpmem_args->emptyAlloc[3]);
+		// printf("%s", xpmem_args->emptyAlloc[4]);
+		// printf("%s", xpmem_args->emptyAlloc[5]);
+		// printf("%s", xpmem_args->emptyAlloc[6]);
+		// printf("%s", xpmem_args->emptyAlloc[7]);
 
-	/* Copy data to mmap share */
-    for (i = 0; i < XPMEM_ROW_SIZE; i++)
-        memcpy(xpmem_args->emptyAlloc[i], data,  
-				PAGE_SIZE);
-	// printf("%s", xpmem_args->emptyAlloc[i-1]);
+		ipcb_get_time(&end, "\ntest_base_one:end: "); /* End. */
 
-    
-	ipcb_get_time(&end, "\ntest_base_one:end: "); /* End. */
+		printf("   \n\n==== Reader: Ends ====\n");
 
-	printf("   \n\n==== Reader: Ends ====\n");
+		xpmem_detach(data);
+		xpmem_release(apid);
 
-	xpmem_detach(data);
-	xpmem_release(apid);
-	return ret;
+		return ret;
+	}
+
 }
 
 
