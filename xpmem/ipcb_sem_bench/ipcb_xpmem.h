@@ -8,13 +8,15 @@
 #include "../../commons/commons.h"
 #include"../../semaphore_lib/ipcb_semaphore.h"
 
-#define KEY                   0x1111
+#define SEM_KEY                   0x1111
+#define UMS_KEY					  0x2222
 #define ull                   unsigned long long
 #define MW_LOCK_FILE          "/tmp/ipcb_mw_xpmem.lock"
 #define RW_LOCK_FILE          "/tmp/ipcb_rw_xpmem.lock"
 #define RW_SHARE_FILE         "/tmp/ipcb_xpmem.share"
  
-key_t shared_sem_key = KEY;
+key_t shared_sem_key = SEM_KEY;
+key_t shared_ums_key = UMS_KEY;
 struct sembuf decrease = DECREASE_SEM;
 struct sembuf increase = INCREASE_SEM;
 

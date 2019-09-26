@@ -94,11 +94,7 @@ xpmem_proc1.o: xpmem_proc1.c /usr/include/stdc-predef.h \
  /usr/include/linux/stddef.h \
  /usr/include/x86_64-linux-gnu/asm/posix_types.h \
  /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
- /usr/include/asm-generic/posix_types.h include/xpmem_test.h \
- include/../../../commons/commons.h \
- /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
- /usr/include/x86_64-linux-gnu/bits/semaphore.h
+ /usr/include/asm-generic/posix_types.h include/xpmem_test.h
 
 /usr/include/stdc-predef.h:
 
@@ -317,13 +313,3 @@ xpmem_proc1.o: xpmem_proc1.c /usr/include/stdc-predef.h \
 /usr/include/asm-generic/posix_types.h:
 
 include/xpmem_test.h:
-
-include/../../../commons/commons.h:
-
-/usr/include/x86_64-linux-gnu/sys/stat.h:
-
-/usr/include/x86_64-linux-gnu/sys/time.h:
-
-/usr/include/semaphore.h:
-
-/usr/include/x86_64-linux-gnu/bits/semaphore.h:

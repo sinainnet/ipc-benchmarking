@@ -93,11 +93,7 @@ xpmem_master.o: xpmem_master.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/floatn-common.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- include/../../../commons/commons.h \
- /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
- /usr/include/x86_64-linux-gnu/bits/semaphore.h
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h
 
 /usr/include/stdc-predef.h:
 
@@ -316,13 +312,3 @@ include/xpmem_test.h:
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
-
-include/../../../commons/commons.h:
-
-/usr/include/x86_64-linux-gnu/sys/stat.h:
-
-/usr/include/x86_64-linux-gnu/sys/time.h:
-
-/usr/include/semaphore.h:
-
-/usr/include/x86_64-linux-gnu/bits/semaphore.h:

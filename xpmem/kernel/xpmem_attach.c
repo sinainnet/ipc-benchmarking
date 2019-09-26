@@ -712,7 +712,7 @@ static void
 xpmem_clear_PTEs_of_att(struct xpmem_attachment *att, u64 start, u64 end,
 							int from_mmu)
 {
-	int ret;
+	int ret = 0;
 
 	/*
 	 * This function should ideally acquire both att->mm->mmap_sem

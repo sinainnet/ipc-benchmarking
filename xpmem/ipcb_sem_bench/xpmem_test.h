@@ -14,7 +14,7 @@
 
 // #define NR_TEST_PAGES 	5
 
-#define PAGE_SIZE	sysconf(_SC_PAGE_SIZE)
+// #define PAGE_SIZE	sysconf(_SC_PAGE_SIZE)
 // #define SHARE_SIZE	NR_TEST_PAGES * PAGE_SIZE
 
 // #define PAGE_INT_SIZE	(PAGE_SIZE / sizeof(int))
@@ -22,10 +22,10 @@
 
 /* ------------------- */
 
-#define XPMEM_ROW_SIZE        ((1ull) << 18)
-#define XPMEM_COL_SIZE        ((1ull) << 3)
+#define XPMEM_ROW_SIZE        ((1ull) << 20)
+#define XPMEM_COL_SIZE        ((1ull) << 20)
 
-// // #define PAGE_SIZE	          XPMEM_COL_SIZE
+#define PAGE_SIZE	          XPMEM_COL_SIZE
 #define SHARE_SIZE            XPMEM_ROW_SIZE*PAGE_SIZE
 
 #define PAGE_INT_SIZE	      (PAGE_SIZE / sizeof(int))
