@@ -1,3 +1,13 @@
+/****************************************************************************
+ * (C) 2019-2020 - DSLab @ Iran University of Science and Technology
+ ****************************************************************************
+ *
+ *      File: xpmem/ipcb_sem_bench/ipcb_xpmem_master.c
+ *      Authors: Amir Hossein Sorouri - Sina Mahmoodi
+ *
+ * Description: 
+ */
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
