@@ -23,39 +23,10 @@
 
 #include "../vmsplice.h"
 
-#define SPLICERS_ROW_SIZE     ((1ull) << 10)
-#define SPLICERS_COL_SIZE     ((1ull) << 20)
+#define SPLICERS_ROW_SIZE     ((1ull) << 20)
+#define SPLICERS_COL_SIZE     ((1ull) << 10)
 
 const unsigned long int memSize = ( SPLICERS_ROW_SIZE * SPLICERS_COL_SIZE );
-
-
-/*
- * Lorem Ipsum
- */
-static int ipcb_parse_option(int argc, char *argv[])
-{
-        int opt, index = 1, vmSpliceFlag;
-
-        while ((opt = getopt(argc, argv, ":gu")) != -1) {
-                switch (opt) {
-                        case 'u':
-                                vmSpliceFlag = SPLICE_F_MOVE;
-                                index++;
-                                break;
-                        case 'g':
-                                printf("Gift\n");
-                                vmSpliceFlag = SPLICE_F_GIFT;
-                                index++;
-                                break;
-                        default:
-                                return -1;
-                }
-        }
-    	for(; optind <= argc; optind++){
-        	printf("extra arguments: %s\n", argv[optind-1]);
-    	}
-        return vmSpliceFlag;
-}
 
 
 /*
@@ -80,51 +51,70 @@ main() {
                 name = "First Child";
                 close(pip[0]);
                 close(fd[0]);
-
+				printf("here\n");
                 ipcb_get_time(&start, "\nfirst_child:start: "); /* Start. */
 
                 nread = ipcb_vmsplicer(pip[1], data, SPLICERS_ROW_SIZE, SPLICERS_COL_SIZE, SPLICE_F_GIFT);
                 
 		ipcb_get_time(&end, "\nfirst_child:end: ");  /* End. */
                
-                printf("---------------------------------------------\n");
+                printf("\n---------------------------------------------\n");
                 write(fd[1], &start, sizeof(start));
                 write(fd[1], &end, sizeof(start));
                 exit(0);
         }
         else
         {
-        	pid_t childTwoPid;
+        	pid_t childTwoPid, childThree;
         	childTwoPid = ipcb_fork();
 	        if(childTwoPid == 0)
             	{
             		/* Second Child process closes up output side of pipe */
             		name = "Second Child";
-           		close(fd[1]);
+           			close(fd[1]);
             		close(pip[1]);
-            		close(childPipe[0]);
+            		// close(childPipe[0]);
+					
+					childThree = ipcb_fork();
+	        		if(childThree == 0){
+						char* emptyalloc = calloc(memSize, sizeof(char));
+						unsigned long long int cnt = 0;
+						while(cnt < memSize){
+            				
+							long int r = read(childPipe[0], emptyalloc, 1024);
+							if(r > 0) {
+								cnt += r;
+							}
+							else {
+								perror("child three:");
+							}
 
-            		ipcb_get_time(&start, "\nsecond_child:start: "); /* Start. */
+						}
+					}
+					else {
+						ipcb_get_time(&start, "\nsecond_child:start: "); /* Start. */
 
-            		nread = ipcb_splicer(pip[0], STDOUT_FILENO, SPLICERS_ROW_SIZE, SPLICERS_COL_SIZE, SPLICE_F_MOVE);
+						nread = ipcb_splicer(pip[0], childPipe[1], SPLICERS_ROW_SIZE, SPLICERS_COL_SIZE, SPLICE_F_MOVE);
+						
+						ipcb_get_time(&end, "\nsecond_child:end: ");  /* End. */
+
+						printf("in %s: number of reads from the pipe = %ld\n", name, nread);
+						printf("---------------------------------------------\n");
+						struct timeval firstChildStart, firstChildEnd;
+						
+						read(fd[0], &firstChildStart, sizeof(start));
+						read(fd[0], &firstChildEnd, sizeof(start));
+							
+				double result = printf("\nWriting Data into memory is done.\n");
+						printf("Time in microseconds: %ld microseconds\n",
+								((end.tv_sec - firstChildStart.tv_sec)*1000000L
+								+end.tv_usec) - firstChildStart.tv_usec
+								); // Added semicolon
+						printf("The frequency is eqals to(Mbps): %f .\n", (double)((2* memSize)/(result*1000000L)));
+
+							exit(0);
+					}
             		
-			ipcb_get_time(&end, "\nsecond_child:end: ");  /* End. */
-
-            		printf("in %s: number of reads from the pipe = %ld\n", name, nread);
-            		printf("---------------------------------------------\n");
-            		struct timeval firstChildStart, firstChildEnd;
-            		
-            		read(fd[0], &firstChildStart, sizeof(start));
-            		read(fd[0], &firstChildEnd, sizeof(start));
-                        
-			double result = printf("\nWriting Data into memory is done.\n");
-	                printf("Time in microseconds: %ld microseconds\n",
-        	                ((end.tv_sec - firstChildStart.tv_sec)*1000000L
-                	        +end.tv_usec) - firstChildStart.tv_usec
-                        	); // Added semicolon
-                	printf("The frequency is eqals to(Mbps): %f .\n", (double)((2* memSize)/(result*1000000L)));
-
-                        exit(0);
         	}
         	else {
             		/* Parent process closes up output side of pipe */
