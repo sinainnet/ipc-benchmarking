@@ -5,12 +5,12 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/time.h>
+#include <limits.h>
 #include <sys/resource.h>
 #include "sina.h"
 
 
 int ipcb_test_base_one(test_args* t) { return 0; }
-
 
 int main(int argc, char **argv) {
         if (argc < 3) {
@@ -35,17 +35,32 @@ int main(int argc, char **argv) {
         struct iovec local[1];
         local[0].iov_base = calloc(bufferLength, sizeof(char));
         local[0].iov_len = bufferLength;
-
-        struct iovec remote[1];
+        long long ss = 2147479552;
+        long long s = 2*ss;
+        struct iovec remote[5];
         remote[0].iov_base = remotePtr;
         remote[0].iov_len = bufferLength;
-
+        remote[1].iov_base = remotePtr + 2147479552;
+        remote[1].iov_len = bufferLength - 2147479552;
+        remote[2].iov_base = remotePtr + s;
+        remote[2].iov_len = bufferLength - s;
+        remote[3].iov_base = remotePtr + 3*ss;
+        remote[3].iov_len = bufferLength - 3*ss;
+        remote[4].iov_base = remotePtr + 4*ss;
+        remote[4].iov_len = bufferLength - 4*ss;
         // Call process_vm_readv - handle any error codes
-
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
-        ssize_t nread = process_vm_readv(pid, local, 2, remote, 1, 0);
+
+        ssize_t nread = process_vm_readv(pid, local, 2, &remote[0], 1, 0);
+        ssize_t nread2 = process_vm_readv(pid, local, 2, &remote[1], 1, 0);
+        ssize_t nread3 = process_vm_readv(pid, local, 2, &remote[2], 1, 0);
+        ssize_t nread4 = process_vm_readv(pid, local, 2, &remote[3], 1, 0);
+        ssize_t nread5 = process_vm_readv(pid, local, 2, &remote[4], 1, 0);
+
+
         clock_gettime(CLOCK_REALTIME, &finish);
+
         if (nread < 0) {
                 switch (errno) {
                         case EINVAL:
@@ -66,17 +81,19 @@ int main(int argc, char **argv) {
                         default:
                                 printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED.\n");
                 }
-
-                return -1;
         }
 
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread);
-        printf("%s\n", (char *)(local[0].iov_base));
+       
+        
+        
+        printf(" * Executed process_vm_ready, read %d:%llu bytes.\n", 2, nread + nread2 + nread3+ nread4+ nread5);
+        // printf("%s\n", (char *)(local[0].iov_base));
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;
 
         if (start.tv_nsec > finish.tv_nsec) { // clock underflow
+                printf("overflowed.\n");
                 --seconds;
                 ns += 1000000000;
         }
