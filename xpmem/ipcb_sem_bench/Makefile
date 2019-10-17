@@ -5,8 +5,8 @@ LDFLAGS := -lrt -lpthread
 TARGETS:= ipcb_xpmem_master ipcb_xpmem_writer ipcb_xpmem_reader
 MAINS  := $(addsuffix .o, $(TARGETS) )
 OBJ    := ../../semaphore_lib/ipcb_semaphore.o ../../commons/commons.o
-XPMEM  := ../lib/.libs/libxpmem.so  #../lib/.libs/libxpmem.a #
-LIBS := #-L ../lib/.libs/libxpmem.so.0
+XPMEM  :=  ../lib/.libs/libxpmem.so.0  ../lib/.libs/libxpmem.so ../lib/.libs/libxpmem.so.0.0.0 #
+LIBS   := -L ../lib/.libs/libxpmem.so.0
 DEPS   := #../../semaphore_lib/ipcb_semaphore.h#./commons/commons.h
 
 BUILDPATH       := ../.
