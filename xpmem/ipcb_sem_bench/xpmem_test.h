@@ -22,7 +22,7 @@
 
 /* ------------------- */
 
-#define XPMEM_ROW_SIZE        ((1ull) << 20)
+#define XPMEM_ROW_SIZE        ((1ull) << 10)
 #define XPMEM_COL_SIZE        ((1ull) << 20)
 
 #define PAGE_SIZE	          XPMEM_COL_SIZE
