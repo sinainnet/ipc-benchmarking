@@ -13,11 +13,31 @@
 #include "../shared_memory.h"
 #include"../../semaphore_lib/ipcb_semaphore.h"
 
+#define  mgrow 			1024
+#define  gigrow  		1048576
+#define  two_gigrow  	2*gigrow
+#define  three_gigrow  	3*gigrow
+#define  four_gigrow  	4*gigrow
+#define  eight_gigrow  	8*gigrow
+#define  col  			1024
+
+#define mgsize  mgrow*col
+#define gigsize  gigrow*col
+#define two_gigsize  two_gigrow*col
+#define three_gigsize  three_gigrow*col
+#define four_gigsize  four_gigrow*col
+#define eight_gigsize  eight_gigrow*col
+
+
 #define SEM_KEY                   0x1111
 #define UMS_KEY					  0x2222
-#define SHM_ROW_SIZE        ((1ull) << 20)
-#define SHM_COL_SIZE        ((1ull) << 20)
-#define TMP_SHARE_SIZE      SHM_ROW_SIZE*SHM_COL_SIZE
+// #define SHM_ROW_SIZE        ((1ull) << 20)
+// #define SHM_COL_SIZE        ((1ull) << 10)
+#define SHM_ROW_SIZE		gigrow
+#define SHM_COL_SIZE		col
+// #define TMP_SHARE_SIZE      (SHM_ROW_SIZE*SHM_COL_SIZE)
+#define TMP_SHARE_SIZE      (1*((1ull) << 20)*1024)
+
 #define SHM_FILE            "/tmp/ipcb_shm_file"
 #define SHM_FILE_NAME       "ipcb_shm_file"
 #define FIFO_FILE           "/tmp/fifo_twoway-shm"
