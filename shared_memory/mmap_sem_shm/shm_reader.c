@@ -8,14 +8,14 @@
  *
  * Description: 
  */
-
+// 
 #include <stdio.h> 
 #include <string.h>
 
 #include "mmap_shm.h"
 
 struct timeval start, end;
-const unsigned long int memSize = ( SHM_ROW_SIZE * SHM_COL_SIZE );
+const unsigned long long int memSize = ( SHM_ROW_SIZE * SHM_COL_SIZE );
 
 
 /*
