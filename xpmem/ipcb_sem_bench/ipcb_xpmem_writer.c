@@ -7,7 +7,7 @@
  *
  * Description: 
  */
-
+// 
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +20,6 @@
 
 struct timeval start, end;
 
-// 
 int 
 main(int argc, char **argv) {
 
@@ -73,16 +72,19 @@ ipcb_test_base_one (test_args *xpmem_args) {
 	
 	ipcb_get_time(&start, "\ntest_base_one:start: "); /* Start. */
 	
+	memset(data, 'a', SHARE_SIZE);
+	printf("%ls", data);
 	/* Copy data to mmap share */
-    for (i = 0; i < XPMEM_ROW_SIZE; i++){
-        memcpy((data), xpmem_args->buf[i],
-				PAGE_SIZE);
-	}
+    // for (i = 0; i < XPMEM_ROW_SIZE; i++){
+	// 	for(int j = 0; j < )
+    //     memcpy(data + (i*PAGE_SIZE), xpmem_args->buf[i],
+	// 			PAGE_SIZE);
+	// }
 
 	printf("   \n\n==== WRITER: Ends ====\n");
 
-	// check what has been wrote on data.
-	printf("%ls\n\n", data);
+	// check what has been written on data.
+	// printf("%ls\n\n", data);
 
 	/* Give control back to xpmem_master */
 	// printf("give control back to reader\n");

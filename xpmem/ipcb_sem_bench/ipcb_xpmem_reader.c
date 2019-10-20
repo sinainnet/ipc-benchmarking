@@ -15,12 +15,14 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <time.h>
+
 
 #include "ipcb_xpmem.h"
 
-extern struct timeval start, end;
+extern struct timeval startss, end;
+struct timespec starts, finish;
 
-// 
 int 
 main(int argc, char **argv) {
 
@@ -36,7 +38,7 @@ main(int argc, char **argv) {
 
 	ipcb_xpmem_arg_generator(TMP_SHARE_SIZE, &xpmem_args);
 
-	xpmem_args.emptyAlloc = ipcb_fake_data_generator(XPMEM_ROW_SIZE, PAGE_SIZE);
+	xpmem_args.emptyAlloc = ipcb_empty_allocator(XPMEM_ROW_SIZE, PAGE_SIZE);
 
 	/* Wait for xpmem_proc1 to finish processing */
 	// while ((tmp = strtol(xpmem_args.share+LOCK_INDEX, NULL, 16)) == 0) { 
@@ -90,21 +92,40 @@ ipcb_test_base_one (test_args *xpmem_args) {
 		printf("5- xpmem_proc_reader: attached at %p\n", data);
 
 		char* tmp = (char*)data;
+		char* read = malloc(2048);
+		struct timeval startss;
+		ipcb_get_time(&startss, "\ntest_base_one:start: "); /* Start. */
+
+		clock_gettime(CLOCK_REALTIME, &starts);
 		/* Copy data to mmap share */
 		for (i = 0; i < XPMEM_ROW_SIZE-1; i++)
-			memcpy(xpmem_args->emptyAlloc[i], tmp,  
+			read = memcpy(xpmem_args->emptyAlloc[i], tmp + (i*PAGE_SIZE),  
 					PAGE_SIZE);
+		clock_gettime(CLOCK_REALTIME, &finish);
+		
 		// test if read strings match to the one writer wrote.
 		// printf("\n%s", xpmem_args->emptyAlloc[0]);
-		// printf("%s", xpmem_args->emptyAlloc[1]);
-		// printf("%s", xpmem_args->emptyAlloc[2]);
-		// printf("%s", xpmem_args->emptyAlloc[3]);
-		// printf("%s", xpmem_args->emptyAlloc[4]);
-		// printf("%s", xpmem_args->emptyAlloc[5]);
-		// printf("%s", xpmem_args->emptyAlloc[6]);
+		// // printf("%s\n", xpmem_args->emptyAlloc[1]);
+		// // printf("%s\n", xpmem_args->emptyAlloc[2]);
+		// printf("500 %s", xpmem_args->emptyAlloc[500]);
+		// // printf("%s", xpmem_args->emptyAlloc[4]);
+		// // printf("%s", xpmem_args->emptyAlloc[5]);
+		// printf("1000%s", xpmem_args->emptyAlloc[1000]);
 		// printf("%s", xpmem_args->emptyAlloc[7]);
 
 		ipcb_get_time(&end, "\ntest_base_one:end: "); /* End. */
+
+		long seconds = finish.tv_sec - starts.tv_sec;
+        long ns = finish.tv_nsec - starts.tv_nsec;
+
+        if (starts.tv_nsec > finish.tv_nsec) { // clock underflow
+                printf("overflowed.\n");
+                --seconds;
+                ns += 1000000000;
+        }
+        printf("\nseconds without ns: %ld\n", seconds);
+        printf("nanoseconds: %ld\n", ns);
+        printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
 
 		printf("   \n\n==== Reader: Ends ====\n");
 
@@ -116,7 +137,7 @@ ipcb_test_base_one (test_args *xpmem_args) {
 
 }
 
-
+// 
 int ipcb_test_base_two(test_args* xpmem_args) { 
 	xpmem_segid_t segid;
 	xpmem_apid_t apid;

@@ -26,7 +26,7 @@
 #define SPLICERS_ROW_SIZE     ((1ull) << 20)
 #define SPLICERS_COL_SIZE     ((1ull) << 10)
 
-const unsigned long int memSize = ( SPLICERS_ROW_SIZE * SPLICERS_COL_SIZE );
+const unsigned long long int memSize = ( SPLICERS_ROW_SIZE * SPLICERS_COL_SIZE );
 
 
 /*
@@ -90,6 +90,7 @@ main() {
 							}
 
 						}
+						printf("second child number of reads from the pipe= %llu\n", cnt);
 					}
 					else {
 						ipcb_get_time(&start, "\nsecond_child:start: "); /* Start. */
