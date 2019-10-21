@@ -11,7 +11,7 @@ $ LD_PRELOAD=/usr/local/lib/libxpmem.so ./xpmem_proc2
 ````
 
 
-## Results without semaphore
+## XPMEM Results without semaphore
 
 ### 1-Gigabyte
 
@@ -74,7 +74,7 @@ time in nanoseconds:
 
 
 
-## Results with semaphore
+## XPMEM Results with semaphore
 
 ### 1-Gigabyte
 
