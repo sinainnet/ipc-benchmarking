@@ -19,6 +19,7 @@
 #include <xpmem.h>
 #include "xpmem_test.h"
 
+// 
 /**
  * test_base - a simple test to share and attach
  * Description:
@@ -57,13 +58,14 @@ int test_base(test_args *xpmem_args)
 		*(mydata + i) += 1;
 	}
 
-	sem_t* mysem = sem_open("/mysem", O_CREAT, 0777, 1);
+	// sem_t* mysem = sem_open("/mysem", O_CREAT, 0777, 1);
+
 	struct timespec start, finish;
 	clock_gettime(CLOCK_REALTIME, &start);
 	
-	sem_wait(mysem);
+	// sem_wait(mysem);
 	memcpy(data, mydata, SHARE_SIZE);
-	sem_post(mysem);
+	// sem_post(mysem);
 
 	clock_gettime(CLOCK_REALTIME, &finish);
 	long seconds = finish.tv_sec - start.tv_sec;
@@ -74,12 +76,12 @@ int test_base(test_args *xpmem_args)
 		ns += 1000000000;
 	}
 
-	printf("nanoseconds 2:%ld\n", ns);
+	printf("nanoseconds proc 2: %ld.%ld\n", seconds, ns);
 
 	printf("done writing\n");
 	xpmem_detach(data);
 	xpmem_release(apid);
-	sem_unlink("/mysem");
+	// sem_unlink("/mysem");
 
 
 	return ret;

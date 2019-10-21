@@ -9,7 +9,7 @@
 
 #define NR_TEST_PAGES 	262144
 #define PAGE_SIZE	sysconf(_SC_PAGE_SIZE)
-#define SHARE_SIZE	NR_TEST_PAGES * PAGE_SIZE
+#define SHARE_SIZE	2 * NR_TEST_PAGES * PAGE_SIZE
 #define PAGE_INT_SIZE	(PAGE_SIZE / sizeof(int))
 #define SHARE_INT_SIZE	(SHARE_SIZE / sizeof(int))
 
