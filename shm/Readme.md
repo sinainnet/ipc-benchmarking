@@ -1,4 +1,4 @@
-## Results with semaphore
+## Shared Memory Results with semaphore
 
 ### 1-Gigabyte
 
