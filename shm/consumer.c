@@ -14,7 +14,7 @@
 int main() 
 { 
 	/* the size (in bytes) of shared memory object */
-	const int SIZE = 1<<30; 
+	unsigned long long int SIZE = 1llu*8*1<<30; 
 	char* data = malloc(SIZE);
 
 	/* name of the shared memory object */
@@ -49,7 +49,7 @@ int main()
 		ns += 1000000000;
 	}
 
-	printf("nanoseconds consumer:%ld\n", ns);
+	printf("nanoseconds consumer: %ld.%ld\n",seconds, ns);
 
 	printf("End copy\n");
 	/* remove the shared memory object */
