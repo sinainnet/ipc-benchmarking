@@ -2,7 +2,7 @@
 
 ### 1-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 0.382858118 
 - 0.381446864
@@ -17,7 +17,7 @@ time in nanosecond:
 
 ### 2-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 0.726141478
 - 0.736190090
@@ -27,7 +27,7 @@ time in nanosecond:
 
 ### 3-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 0.893257627
 - 0.892397626
@@ -38,7 +38,7 @@ time in nanosecond:
 
 ### 4-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 1.044328047
 - 1.040005969
@@ -48,7 +48,7 @@ time in nanosecond:
 
 ### 8-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 1.678261631
 - 1.664142783

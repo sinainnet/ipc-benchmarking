@@ -11,22 +11,22 @@ $ LD_PRELOAD=/usr/local/lib/libxpmem.so ./xpmem_proc2
 ````
 
 
-## Results without semaphore
+## XPMEM Results without semaphore
 
 ### 1-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
-- 581379066
-- 586321675
-- 583344418
-- 581416783
-- 582653025
-- 583589487
+- 0.581379066
+- 0.586321675
+- 0.583344418
+- 0.581416783
+- 0.582653025
+- 0.583589487
 
 ### 2-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 1.167612513
 - 1.168786209
@@ -38,7 +38,7 @@ time in nanoseconds:
 
 ### 3-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 1.756822524
 - 1.751173598
@@ -50,7 +50,7 @@ time in nanoseconds:
 
 ### 4-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 2.349303082
 - 2.345735161
@@ -63,7 +63,7 @@ time in nanoseconds:
 
 ### 8-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 4.650524226
 - 4.659491382
@@ -74,23 +74,23 @@ time in nanoseconds:
 
 
 
-## Results with semaphore
+## XPMEM Results with semaphore
 
 ### 1-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
-- 585105959
-- 582921067
-- 585180882
-- 585560497
-- 582873555
-- 583817160
+- 0.585105959
+- 0.582921067
+- 0.585180882
+- 0.585560497
+- 0.582873555
+- 0.583817160
 
 
 ### 2-Gigabyte
 
-time in nanosecond:
+time in second.nanoseconds:
 
 - 1.166622371
 - 1.163743761
@@ -102,7 +102,7 @@ time in nanosecond:
 
 ### 3-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 1.758853642
 - 1.751597541
@@ -113,7 +113,7 @@ time in nanoseconds:
 
 ### 4-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 2.335050597
 - 2.337399761
@@ -124,7 +124,7 @@ time in nanoseconds:
 
 ### 8-Gigabyte
 
-time in nanoseconds:
+time in second.nanoseconds:
 
 - 4.671463245
 - 4.696017850

@@ -1,8 +1,8 @@
-## Results with semaphore
+## Shared Memory Results with semaphore
 
 ### 1-Gigabyte
 
-time in nanosecond:
+time in second.nanosecond:
 
 - 1.057700559
 - 1.060184230
@@ -13,7 +13,7 @@ time in nanosecond:
 
 ### 2-Gigabyte
 
-time in nanosecond:
+time in second.nanosecond:
 
 - 2.779390794
 - 2.843186005
@@ -24,7 +24,7 @@ time in nanosecond:
 
 ### 3-Gigabyte
 
-time in nanosecond:
+time in second.nanosecond:
 
 - 3.088553788
 - 3.077946643
@@ -36,7 +36,7 @@ time in nanosecond:
 
 ### 4-Gigabyte
 
-time in nanosecond:
+time in second.nanosecond:
 
 - 3.857433688
 - 4.098119238
@@ -48,7 +48,7 @@ time in nanosecond:
 
 ### 8-Gigabyte
 
-time in nanosecond:
+time in second.nanosecond:
 
 - 8.182055294
 - 8.185105851
