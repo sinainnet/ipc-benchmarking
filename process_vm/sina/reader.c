@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
        
         
         
-        printf(" * Executed process_vm_ready, read %d:%llu bytes.\n", 2, nread /*+ nread2 + nread3+ nread4+ nread5*/);
+        printf(" * Executed process_vm_ready, read %d:%lu bytes.\n", 2, nread /*+ nread2 + nread3+ nread4+ nread5*/);
         // printf("%s\n", (char *)(local[0].iov_base));
 
         long seconds = finish.tv_sec - start.tv_sec;
