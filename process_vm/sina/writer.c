@@ -34,9 +34,9 @@ int main()
     ipcb_control_semaphore(id_sem, 0, SETVAL, u);
     ipcb_operate_semaphore(id_sem, &decrease, 1);
 
-    char *data = calloc(eight_gigrow, col);
-    memset(data, 'a', eight_gigsize);
-    printf("%d %p %lu \n", getpid(), data, eight_gigsize);
+    char *data = calloc(two_gigrow, col);
+    memset(data, 'a', two_gigsize);
+    printf("%d %p %lu \n", getpid(), data, two_gigsize);
 
     // while (1);
     ipcb_operate_semaphore(id_sem, &increase, 1); 
