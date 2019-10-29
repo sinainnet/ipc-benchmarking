@@ -14,8 +14,9 @@ int main()
 { 
 	sem_unlink("/mysem");
 	/* the size (in bytes) of shared memory object */
-	const int SIZE = 1<<30; 
+	unsigned long long int SIZE = 1llu*8*1<<30; 
 	char* data = malloc(SIZE);
+	printf("sdfsdfsBefore copy %llu\n", SIZE);
 	memset(data, 'a', SIZE);
 
 	/* name of the shared memory object */
@@ -55,7 +56,7 @@ int main()
 		ns += 1000000000;
 	}
 
-	printf("nanoseconds producer:%ld\n", ns);
+	printf("nanoseconds producer: %ld.%ld\n",seconds, ns);
 
 	printf("End copy\n");
 	getchar();

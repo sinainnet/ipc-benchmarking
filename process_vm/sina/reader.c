@@ -40,24 +40,28 @@ int main(int argc, char **argv) {
         struct iovec remote[5];
         remote[0].iov_base = remotePtr;
         remote[0].iov_len = bufferLength;
-        remote[1].iov_base = remotePtr + 2147479552;
-        remote[1].iov_len = bufferLength - 2147479552;
-        remote[2].iov_base = remotePtr + s;
-        remote[2].iov_len = bufferLength - s;
-        remote[3].iov_base = remotePtr + 3*ss;
-        remote[3].iov_len = bufferLength - 3*ss;
-        remote[4].iov_base = remotePtr + 4*ss;
-        remote[4].iov_len = bufferLength - 4*ss;
+        // remote[1].iov_base = remotePtr + 2147479552;
+        // remote[1].iov_len = bufferLength - 2147479552;
+        // remote[2].iov_base = remotePtr + s;
+        // remote[2].iov_len = bufferLength - s;
+        // remote[3].iov_base = remotePtr + 3*ss;
+        // remote[3].iov_len = bufferLength - 3*ss;
+        // remote[4].iov_base = remotePtr + 4*ss;
+        // remote[4].iov_len = bufferLength - 4*ss;
         // Call process_vm_readv - handle any error codes
+        // int id_srt = ipcb_get_semaphore(shared_sem_key, 1, 0666);
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
 
-        ssize_t nread = process_vm_readv(pid, local, 2, &remote[0], 1, 0);
-        ssize_t nread2 = process_vm_readv(pid, local, 2, &remote[1], 1, 0);
-        ssize_t nread3 = process_vm_readv(pid, local, 2, &remote[2], 1, 0);
-        ssize_t nread4 = process_vm_readv(pid, local, 2, &remote[3], 1, 0);
-        ssize_t nread5 = process_vm_readv(pid, local, 2, &remote[4], 1, 0);
+        // ipcb_operate_semaphore(id_srt, &decrease, 1);
 
+        ssize_t nread = process_vm_readv(pid, local, 2, &remote[0], 1, 0);
+        // ssize_t nread2 = process_vm_readv(pid, local, 2, &remote[1], 1, 0);
+        // ssize_t nread3 = process_vm_readv(pid, local, 2, &remote[2], 1, 0);
+        // ssize_t nread4 = process_vm_readv(pid, local, 2, &remote[3], 1, 0);
+        // ssize_t nread5 = process_vm_readv(pid, local, 2, &remote[4], 1, 0);
+
+        // ipcb_operate_semaphore(id_srt, &increase, 1);
 
         clock_gettime(CLOCK_REALTIME, &finish);
 
@@ -86,7 +90,7 @@ int main(int argc, char **argv) {
        
         
         
-        printf(" * Executed process_vm_ready, read %d:%llu bytes.\n", 2, nread + nread2 + nread3+ nread4+ nread5);
+        printf(" * Executed process_vm_ready, read %d:%lu bytes.\n", 2, nread /*+ nread2 + nread3+ nread4+ nread5*/);
         // printf("%s\n", (char *)(local[0].iov_base));
 
         long seconds = finish.tv_sec - start.tv_sec;
