@@ -12,6 +12,14 @@
 
 int main(int argc, char **argv) {
 
+        cpu_set_t set;
+        CPU_ZERO(&set);
+        CPU_SET(0, &set);
+        if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
+        {
+                printf("setaffinity error");
+                return 0;
+        }
         int mgrow = 1024;
         int gigrow = 1048576;
         long int two_gigrow = 2*gigrow;
@@ -31,9 +39,9 @@ int main(int argc, char **argv) {
         remote[0].iov_len = bufferLength;
 
 	// changing the process scheduling queue into real-time and set its priority using <sched.h>.
-	struct sched_param *sch_p;
-	sch_p->sched_priority = 99;
-	int re = sched_setscheduler(getpid(), SCHED_RR, sch_p);
+	struct sched_param sch_p;
+	sch_p.sched_priority = 99;
+	int re = sched_setscheduler(getpid(), SCHED_RR, &sch_p);
 	if(re >= 0)
 	        printf("reader: %d %p %lu \n", getpid(), local[0].iov_base, two_gigsize);
 	else {
