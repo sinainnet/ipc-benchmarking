@@ -41,8 +41,7 @@ int main(int argc, char **argv) {
 
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
-        ssize_t nread = process_vm_readv(pid, local, 2, remote, 1, 0);
-        ssize_t nread2 = process_vm_readv(getpid(), local, 2, remote, 1, 0);
+        ssize_t nread2 = process_vm_readv(pid, local, 2, remote, 1, 0);
         clock_gettime(CLOCK_REALTIME, &finish);
         if (nread < 0) {
                 switch (errno) {
@@ -68,7 +67,7 @@ int main(int argc, char **argv) {
                 return -1;
         }
 
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread);
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
         // printf("%s\n", (char *)(local[0].iov_base));
 
         long seconds = finish.tv_sec - start.tv_sec;
