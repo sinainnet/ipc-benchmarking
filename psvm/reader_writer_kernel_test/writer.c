@@ -52,7 +52,10 @@ int main(int argc, char **argv)
         remote[0].iov_len = bufferLength;
 
         // Call process_vm_readv - handle any error codes
+        struct timespec start, finish;
+        clock_gettime(CLOCK_REALTIME, &start);
         ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
+        clock_gettime(CLOCK_REALTIME, &finish);
 
         if (nread2 < 0) {
                 switch (errno) {
@@ -77,6 +80,19 @@ int main(int argc, char **argv)
 
                 return -1;
         }
+
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
+
+        long seconds = finish.tv_sec - start.tv_sec;
+        long ns = finish.tv_nsec - start.tv_nsec;
+
+        if (start.tv_nsec > finish.tv_nsec) { // clock underflow
+                --seconds;
+                ns += 1000000000;
+        }
+        printf("seconds without ns: %ld\n", seconds);
+        printf("nanoseconds: %ld\n", ns);
+        printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
 
         return 0;
 }
