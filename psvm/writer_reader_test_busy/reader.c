@@ -8,6 +8,51 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sched.h>
+
+void set_cpu_scheduler(int cpu_no, int priority) {
+        cpu_set_t set;
+        CPU_ZERO(&set);
+        CPU_SET(cpu_no, &set);
+        if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
+        {
+                printf("setaffinity error");
+                exit(0);
+        }
+        struct sched_param sch_p;
+        sch_p.sched_priority = priority;
+        int re = sched_setscheduler(getpid(), SCHED_RR, &sch_p);
+        if(re < 0) {
+                printf("sched_setscheduler returned error code %d.\n", re);
+                exit(0);
+        }
+        return;
+}
+
+void psvm_error_handler(ssize_t nread2) {
+        if (nread2 < 0) {
+                switch (errno) {
+                        case EINVAL:
+                                printf("ERROR: INVALID ARGUMENTS.\n");
+                                break;
+                        case EFAULT:
+                                printf("ERROR: UNABLE TO ACCESS TARGET MEMORY ADDRESS.\n");
+                                break;
+                        case ENOMEM:
+                                printf("ERROR: UNABLE TO ALLOCATE MEMORY.\n");
+                                break;
+                        case EPERM:
+                                printf("ERROR: INSUFFICIENT PRIVILEGES TO TARGET PROCESS.\n");
+                                break;
+                        case ESRCH:
+                                printf("ERROR: PROCESS DOES NOT EXIST.\n");
+                                break;
+                        default:
+                                printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED.\n");
+                }
+                exit(1);
+        }
+}
 
 int main(int argc, char **argv) {
         if (argc < 3) {
@@ -17,6 +62,8 @@ int main(int argc, char **argv) {
                 printf("  [len] - Length (in bytes) to dump\n");
                 return -1;
         }
+
+        set_cpu_scheduler(1, 99);
 
         // PARSE CLI ARGS
         pid_t pid = strtol(argv[1], NULL, 10);
@@ -43,32 +90,10 @@ int main(int argc, char **argv) {
         clock_gettime(CLOCK_REALTIME, &start);
         ssize_t nread2 = process_vm_readv(pid, local, 2, remote, 1, 0);
         clock_gettime(CLOCK_REALTIME, &finish);
-        if (nread < 0) {
-                switch (errno) {
-                        case EINVAL:
-                                printf("ERROR: INVALID ARGUMENTS.\n");
-                                break;
-                        case EFAULT:
-                                printf("ERROR: UNABLE TO ACCESS TARGET MEMORY ADDRESS.\n");
-                                break;
-                        case ENOMEM:
-                                printf("ERROR: UNABLE TO ALLOCATE MEMORY.\n");
-                                break;
-                        case EPERM:
-                                printf("ERROR: INSUFFICIENT PRIVILEGES TO TARGET PROCESS.\n");
-                                break;
-                        case ESRCH:
-                                printf("ERROR: PROCESS DOES NOT EXIST.\n");
-                                break;
-                        default:
-                                printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED.\n");
-                }
 
-                return -1;
-        }
-
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
-        // printf("%s\n", (char *)(local[0].iov_base));
+        psvm_error_handler(nread2);
+        
+        printf(" * Process_vm_readv Executed, read %zd bytes.\n", nread2);
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;
