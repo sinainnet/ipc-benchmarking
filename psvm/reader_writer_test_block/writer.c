@@ -8,9 +8,9 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <sched.h>
-#include <sched.h>
 #include <string.h>
+#include <sched.h>
+#include "helper.h"
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -56,49 +56,69 @@ void psvm_error_handler(ssize_t nread2) {
         }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+        if (argc < 3) {
+                printf("usage: %s <pid> <mem address> [len]\n", argv[0]);
+                printf("  <pid> - PID of process to target\n");
+                printf("  <mem> - Memory address to target\n");
+                printf("  [len] - Length (in bytes) to dump\n");
+                return -1;
+        }
 
-        int mgrow = 1024;
-        int gigrow = 1048576;
-        long int two_gigrow = 2*gigrow;
-        int col = 1024;
-        unsigned long int mgsize = mgrow * col;
-        unsigned long int gigsize = gigrow * col;
-        unsigned long int two_gigsize = two_gigrow * col;
+        set_cpu_scheduler(1, 99);
 
-        // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(0,99);
+        // PARSE CLI ARGS
+        pid_t pid = strtol(argv[1], NULL, 10);
+        printf(" * Launching with a target PID of: %d\n", pid);
 
-        char *data = calloc(gigrow, col);
-        printf("writer: %d %p %lu \n", getpid(), data, gigsize);
+        void *remotePtr = (void *)strtol(argv[2], NULL, 0);
+        printf(" * Launching with a target address of 0x%llx\n", (long long unsigned)remotePtr);
+
+        size_t bufferLength = (argc > 3) ? strtol(argv[3], NULL, 10) : 20;
+        printf(" * Launching with a buffer size of %lu bytes.\n", bufferLength);
+
+        char *data = calloc(bufferLength, sizeof(char));
+        memset(data, 'a', bufferLength);
 
         // Build iovec structs
-        size_t bufferLength = gigsize;
         struct iovec local[1];
         local[0].iov_base = data;
         local[0].iov_len = bufferLength;
-
+        
         struct iovec remote[1];
-        remote[0].iov_base = calloc(bufferLength, sizeof(char));;
+        remote[0].iov_base = remotePtr;
         remote[0].iov_len = bufferLength;
 
-	/** in case we wanna use chrt command instead of sched.h library */
-	/** printf("press any key to continue.\n"); */
-	/** getchar(); */
-
         // Call process_vm_readv - handle any error codes
-        ssize_t nread2 = process_vm_readv(getpid(), local, 2, remote, 1, 0);
+        int id_srt = ipcb_get_semaphore(shared_sem_key, 1, 0666);
 
-        printf("writer: %d %p %lu \n", getpid(), local[0].iov_base, gigsize);
+        struct timespec start, finish;
+        clock_gettime(CLOCK_REALTIME, &start);
+
+        ipcb_operate_semaphore(id_srt, &decrease, 1);
+        ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
+        ipcb_operate_semaphore(id_srt, &increase, 1);
+
+        clock_gettime(CLOCK_REALTIME, &finish);
 
         psvm_error_handler(nread2);
 
-        // while (1)
-	// {
-	// 	printf("z\n");
-	// }
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
 
-        printf("writers read their messages. I'm done.\n");
+        long seconds = finish.tv_sec - start.tv_sec;
+        long ns = finish.tv_nsec - start.tv_nsec;
+
+        if (start.tv_nsec > finish.tv_nsec) { // clock underflow
+                --seconds;
+                ns += 1000000000;
+        }
+        printf("seconds without ns: %ld\n", seconds);
+        printf("nanoseconds: %ld\n", ns);
+        printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
+
+        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666);
+        ipcb_operate_semaphore(id_wrt, &increase, 1);
 
         return 0;
 }
