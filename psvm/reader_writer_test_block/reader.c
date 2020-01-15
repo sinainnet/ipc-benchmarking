@@ -11,6 +11,7 @@
 #include <sched.h>
 #include <sched.h>
 #include <string.h>
+#include "helper.h"
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -31,49 +32,38 @@ void set_cpu_scheduler(int cpu_no, int priority) {
         return;
 }
 
-void psvm_error_handler(ssize_t nread2) {
-        if (nread2 < 0) {
-                switch (errno) {
-                        case EINVAL:
-                                printf("ERROR: INVALID ARGUMENTS.\n");
-                                break;
-                        case EFAULT:
-                                printf("ERROR: UNABLE TO ACCESS TARGET MEMORY ADDRESS.\n");
-                                break;
-                        case ENOMEM:
-                                printf("ERROR: UNABLE TO ALLOCATE MEMORY.\n");
-                                break;
-                        case EPERM:
-                                printf("ERROR: INSUFFICIENT PRIVILEGES TO TARGET PROCESS.\n");
-                                break;
-                        case ESRCH:
-                                printf("ERROR: PROCESS DOES NOT EXIST.\n");
-                                break;
-                        default:
-                                printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED.\n");
-                }
-                exit(1);
-        }
-}
-
 int main(int argc, char **argv) {
 
         int mgrow = 1024;
         int gigrow = 1048576;
         long int two_gigrow = 2*gigrow;
+        long int three_gigrow = 3*gigrow;
+        long int four_gigrow = 4*gigrow;
+        long int eight_gigrow = 8*gigrow;
         int col = 1024;
+
         unsigned long int mgsize = mgrow * col;
         unsigned long int gigsize = gigrow * col;
         unsigned long int two_gigsize = two_gigrow * col;
+        unsigned long int three_gigsize = three_gigrow * col;
+        unsigned long int four_gigsize = four_gigrow * col;
+        unsigned long int eight_gigsize = eight_gigrow * col;
+        union semun u, j;
+	u.val = 1;
+        j.val = 0;
 
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
         set_cpu_scheduler(0,99);
+
+        int id_sem = ipcb_get_semaphore(shared_sem_key, 1, 0666 | IPC_CREAT);
+        ipcb_control_semaphore(id_sem, 0, SETVAL, u);
+        ipcb_operate_semaphore(id_sem, &decrease, 1);
 
         char *data = calloc(gigrow, col);
         printf("writer: %d %p %lu \n", getpid(), data, gigsize);
 
         // Build iovec structs
-        size_t bufferLength = gigsize;
+        size_t bufferLength = two_gigsize;
         struct iovec local[1];
         local[0].iov_base = data;
         local[0].iov_len = bufferLength;
@@ -82,23 +72,12 @@ int main(int argc, char **argv) {
         remote[0].iov_base = calloc(bufferLength, sizeof(char));;
         remote[0].iov_len = bufferLength;
 
-	/** in case we wanna use chrt command instead of sched.h library */
-	/** printf("press any key to continue.\n"); */
-	/** getchar(); */
+        ipcb_operate_semaphore(id_sem, &increase, 1); 
 
-        // Call process_vm_readv - handle any error codes
-        ssize_t nread2 = process_vm_readv(getpid(), local, 2, remote, 1, 0);
-
-        printf("writer: %d %p %lu \n", getpid(), local[0].iov_base, gigsize);
-
-        psvm_error_handler(nread2);
-
-        // while (1)
-	// {
-	// 	printf("z\n");
-	// }
-
-        printf("writers read their messages. I'm done.\n");
+        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666 | IPC_CREAT);
+        ipcb_control_semaphore(id_wrt, 0, SETVAL, j);
+        ipcb_operate_semaphore(id_wrt, &decrease, 1);
+        ipcb_operate_semaphore(id_wrt, &increase, 1);
 
         return 0;
 }
