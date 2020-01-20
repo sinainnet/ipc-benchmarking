@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <sched.h>
+#include <fcntl.h> 
+#include <sys/mman.h>
+#include <sys/shm.h> 
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -76,6 +79,9 @@ int main(int argc, char **argv)
 
         size_t bufferLength = (argc > 3) ? strtol(argv[3], NULL, 10) : 20;
         printf(" * Launching with a buffer size of %lu bytes.\n", bufferLength);
+
+        // char *shm = (char *)strtol(argv[4], NULL, 0);
+        // printf(" * Launching with a shm at 0x%llx\n", (long long unsigned)shm);
         
         int mgrow = 1024;
         int gigrow = 1048576;
@@ -98,11 +104,33 @@ int main(int argc, char **argv)
         remote[0].iov_base = remotePtr;
         remote[0].iov_len = bufferLength;
 
+        /* shared memory file descriptor */
+        int shm_fd; 
+        
+        /* pointer to shared memory object */
+        void* shm; 
+        
+        /* open the shared memory object */
+        shm_fd = shm_open("Write_finish", O_RDWR, 0666); 
+        if (shm_fd == -1)
+        {
+                perror("shm_fd.\n");
+        }
+        
+        /* memory map the shared memory object */
+        shm = mmap(0, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0); 
+        if (shm == MAP_FAILED)
+        {
+                perror("mmap error.\n");
+                return 1;
+        }
+
         // Call process_vm_readv - handle any error codes
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
 
         ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
+        sprintf(shm, "%s", "b");
 
         clock_gettime(CLOCK_REALTIME, &finish);
 
