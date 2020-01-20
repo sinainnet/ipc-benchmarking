@@ -7,7 +7,6 @@
 #include "ipcb_semaphore.h"
 
 
-
 int 
 ipcb_get_semaphore(key_t key, int nSems, int flag) {
     int id = semget(key, nSems, flag);
@@ -17,7 +16,6 @@ ipcb_get_semaphore(key_t key, int nSems, int flag) {
     }
     return id;
 }
-
 
 int 
 ipcb_control_semaphore(int semId, int semNum, int cmd, 
@@ -30,7 +28,6 @@ ipcb_control_semaphore(int semId, int semNum, int cmd,
     }
     return id;
 }
-
 
 
 int 
