@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         j.val = 0;
 
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(0,99);
+        set_cpu_scheduler(2,99);
 
         char *data = calloc(gigrow, col);
         printf("reader: sudo ./writer %d %p %lu \n", getpid(), data, gigsize);

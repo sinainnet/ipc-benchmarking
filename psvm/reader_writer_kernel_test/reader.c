@@ -67,10 +67,11 @@ int main(int argc, char **argv) {
         unsigned long int two_gigsize = two_gigrow * col;
 
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(0,99);
+        set_cpu_scheduler(2,99);
 
         char *data = calloc(gigrow, col);
-        printf("writer: %d %p %lu \n", getpid(), data, gigsize);
+        // printf("writer: %d %p %lu \n", getpid(), data, gigsize);
+        
 
         // Build iovec structs
         size_t bufferLength = gigsize;
@@ -82,6 +83,8 @@ int main(int argc, char **argv) {
         remote[0].iov_base = calloc(bufferLength, sizeof(char));;
         remote[0].iov_len = bufferLength;
 
+        printf("reader: sudo ./writer %d %p %lu \n", getpid(), local[0].iov_base, gigsize);
+
 	/** in case we wanna use chrt command instead of sched.h library */
 	/** printf("press any key to continue.\n"); */
 	/** getchar(); */
@@ -89,7 +92,7 @@ int main(int argc, char **argv) {
         // Call process_vm_readv - handle any error codes
         ssize_t nread2 = process_vm_readv(getpid(), local, 2, remote, 1, 0);
 
-        printf("writer: %d %p %lu \n", getpid(), local[0].iov_base, gigsize);
+        
 
         psvm_error_handler(nread2);
 
