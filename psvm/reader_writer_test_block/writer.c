@@ -78,13 +78,30 @@ int main(int argc, char **argv)
         size_t bufferLength = (argc > 3) ? strtol(argv[3], NULL, 10) : 20;
         printf(" * Launching with a buffer size of %lu bytes.\n", bufferLength);
 
-        char *data = calloc(bufferLength, sizeof(char));
-        memset(data, 'a', bufferLength);
+        int mgrow = 1024;
+        int gigrow = 1048576;
+        long int two_gigrow = 2*gigrow;
+        int col = 1024;
+        unsigned long int mgsize = mgrow * col;
+        unsigned long int gigsize = gigrow * col;
+        unsigned long int two_gigsize = two_gigrow * col;
+
+
+        char *data1 = calloc(bufferLength, sizeof(char));
+        memset(data1, 'a', bufferLength);
+
+        char *data2 = calloc(bufferLength, sizeof(char));
+        memset(data2, 'b', bufferLength);
 
         // Build iovec structs
-        struct iovec local[1];
-        local[0].iov_base = data;
-        local[0].iov_len = bufferLength;
+        bufferLength = gigsize;
+        struct iovec local1[1];
+        local1[0].iov_base = data1;
+        local1[0].iov_len = bufferLength;
+
+        struct iovec local2[1];
+        local2[0].iov_base = data2;
+        local2[0].iov_len = bufferLength;
         
         struct iovec remote[1];
         remote[0].iov_base = remotePtr;
@@ -95,11 +112,14 @@ int main(int argc, char **argv)
         
         int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666); // key to inform reader.
 
+        ssize_t nread1, nread2;
+
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
 
         // ipcb_operate_semaphore(id_srt, &decrease, 1);
-        ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
+         nread1 = process_vm_writev(pid, local1, 2, remote, 1, 0);
+         nread2 = process_vm_writev(pid, local2, 2, remote, 1, 0);
         // ipcb_operate_semaphore(id_srt, &increase, 1);
         ipcb_operate_semaphore(id_wrt, &increase, 1);
 
@@ -107,7 +127,7 @@ int main(int argc, char **argv)
 
         psvm_error_handler(nread2);
 
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2 + nread1);
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;
