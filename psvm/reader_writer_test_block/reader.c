@@ -55,8 +55,8 @@ int main(int argc, char **argv) {
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(gigrow, col);
-        printf("reader: sudo ./writer %d %p %lu \n", getpid(), data, gigsize);
+        char *data = calloc(two_gigrow, col);
+        printf("reader: sudo ./writer %d %p %lu \n", getpid(), data, two_gigsize);
 
         // Build iovec structs
         size_t bufferLength = two_gigsize;
