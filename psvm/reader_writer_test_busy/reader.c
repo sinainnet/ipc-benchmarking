@@ -9,8 +9,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sched.h>
-#include <sched.h>
 #include <string.h>
+#include <sys/mman.h>
+#include <fcntl.h> 
+#include <sys/shm.h> 
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -77,8 +79,35 @@ int main(int argc, char **argv) {
         set_cpu_scheduler(0,99);
 
         char *data = calloc(gigrow, col);
-        printf("writer: %d %p %lu \n", getpid(), data, gigsize);
+
+        /* shared memory file descriptor */
+        int shm_fd; 
         
-        while (1);
+        /* pointer to shared memory obect */
+        void* shm; 
+        
+        /* create the shared memory object */
+        shm_fd = shm_open("Write_finish", O_CREAT | O_RDWR, 0666); 
+        if (shm_fd < 0)
+                perror("shm_fd.\n");
+        
+        /* configure the size of the shared memory object */
+        ftruncate(shm_fd, 1); 
+        shm = mmap(NULL, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0);//
+
+        if (shm == MAP_FAILED)
+        {
+                perror("mmap error.\n");
+                return 1;
+        }
+        printf("reader: sudo ./writer %d %p %lu\n", getpid(), data, gigsize);
+        
+        while (strcmp(shm, "b") != 0);
+
+        printf("writer just wrote data. I'm done.\n");
+
+        /* remove the shared memory object */
+        munmap(shm, 1);     
+        shm_unlink("Write_finish");  
         return 0;
 }

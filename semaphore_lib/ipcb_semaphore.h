@@ -1,5 +1,12 @@
 #include <sys/sem.h>
 
+
+// /* semop system calls takes an array of these. */
+// struct sembuf {
+// 	unsigned short  sem_num;	/* semaphore index in array */
+// 	short		sem_op;		/* semaphore operation */
+// 	short		sem_flg;	/* operation flags */
+// };
 #define DECREASE_SEM { 0, -1, SEM_UNDO}
 #define INCREASE_SEM { 0, +1, SEM_UNDO}
 
