@@ -55,12 +55,8 @@ int main(int argc, char **argv) {
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
         set_cpu_scheduler(0,99);
 
-        int id_sem = ipcb_get_semaphore(shared_sem_key, 1, 0666 | IPC_CREAT);
-        ipcb_control_semaphore(id_sem, 0, SETVAL, u);
-        ipcb_operate_semaphore(id_sem, &decrease, 1);
-
         char *data = calloc(gigrow, col);
-        printf("writer: %d %p %lu \n", getpid(), data, gigsize);
+        printf("reader: sudo ./writer %d %p %lu \n", getpid(), data, gigsize);
 
         // Build iovec structs
         size_t bufferLength = two_gigsize;
@@ -72,10 +68,10 @@ int main(int argc, char **argv) {
         remote[0].iov_base = calloc(bufferLength, sizeof(char));;
         remote[0].iov_len = bufferLength;
 
-        ipcb_operate_semaphore(id_sem, &increase, 1); 
-
         int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666 | IPC_CREAT);
         ipcb_control_semaphore(id_wrt, 0, SETVAL, j);
+
+        // trying to get lock(after writing operation done.)
         ipcb_operate_semaphore(id_wrt, &decrease, 1);
         ipcb_operate_semaphore(id_wrt, &increase, 1);
 

@@ -91,14 +91,17 @@ int main(int argc, char **argv)
         remote[0].iov_len = bufferLength;
 
         // Call process_vm_readv - handle any error codes
-        int id_srt = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+        // int id_srt = ipcb_get_semaphore(shared_sem_key, 1, 0666);
+        
+        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666); // key to inform reader.
 
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
 
-        ipcb_operate_semaphore(id_srt, &decrease, 1);
+        // ipcb_operate_semaphore(id_srt, &decrease, 1);
         ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
-        ipcb_operate_semaphore(id_srt, &increase, 1);
+        // ipcb_operate_semaphore(id_srt, &increase, 1);
+        ipcb_operate_semaphore(id_wrt, &increase, 1);
 
         clock_gettime(CLOCK_REALTIME, &finish);
 
@@ -116,9 +119,6 @@ int main(int argc, char **argv)
         printf("seconds without ns: %ld\n", seconds);
         printf("nanoseconds: %ld\n", ns);
         printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
-
-        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666);
-        ipcb_operate_semaphore(id_wrt, &increase, 1);
 
         return 0;
 }
