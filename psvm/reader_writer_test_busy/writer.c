@@ -13,6 +13,7 @@
 #include <fcntl.h> 
 #include <sys/mman.h>
 #include <sys/shm.h> 
+#include "header.h"
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
         int shm_fd; 
         
         /* pointer to shared memory object */
-        void* shm; 
+        // void* shm; 
         
         /* open the shared memory object */
         shm_fd = shm_open("Write_finish", O_RDWR, 0666); 
@@ -118,7 +119,8 @@ int main(int argc, char **argv)
         }
         
         /* memory map the shared memory object */
-        shm = mmap(0, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0); 
+        struct Data *shm = (struct Data *) mmap(0, DATA_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+        // shm = mmap(0, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0); 
         if (shm == MAP_FAILED)
         {
                 perror("mmap error.\n");
@@ -128,9 +130,10 @@ int main(int argc, char **argv)
         // Call process_vm_readv - handle any error codes
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
+        // while (atomic_load(&data->state) != 1);
 
         ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
-        sprintf(shm, "%s", "b");
+        atomic_store(&shm->state, 2);
 
         clock_gettime(CLOCK_REALTIME, &finish);
 

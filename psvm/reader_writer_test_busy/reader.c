@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 #include <fcntl.h> 
 #include <sys/shm.h> 
+#include "header.h"
 
 void set_cpu_scheduler(int cpu_no, int priority) {
         cpu_set_t set;
@@ -84,7 +85,7 @@ int main(int argc, char **argv) {
         int shm_fd; 
         
         /* pointer to shared memory obect */
-        void* shm; 
+        // void* shm; 
         
         /* create the shared memory object */
         shm_fd = shm_open("Write_finish", O_CREAT | O_RDWR, 0666); 
@@ -93,7 +94,8 @@ int main(int argc, char **argv) {
         
         /* configure the size of the shared memory object */
         ftruncate(shm_fd, 1); 
-        shm = mmap(NULL, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0);//
+        struct Data *shm = (struct Data *) mmap(0, DATA_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+        // shm = mmap(NULL, 1, PROT_WRITE|PROT_READ, MAP_SHARED, shm_fd, 0);//
 
         if (shm == MAP_FAILED)
         {
@@ -101,8 +103,9 @@ int main(int argc, char **argv) {
                 return 1;
         }
         printf("reader: sudo ./writer %d %p %lu\n", getpid(), data, gigsize);
-        
-        while (strcmp(shm, "b") != 0);
+        atomic_store(&shm->state, 1);
+        while (atomic_load(&shm->state) != 2);
+        // while (strcmp(shm, "b") != 0);
 
         printf("writer just wrote data. I'm done.\n");
 
