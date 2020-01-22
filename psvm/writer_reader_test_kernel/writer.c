@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
         printf("writer: %d %p %lu \n", getpid(), local[0].iov_base, gigsize);
 
         // Call process_vm_readv - handle any error codes
-        ssize_t nread2 = process_vm_writev(getpid(), local, 2, remote, 1, 0);
+        ssize_t nread2 = process_vm_writev(getpid(), local, 10, remote, 1, 0);
 
         psvm_error_handler(nread2);
         

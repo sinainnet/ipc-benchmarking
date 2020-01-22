@@ -92,14 +92,21 @@ int main(int argc, char **argv)
         unsigned long int gigsize = gigrow * col;
         unsigned long int two_gigsize = two_gigrow * col;
 
-        char *data = calloc(bufferLength, sizeof(char));
-        memset(data, 'a', gigsize);
+        char *data1 = calloc(bufferLength, sizeof(char));
+        memset(data1, 'a', gigsize);
+
+        char *data2 = calloc(bufferLength, sizeof(char));
+        memset(data2, 'a', gigsize);
 
         // Build iovec structs
         bufferLength = gigsize;
-        struct iovec local[1];
-        local[0].iov_base = data;
-        local[0].iov_len = bufferLength;
+        struct iovec local1[1];
+        local1[0].iov_base = data1;
+        local1[0].iov_len = bufferLength;
+
+        struct iovec local2[1];
+        local2[0].iov_base = data2;
+        local2[0].iov_len = bufferLength;
         
         struct iovec remote[1];
         remote[0].iov_base = remotePtr;
@@ -126,20 +133,23 @@ int main(int argc, char **argv)
                 perror("mmap error.\n");
                 return 1;
         }
-
+        ssize_t nread1, nread2;
         // Call process_vm_readv - handle any error codes
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
         // while (atomic_load(&data->state) != 1);
 
-        ssize_t nread2 = process_vm_writev(pid, local, 2, remote, 1, 0);
+
+        nread1 = process_vm_writev(pid, local1, 2, remote, 1, 0);
+        nread2 = process_vm_writev(pid, local2, 2, remote, 1, 0);
         atomic_store(&shm->state, 2);
+
 
         clock_gettime(CLOCK_REALTIME, &finish);
 
         psvm_error_handler(nread2);
 
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2);
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2+ nread1);
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;

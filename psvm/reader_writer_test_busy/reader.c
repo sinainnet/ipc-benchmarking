@@ -77,9 +77,9 @@ int main(int argc, char **argv) {
         unsigned long int eight_gigsize = eight_gigrow * col;
 
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(0,99);
+        set_cpu_scheduler(2,99);
 
-        char *data = calloc(gigrow, col);
+        char *data = calloc(two_gigrow, col);
 
         /* shared memory file descriptor */
         int shm_fd; 

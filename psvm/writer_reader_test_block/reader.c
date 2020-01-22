@@ -112,8 +112,8 @@ int main(int argc, char **argv) {
         printf("nanoseconds: %ld\n", ns);
         printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
         
-        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666);
-        ipcb_operate_semaphore(id_wrt, &increase, 1);
+//        int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666);
+//        ipcb_operate_semaphore(id_wrt, &increase, 1);
         
         return 0;
 }
