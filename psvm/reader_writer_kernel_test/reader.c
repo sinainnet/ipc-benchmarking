@@ -61,22 +61,24 @@ int main(int argc, char **argv) {
         int mgrow = 1024;
         int gigrow = 1048576;
         long int two_gigrow = 2*gigrow;
+        long int four_gigrow = 2*two_gigrow;
+
         int col = 1024;
         unsigned long int mgsize = mgrow * col;
         unsigned long int gigsize = gigrow * col;
         unsigned long int two_gigsize = two_gigrow * col;
-        unsigned long int four_gigsize = 2 * two_gigrow * col;
+        unsigned long int four_gigsize = four_gigrow * col;
 
 
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(two_gigrow, col);
+        char *data = calloc(four_gigrow, col);
         // printf("writer: %d %p %lu \n", getpid(), data, gigsize);
         
 
         // Build iovec structs
-        size_t bufferLength = two_gigsize;
+        size_t bufferLength = four_gigsize;
         struct iovec local[1];
         local[0].iov_base = data;
         local[0].iov_len = bufferLength;
@@ -92,16 +94,9 @@ int main(int argc, char **argv) {
 	/** getchar(); */
 
         // Call process_vm_readv - handle any error codes
-        ssize_t nread2 = process_vm_readv(getpid(), local, 2, remote, 1, 0);
-
-        
+        ssize_t nread2 = process_vm_readv(getpid(), local, 4, remote, 1, 0);
 
         psvm_error_handler(nread2);
-
-        // while (1)
-	// {
-	// 	printf("z\n");
-	// }
 
         printf("writers read their messages. I'm done.\n");
 

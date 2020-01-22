@@ -90,6 +90,12 @@ int main(int argc, char **argv)
 
         char *data2 = calloc(bufferLength, sizeof(char));
         memset(data2, 'b', bufferLength);
+
+        char *data3 = calloc(bufferLength, sizeof(char));
+        memset(data3, 'c', bufferLength);
+
+        char *data4 = calloc(bufferLength, sizeof(char));
+        memset(data4, 'd', bufferLength);
         
         // Build iovec structs
         bufferLength = gigsize;
@@ -98,21 +104,31 @@ int main(int argc, char **argv)
         local1[0].iov_len = bufferLength;
 
         struct iovec local2[1];
-        local2[0].iov_base = data1;
+        local2[0].iov_base = data2;
         local2[0].iov_len = bufferLength;
+
+        struct iovec local3[1];
+        local3[0].iov_base = data3;
+        local3[0].iov_len = bufferLength;
+
+        struct iovec local4[1];
+        local4[0].iov_base = data4;
+        local4[0].iov_len = bufferLength;
         
         struct iovec remote[1];
         remote[0].iov_base = remotePtr;
         remote[0].iov_len = bufferLength;
 
-        ssize_t nread1, nread2, nread3;
+        ssize_t nread1, nread2 = 0, nread3 = 0, nread4 = 0;
 
         // Call process_vm_readv - handle any error codes
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
 
-        nread2 = process_vm_writev(pid, local1, 2, remote, 1, 0);
-        nread1 = process_vm_writev(pid, local2, 2, remote, 1, 0);
+        nread1 = process_vm_writev(pid, local1, 1, remote, 1, 0);
+        nread2 = process_vm_writev(pid, local2, 1, remote, 1, 0);
+        nread3 = process_vm_writev(pid, local3, 1, remote, 1, 0);
+        nread4 = process_vm_writev(pid, local4, 1, remote, 1, 0);
 
         clock_gettime(CLOCK_REALTIME, &finish);
 
