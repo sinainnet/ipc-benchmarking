@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
         // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(two_gigrow, col);
+        char *data = calloc(four_gigrow, col);
 
         /* shared memory file descriptor */
         int shm_fd; 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
                 perror("mmap error.\n");
                 return 1;
         }
-        printf("reader: sudo ./writer %d %p %lu\n", getpid(), data, gigsize);
+        printf("reader: sudo ./writer %d %p %lu\n", getpid(), data, four_gigsize);
         atomic_store(&shm->state, 1);
         while (atomic_load(&shm->state) != 2);
         // while (strcmp(shm, "b") != 0);
