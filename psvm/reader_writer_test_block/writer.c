@@ -93,6 +93,12 @@ int main(int argc, char **argv)
         char *data2 = calloc(bufferLength, sizeof(char));
         memset(data2, 'b', bufferLength);
 
+        char *data3 = calloc(bufferLength, sizeof(char));
+        memset(data3, 'c', bufferLength);
+
+        char *data4 = calloc(bufferLength, sizeof(char));
+        memset(data4, 'd', bufferLength);
+
         // Build iovec structs
         bufferLength = gigsize;
         struct iovec local1[1];
@@ -102,6 +108,14 @@ int main(int argc, char **argv)
         struct iovec local2[1];
         local2[0].iov_base = data2;
         local2[0].iov_len = bufferLength;
+
+        struct iovec local3[1];
+        local3[0].iov_base = data3;
+        local3[0].iov_len = bufferLength;
+
+        struct iovec local4[1];
+        local4[0].iov_base = data4;
+        local4[0].iov_len = bufferLength;
         
         struct iovec remote[1];
         remote[0].iov_base = remotePtr;
@@ -112,7 +126,7 @@ int main(int argc, char **argv)
         
         int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666); // key to inform reader.
 
-        ssize_t nread1, nread2;
+        ssize_t nread1, nread2 = 0, nread3 = 0, nread4 = 0;
 
         struct timespec start, finish;
         clock_gettime(CLOCK_REALTIME, &start);
@@ -120,6 +134,8 @@ int main(int argc, char **argv)
         // ipcb_operate_semaphore(id_srt, &decrease, 1);
          nread1 = process_vm_writev(pid, local1, 2, remote, 1, 0);
          nread2 = process_vm_writev(pid, local2, 2, remote, 1, 0);
+         nread3 = process_vm_writev(pid, local3, 2, remote, 1, 0);
+         nread4 = process_vm_writev(pid, local4, 2, remote, 1, 0);
         // ipcb_operate_semaphore(id_srt, &increase, 1);
         ipcb_operate_semaphore(id_wrt, &increase, 1);
 
@@ -127,7 +143,7 @@ int main(int argc, char **argv)
 
         psvm_error_handler(nread2);
 
-        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread2 + nread1);
+        printf(" * Executed process_vm_ready, read %zd bytes.\n", nread1 + nread2 + nread3 + nread4);
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;
