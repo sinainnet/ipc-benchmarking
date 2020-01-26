@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc transblocklibbench.c -g -c -o  transblocklibbench.o
+
