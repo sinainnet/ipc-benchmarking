@@ -2,17 +2,9 @@
 #include <sys/uio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <time.h>
-#include <sys/time.h>
 #include <sys/resource.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <sched.h>
 #include <string.h>
-#include <sys/mman.h>
-#include <fcntl.h> 
-#include <sys/shm.h> 
 #include "../header.h"
 
 int main(int argc, char **argv) {
