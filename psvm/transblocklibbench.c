@@ -109,4 +109,7 @@ void print_results (char* psvm, ssize_t nread, struct timespec start, struct tim
         printf("seconds without ns: %ld\n", seconds);
         printf("nanoseconds: %ld\n", ns);
         printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
+
+		FILE *file_res = fopen("file.txt", "a");
+		fprintf(file_res, "%ld.%ld\n", seconds, ns);
 }
