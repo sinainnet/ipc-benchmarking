@@ -8,4 +8,4 @@ for i in $( awk '{ print $1; }' file.txt )
      total=$(echo $total+$i | bc )
      ((count++))
    done
-echo "scale=2; $total / $count" | bc
+echo "scale=10; $total / $count" | bc
