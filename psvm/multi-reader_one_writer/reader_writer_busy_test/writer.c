@@ -14,10 +14,12 @@ typedef enum {true, false} bool;
  *  Threads Data Structure to keep track of each one
  */
 typedef struct thread_tags {
-	pthread_t	thread_id;
-	int         	thread_num;
-	struct iovec	*local;
-	struct iovec	*remote;
+	pthread_t		thread_id;
+	int         		thread_num;
+	struct iovec		*local;
+	struct iovec		*remote;
+	data_input 		input;
+	struct Data		*shm;
 } thread_tracker;
 
 barrier_t barrier;
@@ -38,23 +40,26 @@ void* thread_routine (void *arg) {
 	thread_tracker *self = (thread_tracker*) arg;
 	thread_result *thread_res = \
 		(struct thread_return_data*)calloc(1, sizeof(struct thread_return_data));
-	thread_res[0].status = false;
-	thread_res[0].nread = 0;
+	thread_res->status = false;
+	thread_res->nread = 0;
 	int status;
 
 	printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
 	status = barrier_wait (&barrier);
+	// atomic_int st = atomic_load(&self->shm->state);
 
-	clock_gettime(CLOCK_REALTIME, &thread_res[0].start);
+	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
-	if (status > 0)
-        	err_abort(status, "Wait on barrier");
-	else {
-        	printf("Thread (%d). I woke up after barrier done.\n", self->thread_num);
-		thread_res[0].printed = true;
-	}
+	// if (status > 0)
+        // 	err_abort(status, "Wait on barrier");
+	// else {
+        // 	printf("Thread (%d). I woke up after barrier done.\n", self->thread_num);
+	// 	thread_res[0].printed = true;
+	// }
+	thread_res->nread = process_vm_writev(self->input.pid, (struct iovec *)&self->local[self->thread_num], 1, self->remote, 1, 0);
+	atomic_store(&self->shm->state, atomic_load(&self->shm->state) + 1);
 
-	clock_gettime(CLOCK_REALTIME, &thread_res[0].finish);
+	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
 	return (void*)thread_res;
 }
@@ -120,6 +125,11 @@ int main (int argc, char **argv) {
         remote[0].iov_base = inputs.remote_ptr;
         remote[0].iov_len = inputs.buffer_length;
 
+	// Create Shared Memory
+        struct Data *shm = (struct Data*)shm_builder( \
+		shm_file_use_mod, shm_prov_prot, shm_prov_flags,\
+		shm_writer_file);
+
 	/*
 	 * Create a set of threads that will use the barrier.
 	 */
@@ -127,6 +137,8 @@ int main (int argc, char **argv) {
 		thread[thread_count].thread_num = thread_count;
 		thread[thread_count].local = local;
 		thread[thread_count].remote = remote;
+		thread[thread_count].input = inputs;
+		thread[thread_count].shm  = shm;
 		status = pthread_create (&thread[thread_count].thread_id,
 			NULL, thread_routine, (void*)&thread[thread_count]);
 		if (status != 0)
