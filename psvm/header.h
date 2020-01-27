@@ -9,6 +9,8 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/stat.h>        /* For mode constants */
+
 
 struct Data {
   atomic_int state;
