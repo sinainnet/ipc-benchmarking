@@ -32,7 +32,7 @@ typedef struct main_inputs {
 #define four_gig_row		(two*two_gig_row)
 #define lli			(long long int)
 #define gig_size		(gig_row*col)
-#define two_gig_size    	(two*gig_size)
+#define two_gig_size    	((long)two*(long)gig_size)
 #define four_gig_size		(two*two_gig_size)
 #define eight_gig_size  	(two*four_gig_size)
 #define shm_writer_file		"Write_finish"

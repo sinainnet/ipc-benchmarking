@@ -7,7 +7,7 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		2
+#define THREADS		5
 
 typedef enum {true, false} bool;
 

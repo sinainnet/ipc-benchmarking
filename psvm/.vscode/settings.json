@@ -2,6 +2,8 @@
     "files.associations": {
         "header.h": "c",
         "string.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "helper.h": "c",
+        "ipcb_semaphore.h": "c"
     }
 }

@@ -35,5 +35,6 @@ key_t shared_wrt_key = WRT_KEY;
 key_t shared_otcid_key = ChildId_KEY;
 struct sembuf decrease = DECREASE_SEM;
 struct sembuf increase = INCREASE_SEM;
-
+struct sembuf decrease_two = DECREASE_SEM_TWO;
+struct sembuf increase_two = INCREASE_SEM_TWO;
 
