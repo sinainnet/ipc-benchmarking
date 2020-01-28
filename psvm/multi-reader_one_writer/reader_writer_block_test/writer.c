@@ -8,7 +8,7 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		5
+#define THREADS		40
 
 typedef enum {true, false} bool;
 
@@ -180,7 +180,7 @@ int main (int argc, char **argv) {
 			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results(psvm_writer, nreads, start, finish);
+	print_results(psvm_writer, nreads, start, finish, eight_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.

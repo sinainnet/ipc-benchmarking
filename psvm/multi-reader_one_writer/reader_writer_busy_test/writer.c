@@ -7,7 +7,7 @@
 
 #include "../../header.h"
 
-#define THREADS		2
+#define THREADS		40
 
 typedef enum {true, false} bool;
 
@@ -174,7 +174,7 @@ int main (int argc, char **argv) {
 	{
 		nreads += all_threads[i]->nread;
 	}
-	print_results(psvm_writer, nreads, start, finish, two_gig_file);
+	print_results(psvm_writer, nreads, start, finish, eight_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.

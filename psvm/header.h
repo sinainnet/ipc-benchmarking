@@ -30,11 +30,12 @@ typedef struct main_inputs {
 #define gig_row			1048576
 #define two_gig_row		(long long int)(two * gig_row)
 #define four_gig_row		(two*two_gig_row)
+#define eight_gig_row		(long long int)(two*two_gig_row)
 #define lli			(long long int)
 #define gig_size		(gig_row*col)
 #define two_gig_size    	((long)two*(long)gig_size)
 #define four_gig_size		(two*two_gig_size)
-#define eight_gig_size  	(two*four_gig_size)
+#define eight_gig_size  	((long long)two*(long long)four_gig_size)
 #define shm_writer_file		"Write_finish"
 #define shm_reader_file		"Read_finish"
 #define shm_file_creat_mod	(O_CREAT | O_RDWR)

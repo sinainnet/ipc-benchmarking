@@ -7,7 +7,7 @@
 
 #include "../../header.h"
 
-#define THREADS		2
+#define THREADS		40
 
 typedef enum {true, false} bool;
 
@@ -53,7 +53,6 @@ void* thread_routine (void *arg) {
 	thread_res->nread = process_vm_writev(self->input.pid, 
 		(struct iovec *)&self->local[self->thread_num], \
 		1, self->remote, 1, 0);
-	atomic_store(&self->shm->state, atomic_load(&self->shm->state) + 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
@@ -123,9 +122,6 @@ int main (int argc, char **argv) {
         remote[0].iov_base = inputs.remote_ptr;
         remote[0].iov_len = inputs.buffer_length;
 
-	// Create Shared Memory
-        struct Data *shm = (struct Data*)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);
-
 	/*
 	 * Create a set of threads that will use the barrier.
 	 */
@@ -134,7 +130,6 @@ int main (int argc, char **argv) {
 		thread[thread_count].local = local;
 		thread[thread_count].remote = remote;
 		thread[thread_count].input = inputs;
-		thread[thread_count].shm  = shm;
 		status = pthread_create (&thread[thread_count].thread_id, NULL, thread_routine, (void*)&thread[thread_count]);
 		if (status != 0)
 			err_abort (status, "Create thread");
@@ -174,7 +169,7 @@ int main (int argc, char **argv) {
 	{
 		nreads += all_threads[i]->nread;
 	}
-	print_results(psvm_writer, nreads, start, finish, two_gig_file);
+	print_results(psvm_writer, nreads, start, finish, eight_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.

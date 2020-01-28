@@ -7,8 +7,8 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
-#define THREADS		2
-#define data_len        two_gig_size
+#define THREADS		40
+#define data_len        eight_gig_size
 
 int main(int argc, char **argv) {
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(data_len, col);
+        char *data = calloc(eight_gig_row, col);
 
         struct iovec local[1];
         local[0].iov_base = data;

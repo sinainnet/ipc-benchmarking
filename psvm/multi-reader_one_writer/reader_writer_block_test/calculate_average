@@ -1,0 +1,11 @@
+#!/bin/bash
+
+count=0;
+total=0; 
+
+for i in $( awk '{ print $1; }' eight_gig.txt )
+   do 
+     total=$(echo $total+$i | bc )
+     ((count++))
+   done
+echo "scale=10; $total / $count" | bc
