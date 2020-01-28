@@ -96,7 +96,7 @@ void* shm_builder (int file_mode, int prot, int flags, char *shm_file_name) {
         return shm;
 }
 
-void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish) {
+void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char* filename) {
         printf(" * Executed %s, read %zd bytes.\n", psvm, nread);
 
         long seconds = finish.tv_sec - start.tv_sec;
@@ -110,6 +110,6 @@ void print_results (char* psvm, ssize_t nread, struct timespec start, struct tim
         printf("nanoseconds: %ld\n", ns);
         printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
 
-		FILE *file_res = fopen("file.txt", "a");
+		FILE *file_res = fopen(filename, "a");
 		fprintf(file_res, "%ld.%ld\n", seconds, ns);
 }

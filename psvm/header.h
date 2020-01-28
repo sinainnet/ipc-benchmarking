@@ -1,14 +1,14 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <stdatomic.h>
-#include <sys/mman.h>       // mmap
+#include <time.h>
 #include <fcntl.h>
 #include <errno.h>          // errno
-#include <time.h>
-#include <sys/time.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/mman.h>       // mmap
+#include <sys/time.h>
+#include <stdatomic.h>
+#include <sys/types.h>
 
 struct Data {
   atomic_int state;
@@ -45,6 +45,11 @@ typedef struct main_inputs {
 #define shm_cons_flags						// Provider is the first program to run
 #define psvm_writer		"process_vm_writev"
 #define psvm_reader		"process_vm_readv"
+#define one_gig_file  		"one_gig.txt"
+#define two_gig_file  		"two_gig.txt"
+#define four_gig_file  		"four_gig.txt"
+#define eight_gig_file  	"eight_gig.txt"
+#define sixteen_gig_file  	"sixteen_gig.txt"
 
 void set_cpu_scheduler (int cpu_no, int priority);
 
@@ -54,4 +59,4 @@ void get_inputs (data_input *input_var, int argc, char **argv);
 
 void* shm_builder (int file_mode, int prot, int flags, char *shm_file_name);
 
-void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish);
+void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char *filename);
