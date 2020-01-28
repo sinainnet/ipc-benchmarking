@@ -9,6 +9,9 @@
 // };
 #define DECREASE_SEM { 0, -1, SEM_UNDO}
 #define INCREASE_SEM { 0, +1, SEM_UNDO}
+#define DECREASE_SEM_TWO { 0, -2, SEM_UNDO}
+#define INCREASE_SEM_TWO { 0, +2, SEM_UNDO}
+
 
 union semun {
     int val;
