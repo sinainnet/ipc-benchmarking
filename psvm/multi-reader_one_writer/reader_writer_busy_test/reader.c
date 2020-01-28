@@ -8,6 +8,7 @@
 #include "../../header.h"
 
 #define THREADS		2
+#define data_len        two_gig_size
 
 
 int main(int argc, char **argv) {
@@ -16,7 +17,7 @@ int main(int argc, char **argv) {
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(two_gig_row, col);
+        char *data = calloc(data_len, col);
 
         // Create Shared Memory
         struct Data *shm = (struct Data*)shm_builder( \
@@ -24,7 +25,7 @@ int main(int argc, char **argv) {
                 shm_prov_flags, shm_writer_file);
         
         printf("reader: sudo ./writer %d %p %lu\n", \
-                getpid(), data, two_gig_size);
+                getpid(), data, data_len);
 
         atomic_store(&shm->state, 0);
         while (atomic_load(&shm->state) != THREADS);
