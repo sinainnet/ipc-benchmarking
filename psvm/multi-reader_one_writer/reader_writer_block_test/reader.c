@@ -5,17 +5,17 @@
 #include <string.h>
 #include <sys/uio.h>
 #include <sys/resource.h>
+
 #include "../../header.h"
 #include "../../helper.h"
 
 #define THREADS		5
-
 #define DECREASE_SEM_THREADS { 0, -THREADS, SEM_UNDO}
 #define INCREASE_SEM_THREADS { 0, +THREADS, SEM_UNDO}
 
 struct sembuf decrease_threads = DECREASE_SEM_THREADS;
 struct sembuf increase_threads = INCREASE_SEM_THREADS;
-//
+
 int main(int argc, char **argv) {
         // Changing the process scheduling queue into real-time 
         // and set its priority using <sched.h>.
