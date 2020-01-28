@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         remote[0].iov_len = data_len;
         
         printf("reader: sudo ./writer %d %p %lu\n", \
-                getpid(), data, two_gig_size);
+                getpid(), data, data_len);
 
         ssize_t nread = process_vm_readv(getpid(), local, THREADS, remote, 1, 0);
 
