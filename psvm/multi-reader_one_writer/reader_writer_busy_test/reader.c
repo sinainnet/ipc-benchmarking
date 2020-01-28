@@ -7,19 +7,27 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
+#define THREADS		2
+
+
 int main(int argc, char **argv) {
 
-        // Changing the process scheduling queue into real-time and set its priority using <sched.h>.
+        // Changing the process scheduling queue into 
+        // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(gig_row, col);
+        char *data = calloc(two_gig_row, col);
 
         // Create Shared Memory
-        struct Data *shm = (struct Data*)shm_builder(shm_file_creat_mod, shm_prov_prot, shm_prov_flags, shm_writer_file);
+        struct Data *shm = (struct Data*)shm_builder( \
+                shm_file_creat_mod, shm_prov_prot, \
+                shm_prov_flags, shm_writer_file);
         
-        printf("reader: sudo ./writer %d %p %lu\n", getpid(), data, gig_size);
-        atomic_store(&shm->state, 1);
-        while (atomic_load(&shm->state) != 2);
+        printf("reader: sudo ./writer %d %p %lu\n", \
+                getpid(), data, two_gig_size);
+
+        atomic_store(&shm->state, 0);
+        while (atomic_load(&shm->state) != THREADS);
 
         printf("writer just wrote data. I'm done.\n");
 
