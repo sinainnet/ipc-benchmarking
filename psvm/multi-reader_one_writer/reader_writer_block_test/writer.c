@@ -4,6 +4,7 @@
 #include <sys/resource.h>
 #include "barrier.h"
 #include "errors.h"
+
 #include "../../header.h"
 #include "../../helper.h"
 
@@ -48,16 +49,9 @@ void* thread_routine (void *arg) {
 	
 	printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
 	status = barrier_wait (&barrier);
-	// atomic_int st = atomic_load(&self->shm->state);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
-	// if (status > 0)
-        // 	err_abort(status, "Wait on barrier");
-	// else {
-        // 	printf("Thread (%d). I woke up after barrier done.\n", self->thread_num);
-	// 	thread_res[0].printed = true;
-	// }
 	thread_res->nread = process_vm_writev(self->input.pid, (struct iovec *)&self->local[self->thread_num], 1, self->remote, 1, 0);	
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
@@ -113,14 +107,16 @@ int main (int argc, char **argv) {
 	barrier_init(&barrier, THREADS);
 	
 	// Build iovec structs
-        int local_iov_num = inputs.buffer_length/gig_size;
+        int local_iov_num = THREADS;
+        int data_len = inputs.buffer_length/local_iov_num;
+	
         struct iovec local[local_iov_num];
         for (int i = 0; i < local_iov_num; i++)
         {
-                char *data = calloc(inputs.buffer_length, sizeof(char));
-                memset(data, 'a' + i, gig_size);
+                char *data = calloc(data_len, sizeof(char));
+                memset(data, 'a' + i, data_len);
                 local[i].iov_base = data;
-                local[i].iov_len = gig_size;
+                local[i].iov_len = data_len;
 	}
         
         struct iovec remote[1];
@@ -173,6 +169,8 @@ int main (int argc, char **argv) {
 	ssize_t nreads = 0;
 	for (int i = 0; i < THREADS; i++)
 	{
+		if (psvm_error_handler(all_threads[i]->nread) < 0)
+			exit(1);
 		nreads += all_threads[i]->nread;
 	}
 	print_results(psvm_writer, nreads, start, finish);
