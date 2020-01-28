@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "helper.h": "c",
+        "header.h": "c"
+    }
+}

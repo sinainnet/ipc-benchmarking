@@ -9,8 +9,8 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		2
-#define data_len        two_gig_size
+#define THREADS		40
+#define data_len        eight_gig_size
 #define DECREASE_SEM_THREADS { 0, -THREADS, SEM_UNDO}
 #define INCREASE_SEM_THREADS { 0, +THREADS, SEM_UNDO}
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
         union semun j;
         j.val = 0;
 
-        char *data = calloc(data_len, col);
+        char *data = calloc(eight_gig_row, col);
         printf("reader: sudo ./writer %d %p %lu \n", getpid(), data, data_len);
 
         int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666 | IPC_CREAT);
