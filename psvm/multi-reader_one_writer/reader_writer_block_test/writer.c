@@ -52,7 +52,8 @@ void* thread_routine (void *arg) {
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
-	thread_res->nread = process_vm_writev(self->input.pid, (struct iovec *)&self->local[self->thread_num], 1, self->remote, 1, 0);	
+	thread_res->nread = process_vm_writev(self->input.pid, \
+		(struct iovec *)&self->local[self->thread_num], 1, self->remote, 1, 0);	
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
@@ -66,8 +67,10 @@ int* calc_max_clock (void **thread2) {
 	
 	for (int i = 0; i < THREADS; i++)
 	{
-		times[i][0] = (double)results[i]->start.tv_sec + ((double)results[i]->start.tv_nsec/(double)1000000000);
-		times[i][1] = (double)results[i]->finish.tv_sec + ((double)results[i]->finish.tv_nsec/(double)1000000000);
+		times[i][0] = (double)results[i]->start.tv_sec + \
+			((double)results[i]->start.tv_nsec/(double)1000000000);
+		times[i][1] = (double)results[i]->finish.tv_sec + \
+			((double)results[i]->finish.tv_nsec/(double)1000000000);
 	}
 
 	int 	finish_offset_max = 0;
@@ -140,11 +143,13 @@ int main (int argc, char **argv) {
 	/*
 	 * Now join with each of the threads.
 	 */
-	thread_result **all_threads = (struct thread_return_data**)calloc(THREADS, sizeof(struct thread_return_data));
+	thread_result **all_threads = (struct thread_return_data**) \
+		calloc(THREADS, sizeof(struct thread_return_data));
 
 	for (size_t i = 0; i < THREADS; i++)
 	{
-		all_threads[i] = (struct thread_return_data*)calloc(1, sizeof(struct thread_return_data));
+		all_threads[i] = (struct thread_return_data*) \
+			calloc(1, sizeof(struct thread_return_data));
 	}
 	
 	for (thread_count = 0; thread_count < THREADS; thread_count++) {
@@ -155,11 +160,13 @@ int main (int argc, char **argv) {
 
 		if (thread_res->printed == true)
 		{
-			printf("%03d: (%d):true \n", thread_count, thread[thread_count].thread_num);
+			printf("%03d: (%d):true \n", thread_count, \
+				thread[thread_count].thread_num);
 			all_threads[thread_count] = thread_res;
 		}
 		else {
-			printf("%03d: (%d):false \n", thread_count, thread[thread_count].thread_num);
+			printf("%03d: (%d):false \n", thread_count, \
+				thread[thread_count].thread_num);
 		}
 	}
 
