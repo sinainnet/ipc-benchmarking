@@ -171,7 +171,7 @@ int main (int argc, char **argv) {
 			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results("read", psvm_writer, nreads, start, finish, eight_gig_file);
+	print_results("read", psvm_reader, nreads, start, finish, eight_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.
