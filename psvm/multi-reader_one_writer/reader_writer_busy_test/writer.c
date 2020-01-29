@@ -172,9 +172,11 @@ int main (int argc, char **argv) {
 	ssize_t nreads = 0;
 	for (int i = 0; i < THREADS; i++)
 	{
+		if (psvm_error_handler(all_threads[i]->nread) < 0)
+			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results(psvm_writer, nreads, start, finish, eight_gig_file);
+	print_results("write", psvm_writer, nreads, start, finish, eight_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.

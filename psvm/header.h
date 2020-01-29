@@ -60,4 +60,4 @@ void get_inputs (data_input *input_var, int argc, char **argv);
 
 void* shm_builder (int file_mode, int prot, int flags, char *shm_file_name);
 
-void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char *filename);
+void print_results (char* read_write, char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char *filename);
