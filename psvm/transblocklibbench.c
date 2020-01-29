@@ -96,8 +96,8 @@ void* shm_builder (int file_mode, int prot, int flags, char *shm_file_name) {
         return shm;
 }
 
-void print_results (char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char* filename) {
-        printf(" * Executed %s, read %zd bytes.\n", psvm, nread);
+void print_results (char* read_write, char* psvm, ssize_t nread, struct timespec start, struct timespec finish, char* filename) {
+        printf(" * Executed %s, %s %zd bytes.\n", psvm, read_write, nread);
 
         long seconds = finish.tv_sec - start.tv_sec;
         long ns = finish.tv_nsec - start.tv_nsec;
