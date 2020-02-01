@@ -25,17 +25,27 @@ typedef struct main_inputs {
 #endif  /* PROTOCOL_H */
 
 #define two			2
+#define seven			7
+#define ten			10
 #define col			1024
 #define meg_row			1024
 #define gig_row			1048576
 #define two_gig_row		(long long int)(two * gig_row)
-#define four_gig_row		(two*two_gig_row)
-#define eight_gig_row		(long long int)(two*two_gig_row)
+#define twenty_gig_row		(long long int)(ten * two * gig_row)
+#define four_gig_row		(long long int)(two*two_gig_row)
+#define seven_gig_row		(long long int)(seven*gig_row)
+#define eight_gig_row		(long long int)(two*four_gig_row)
+#define fourteen_gig_row	(long long int)(two*seven_gig_row)
+#define sixteen_gig_row		(long long int)(two*eight_gig_row)
 #define lli			(long long int)
 #define gig_size		(gig_row*col)
 #define two_gig_size    	((long)two*(long)gig_size)
-#define four_gig_size		(two*two_gig_size)
+#define twenty_gig_size    	((long)two * (long)ten *(long)gig_size)
+#define four_gig_size		((long)two * (long)two_gig_size)
+#define seven_gig_size		((long)seven * (long)gig_size)
 #define eight_gig_size  	((long long)two*(long long)four_gig_size)
+#define fourteen_gig_size  	((long long)two*(long long)seven_gig_size)
+#define sixteen_gig_size  	((long long)two*(long long)eight_gig_size)
 #define shm_writer_file		"Write_finish"
 #define shm_reader_file		"Read_finish"
 #define shm_file_creat_mod	(O_CREAT | O_RDWR)
@@ -49,8 +59,12 @@ typedef struct main_inputs {
 #define one_gig_file  		"one_gig.txt"
 #define two_gig_file  		"two_gig.txt"
 #define four_gig_file  		"four_gig.txt"
+#define seven_gig_file  	"seven_gig.txt"
 #define eight_gig_file  	"eight_gig.txt"
+#define fourteen_gig_file  	"fourteen_gig.txt"
 #define sixteen_gig_file  	"sixteen_gig.txt"
+#define twenty_gig_file  	"twenty_gig.txt"
+
 
 void set_cpu_scheduler (int cpu_no, int priority);
 

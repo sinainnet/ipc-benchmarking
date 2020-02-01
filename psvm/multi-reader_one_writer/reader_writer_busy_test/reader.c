@@ -7,8 +7,8 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
-#define THREADS		40
-#define data_len        eight_gig_size
+#define THREADS		80
+#define data_len        fourteen_gig_size
 
 
 int main(int argc, char **argv) {
@@ -17,14 +17,14 @@ int main(int argc, char **argv) {
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(eight_gig_row, col);
+        char *data = calloc(fourteen_gig_row, col);
 
         // Create Shared Memory
         struct Data *shm = (struct Data*)shm_builder( \
                 shm_file_creat_mod, shm_prov_prot, \
                 shm_prov_flags, shm_writer_file);
         
-        printf("reader: sudo ./writer %d %p %lu\n", \
+        printf("reader: sudo ./writer %d %p %llu\n", \
                 getpid(), data, data_len);
 
         atomic_store(&shm->state, 0);

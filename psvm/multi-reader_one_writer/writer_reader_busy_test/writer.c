@@ -7,8 +7,8 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
-#define THREADS		40
-#define data_len        eight_gig_size
+#define THREADS		80
+#define data_len        fourteen_gig_size
 
 
 int main(int argc, char **argv) {
@@ -17,12 +17,12 @@ int main(int argc, char **argv) {
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(eight_gig_row, col);
+        char *data = calloc(fourteen_gig_row, col);
         
         // Build iovec structs
         int local_iov_num = THREADS;
-        int data_leng = data_len/local_iov_num;
-        for (int i = 0; i < local_iov_num; i++)
+        long long int data_leng = data_len/local_iov_num;
+        for (long long int i = 0; i < local_iov_num; i++)
         {
                 memset(data + (i*data_leng), 'a' + i, data_leng);
 	}
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
                 shm_file_creat_mod, shm_prov_prot, \
                 shm_prov_flags, shm_writer_file);
         
-        printf("writer: sudo ./reader %d %p %lu\n", \
+        printf("writer: sudo ./reader %d %p %llu\n", \
                 getpid(), data, data_len);
 
         atomic_store(&shm->state, 0);

@@ -8,7 +8,7 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		40
+#define THREADS		80
 
 typedef enum {true, false} bool;
 
@@ -47,7 +47,7 @@ void* thread_routine (void *arg) {
 	int status;
 	int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666); // key to inform reader.
 	
-	printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
+	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
 	status = barrier_wait (&barrier);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
@@ -160,7 +160,7 @@ int main (int argc, char **argv) {
 
 		if (thread_res->printed == true)
 		{
-			printf("%03d: (%d):true \n", thread_count, \
+			// printf("%03d: (%d):true \n", thread_count, \
 				thread[thread_count].thread_num);
 			all_threads[thread_count] = thread_res;
 		}
@@ -180,7 +180,7 @@ int main (int argc, char **argv) {
 			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results("write", psvm_writer, nreads, start, finish, eight_gig_file);
+	print_results("write", psvm_writer, nreads, start, finish, fourteen_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.
