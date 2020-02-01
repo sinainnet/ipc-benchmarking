@@ -7,8 +7,8 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
-#define THREADS		40
-#define data_len        eight_gig_size
+#define THREADS		80
+#define data_len        fourteen_gig_size
 
 int main(int argc, char **argv) {
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(eight_gig_row, col);
+        char *data = calloc(fourteen_gig_row, col);
 
         struct iovec local[1];
         local[0].iov_base = data;
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         remote[0].iov_base = calloc(data_len, col);
         remote[0].iov_len = data_len;
         
-        printf("reader: sudo ./writer %d %p %lu\n", \
+        printf("reader: sudo ./writer %d %p %llu\n", \
                 getpid(), data, data_len);
 
         ssize_t nread = process_vm_readv(getpid(), local, THREADS, remote, 1, 0);

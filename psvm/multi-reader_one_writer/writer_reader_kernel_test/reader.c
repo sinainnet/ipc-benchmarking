@@ -7,7 +7,7 @@
 
 #include "../../header.h"
 
-#define THREADS		40
+#define THREADS		80
 
 typedef enum {true, false} bool;
 
@@ -45,7 +45,7 @@ void* thread_routine (void *arg) {
 	thread_res->nread = 0;
 	int status;
 
-	printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
+	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
 	status = barrier_wait (&barrier);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
@@ -107,14 +107,14 @@ int main (int argc, char **argv) {
 	
 	// Build iovec structs
         int local_iov_num = THREADS;
-        int data_len = inputs.buffer_length/local_iov_num;
+        long long int data_len = inputs.buffer_length/local_iov_num;
 
         struct iovec local[local_iov_num];
-        for (int i = 0; i < local_iov_num; i++)
+        for (long long int i = 0; i < local_iov_num; i++)
         {
                 char *data = calloc(data_len, sizeof(char));
-                memset(data, 'z' + i, data_len);
-                local[i].iov_base = data;
+                // memset(data, 'z' + i, data_len);
+                local[i].iov_base = data + (i * data_len);
                 local[i].iov_len = data_len;
 	}
         
@@ -153,7 +153,7 @@ int main (int argc, char **argv) {
 
 		if (thread_res->printed == true)
 		{
-			printf("%03d: (%d):true \n", thread_count,thread[thread_count].thread_num);
+			// printf("%03d: (%d):true \n", thread_count,thread[thread_count].thread_num);
 			all_threads[thread_count] = thread_res;
 		}
 		else {
@@ -171,7 +171,7 @@ int main (int argc, char **argv) {
 			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results("read", psvm_reader, nreads, start, finish, eight_gig_file);
+	print_results("read", psvm_reader, nreads, start, finish, fourteen_gig_file);
 	
 	/*
 	 * To be thorough, destroy the barrier.
