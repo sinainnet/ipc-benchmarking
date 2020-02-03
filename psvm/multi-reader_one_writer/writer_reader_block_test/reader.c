@@ -1,10 +1,13 @@
 #define _GNU_SOURCE
+#include <sched.h>
 #include <pthread.h>
 #include <sys/uio.h>
+#include <pthread.h>
+#include <stdatomic.h>
 #include <sys/resource.h>
-#include "barrier.h"
-#include "errors.h"
 
+#include "errors.h"
+#include "barrier.h"
 #include "../../header.h"
 #include "../../helper.h"
 
@@ -22,6 +25,8 @@ typedef struct thread_tags {
 	struct iovec		*remote;
 	data_input 		input;
 	struct Data		*shm;
+	int 			*lock_count;
+	struct spinlock		*lock;
 } thread_tracker;
 
 barrier_t barrier;
@@ -42,6 +47,19 @@ void* thread_routine (void *arg) {
 	thread_tracker *self = (thread_tracker*) arg;
 	thread_result *thread_res = \
 		(struct thread_return_data*)calloc(1, sizeof(struct thread_return_data));
+	
+	cpu_set_t set;
+	CPU_ZERO(&set);
+	long long int cpu_no = (self->thread_num%10) + 2;
+	printf("%lld\n", cpu_no);
+
+	CPU_SET(cpu_no, &set);
+	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
+	{
+			printf("Thread setaffinity error");
+			exit(0);
+	}
+	
 	thread_res->status = false;
 	thread_res->nread = 0;
 	int status;

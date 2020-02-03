@@ -9,7 +9,7 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		80
+#define THREADS		10
 #define data_len        fourteen_gig_size
 #define DECREASE_SEM_THREADS { 0, -THREADS, SEM_UNDO}
 #define INCREASE_SEM_THREADS { 0, +THREADS, SEM_UNDO}
@@ -20,7 +20,7 @@ struct sembuf increase_threads = INCREASE_SEM_THREADS;
 int main(int argc, char **argv) {
         // Changing the process scheduling queue into real-time 
         // and set its priority using <sched.h>.
-        set_cpu_scheduler(2,99);
+        set_cpu_scheduler(1,99);
         
         union semun j;
         j.val = 0;

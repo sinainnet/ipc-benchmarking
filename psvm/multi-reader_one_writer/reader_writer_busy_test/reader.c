@@ -4,10 +4,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/uio.h>
+#include <stdatomic.h>
 #include <sys/resource.h>
+
 #include "../../header.h"
 
-#define THREADS		80
+
+#define THREADS		10
 #define data_len        fourteen_gig_size
 
 
@@ -15,7 +18,7 @@ int main(int argc, char **argv) {
 
         // Changing the process scheduling queue into 
         // real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(2,99);
+        set_cpu_scheduler(1,99);
 
         char *data = calloc(fourteen_gig_row, col);
 
@@ -28,8 +31,15 @@ int main(int argc, char **argv) {
                 getpid(), data, data_len);
 
         atomic_store(&shm->state, 0);
-        while (atomic_load(&shm->state) != THREADS);
-
+        while (atomic_load(&shm->state) != THREADS)
+        {
+                // if (shm->state >= 2)
+                // {
+                //         /* code */
+                //         printf("%d\n", shm->state);
+                // }
+                continue;
+        }
         printf("writer just wrote data. I'm done.\n");
 
         /* remove the shared memory object */
