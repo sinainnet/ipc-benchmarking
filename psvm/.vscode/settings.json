@@ -4,6 +4,10 @@
         "string.h": "c",
         "pthread.h": "c",
         "helper.h": "c",
-        "ipcb_semaphore.h": "c"
+        "ipcb_semaphore.h": "c",
+        "stdbool.h": "c",
+        "cstdbool": "c",
+        "c++config.h": "c",
+        "errors.h": "c"
     }
 }

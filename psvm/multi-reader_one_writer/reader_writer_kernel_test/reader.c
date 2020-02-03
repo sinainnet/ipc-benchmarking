@@ -7,7 +7,7 @@
 #include <sys/resource.h>
 #include "../../header.h"
 
-#define THREADS		80
+#define THREADS		20
 #define data_len        fourteen_gig_size
 
 int main(int argc, char **argv) {

@@ -1,15 +1,41 @@
 #define _GNU_SOURCE
+#include <sched.h>
 #include <pthread.h>
 #include <sys/uio.h>
-#include "barrier.h"
-#include "errors.h"
+#include <pthread.h>
+#include <stdatomic.h>
 #include <sys/resource.h>
 
+#include "errors.h"
+#include "barrier.h"
 #include "../../header.h"
 
-#define THREADS		80
+#define THREADS		10
 
 typedef enum {true, false} bool;
+
+
+static inline bool atomic_compare_exchange(int* ptr, int compare, int exchange) {
+    return __atomic_compare_exchange_n(ptr, &compare, exchange,
+            0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
+}
+
+static inline void my_atomic_store(int* ptr, int value) {
+    __atomic_store_n(ptr, 0, __ATOMIC_SEQ_CST);
+}
+
+static inline int atomic_add_fetch(int* ptr, int d) {
+    return __atomic_add_fetch(ptr, d, __ATOMIC_SEQ_CST);
+}
+
+void spinlock_lock(struct spinlock* spinlock) {
+    while (!atomic_compare_exchange(&spinlock->locked, 0, 1)) {
+    }
+}
+
+void spinlock_unlock(struct spinlock* spinlock) {
+    my_atomic_store(&spinlock->locked, 0);
+}
 
 /*
  *  Threads Data Structure to keep track of each one
@@ -21,6 +47,8 @@ typedef struct thread_tags {
 	struct iovec		*remote;
 	data_input 		input;
 	struct Data		*shm;
+	int 			*lock_count;
+	struct spinlock		*lock;
 } thread_tracker;
 
 barrier_t barrier;
@@ -41,6 +69,19 @@ void* thread_routine (void *arg) {
 	thread_tracker *self = (thread_tracker*) arg;
 	thread_result *thread_res = (struct thread_return_data*) \
 		calloc(1, sizeof(struct thread_return_data));
+
+	cpu_set_t set;
+	CPU_ZERO(&set);
+	long long int cpu_no = (self->thread_num%10) + 2;
+	printf("%lld\n", cpu_no);
+
+	CPU_SET(cpu_no, &set);
+	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
+	{
+		printf("Thread setaffinity error");
+		exit(0);
+	}
+	
 	thread_res->status = false;
 	thread_res->nread = 0;
 	int status;
@@ -53,8 +94,18 @@ void* thread_routine (void *arg) {
 	thread_res->nread = process_vm_writev(self->input.pid, 
 		(struct iovec *)&self->local[self->thread_num], \
 		1, self->remote, 1, 0);
-	atomic_store(&self->shm->state, atomic_load(&self->shm->state) + 1);
 
+	spinlock_lock(self->lock);
+	// if (atomic_add_fetch(self->lock_count, 1) > 1) {
+        //     fprintf(stderr, "lock is broken\n");
+        //     exit(1);
+        // }
+	
+	int x = atomic_load(&self->shm->state);
+	atomic_store(&self->shm->state, x + 1);
+
+	// atomic_add_fetch(self->lock_count, -1);
+        spinlock_unlock(self->lock);
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
 	return (void*)thread_res;
@@ -95,7 +146,7 @@ int* calc_max_clock (void **thread2) {
 }
 
 int main (int argc, char **argv) {
-	set_cpu_scheduler(1, 99);
+	set_cpu_scheduler(2, 99);
 
         // PARSE CLI ARGS
         data_input inputs;
@@ -103,6 +154,9 @@ int main (int argc, char **argv) {
 
 	int thread_count, array_count;
 	int status;
+	int lock_count = 0;
+
+	struct spinlock lock = SPINLOCK_INIT;
 	
 	barrier_init(&barrier, THREADS);
 	
@@ -135,6 +189,8 @@ int main (int argc, char **argv) {
 		thread[thread_count].remote = remote;
 		thread[thread_count].input = inputs;
 		thread[thread_count].shm  = shm;
+		thread[thread_count].lock_count  = &lock_count;
+		thread[thread_count].lock  = &lock;
 		status = pthread_create (&thread[thread_count].thread_id, NULL, thread_routine, (void*)&thread[thread_count]);
 		if (status != 0)
 			err_abort (status, "Create thread");
