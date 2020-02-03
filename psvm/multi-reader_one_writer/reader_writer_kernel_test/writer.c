@@ -9,7 +9,7 @@
 
 #include "../../header.h"
 
-#define THREADS		20
+#define THREADS		10
 
 typedef enum {true, false} bool;
 
