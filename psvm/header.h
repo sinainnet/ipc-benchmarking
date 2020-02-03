@@ -7,12 +7,17 @@
 #include <unistd.h>
 #include <sys/mman.h>       // mmap
 #include <sys/time.h>
-#include <stdatomic.h>
 #include <sys/types.h>
 
 struct Data {
-  atomic_int state;
+  int state;
 };
+
+struct spinlock {
+    int locked;
+};
+
+#define SPINLOCK_INIT { 0 };
 
 typedef struct main_inputs {
         pid_t pid;
