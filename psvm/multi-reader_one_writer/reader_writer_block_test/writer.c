@@ -2,7 +2,7 @@
 #include <pthread.h>
 #include <sys/uio.h>
 #include <sys/resource.h>
-#include "barrier.h"
+// #include "barrier.h"
 #include "errors.h"
 #include <sched.h>
 #include <pthread.h>
@@ -10,9 +10,12 @@
 #include "../../header.h"
 #include "../../helper.h"
 
-#define THREADS		10
+#define THREADS		9
 
 typedef enum {true, false} bool;
+
+static pthread_barrier_t barrier;
+static int numBarriers;
 
 /*
  *  Threads Data Structure to keep track of each one
@@ -28,7 +31,7 @@ typedef struct thread_tags {
 	struct spinlock		*lock;
 } thread_tracker;
 
-barrier_t barrier;
+// barrier_t barrier;
 thread_tracker thread[THREADS];
 
 typedef struct thread_return_data {
@@ -48,7 +51,7 @@ void* thread_routine (void *arg) {
 		(struct thread_return_data*)calloc(1, sizeof(struct thread_return_data));
 	cpu_set_t set;
 	CPU_ZERO(&set);
-	long long int cpu_no = (self->thread_num%10) + 2;
+	long long int cpu_no = (self->thread_num%9) + 3;
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
 	{
@@ -58,11 +61,12 @@ void* thread_routine (void *arg) {
 
 	thread_res->status = false;
 	thread_res->nread = 0;
-	int status;
+	int status, s;
 	int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666); // key to inform reader.
 	
 	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
-	status = barrier_wait (&barrier);
+	// status = barrier_wait (&barrier);
+	s = pthread_barrier_wait(&barrier);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
@@ -81,6 +85,9 @@ int* calc_max_clock (void **thread2) {
 	
 	for (int i = 0; i < THREADS; i++)
 	{
+		printf("---------- Thread %d --------------\n", i);
+		printf("\t\t start_time_second = %ld,    start_time_nano = %ld\n", results[i]->start.tv_sec, results[i]->start.tv_nsec);
+		printf("\t\t end_time_second = %ld,    end_time_nano = %ld\n", results[i]->finish.tv_sec, results[i]->finish.tv_nsec);
 		times[i][0] = (double)results[i]->start.tv_sec + \
 			((double)results[i]->start.tv_nsec/(double)1000000000);
 		times[i][1] = (double)results[i]->finish.tv_sec + \
@@ -91,8 +98,13 @@ int* calc_max_clock (void **thread2) {
 	int 	start_offset_min = 0;
 	double 	finish = times[0][1];
 	double 	start = times[0][0];
+	printf("\n\n");
+	printf("---------- Thread %d --------------\n", 0);
+	printf("\t\t start_time = %f,    end_time = %f\n", times[0][0], times[0][1]);
 	for (int i = 1; i < THREADS; i++)
 	{
+		printf("---------- Thread %d --------------\n", i);
+		printf("\t\t start_time = %f,    end_time = %f\n", times[i][0], times[i][1]);
 		if (times[i][0] < start)
 		{
 			start_offset_min = i;
@@ -107,6 +119,7 @@ int* calc_max_clock (void **thread2) {
 	int *offset = (int *)calloc(2, sizeof(int));
 	offset[0] = start_offset_min;		// [0]  for start_time
 	offset[1] = finish_offset_max;		// [1]	for finish_time
+	printf("min_offset = %d, max_offset = %d\n", offset[0], offset[1]);
 
 	return offset;
 }
@@ -119,9 +132,15 @@ int main (int argc, char **argv) {
         get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
-	int status;
+	int status, s;
 	
-	barrier_init(&barrier, THREADS);
+	// barrier_init(&barrier, THREADS);
+	s = pthread_barrier_init(&barrier, NULL, THREADS);
+	if (s != 0)
+	{
+		/* code */
+		perror("pthread_init\n");
+	}
 	
 	// Build iovec structs
         int local_iov_num = THREADS;
@@ -199,7 +218,7 @@ int main (int argc, char **argv) {
 	/*
 	 * To be thorough, destroy the barrier.
 	 */
-	barrier_destroy (&barrier);
+	// barrier_destroy (&barrier);
 	return 0;
 }
 
