@@ -7,12 +7,15 @@
 #include <sys/resource.h>
 
 #include "errors.h"
-#include "barrier.h"
+// #include "barrier.h"
 #include "../../header.h"
 
 #define THREADS		10
 
 typedef enum {true, false} bool;
+
+static pthread_barrier_t barrier;
+static int numBarriers;
 
 
 static inline bool atomic_compare_exchange(int* ptr, int compare, int exchange) {
@@ -51,7 +54,7 @@ typedef struct thread_tags {
 	struct spinlock		*lock;
 } thread_tracker;
 
-barrier_t barrier;
+// barrier_t barrier;
 thread_tracker thread[THREADS];
 
 typedef struct thread_return_data {
@@ -84,10 +87,18 @@ void* thread_routine (void *arg) {
 	
 	thread_res->status = false;
 	thread_res->nread = 0;
-	int status;
+	int status, s;
 
 	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
-	status = barrier_wait (&barrier);
+	// status = barrier_wait (&barrier);
+	s = pthread_barrier_wait(&barrier);
+	// if (s != 0 || s!= PTHREAD_BARRIER_SERIAL_THREAD)
+	// {
+	// 	/* code */
+	// 	printf("pthread_barrier_wait error on thread %d\n", self->thread_num);
+	// 	perror("barrier_wait");
+	// 	exit(1);
+	// } 
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
@@ -153,12 +164,18 @@ int main (int argc, char **argv) {
         get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
-	int status;
+	int status, s;
 	int lock_count = 0;
 
 	struct spinlock lock = SPINLOCK_INIT;
 	
-	barrier_init(&barrier, THREADS);
+	// barrier_init(&barrier, THREADS);
+	s = pthread_barrier_init(&barrier, NULL, THREADS);
+	if (s != 0)
+	{
+		/* code */
+		perror("pthread_init\n");
+	}
 	
 	// Build iovec structs
         int local_iov_num = THREADS;
@@ -237,7 +254,7 @@ int main (int argc, char **argv) {
 	/*
 	 * To be thorough, destroy the barrier.
 	 */
-	barrier_destroy (&barrier);
+	// barrier_destroy (&barrier);
 	return 0;
 }
 
