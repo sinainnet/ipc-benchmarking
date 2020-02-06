@@ -10,7 +10,7 @@
 #include "../../header.h"
 
 
-#define THREADS		10
+#define THREADS		9
 #define data_len        fourteen_gig_size
 
 

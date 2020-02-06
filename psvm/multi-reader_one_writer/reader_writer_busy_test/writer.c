@@ -10,7 +10,7 @@
 // #include "barrier.h"
 #include "../../header.h"
 
-#define THREADS		10
+#define THREADS		9
 
 typedef enum {true, false} bool;
 
@@ -75,7 +75,7 @@ void* thread_routine (void *arg) {
 
 	cpu_set_t set;
 	CPU_ZERO(&set);
-	long long int cpu_no = (self->thread_num%10) + 2;
+	long long int cpu_no = (self->thread_num%9) + 3;
 //	printf("%lld\n", cpu_no);
 
 	CPU_SET(cpu_no, &set);
