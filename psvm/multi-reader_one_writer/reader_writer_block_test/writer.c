@@ -85,9 +85,9 @@ int* calc_max_clock (void **thread2) {
 	
 	for (int i = 0; i < THREADS; i++)
 	{
-		printf("---------- Thread %d --------------\n", i);
-		printf("\t\t start_time_second = %ld,    start_time_nano = %ld\n", results[i]->start.tv_sec, results[i]->start.tv_nsec);
-		printf("\t\t end_time_second = %ld,    end_time_nano = %ld\n", results[i]->finish.tv_sec, results[i]->finish.tv_nsec);
+		// printf("---------- Thread %d --------------\n", i);
+		// printf("\t\t start_time_second = %ld,    start_time_nano = %ld\n", results[i]->start.tv_sec, results[i]->start.tv_nsec);
+		// printf("\t\t end_time_second = %ld,    end_time_nano = %ld\n", results[i]->finish.tv_sec, results[i]->finish.tv_nsec);
 		times[i][0] = (double)results[i]->start.tv_sec + \
 			((double)results[i]->start.tv_nsec/(double)1000000000);
 		times[i][1] = (double)results[i]->finish.tv_sec + \
@@ -98,13 +98,13 @@ int* calc_max_clock (void **thread2) {
 	int 	start_offset_min = 0;
 	double 	finish = times[0][1];
 	double 	start = times[0][0];
-	printf("\n\n");
-	printf("---------- Thread %d --------------\n", 0);
-	printf("\t\t start_time = %f,    end_time = %f\n", times[0][0], times[0][1]);
+	// printf("\n\n");
+	// printf("---------- Thread %d --------------\n", 0);
+	// printf("\t\t start_time = %f,    end_time = %f\n", times[0][0], times[0][1]);
 	for (int i = 1; i < THREADS; i++)
 	{
-		printf("---------- Thread %d --------------\n", i);
-		printf("\t\t start_time = %f,    end_time = %f\n", times[i][0], times[i][1]);
+		// printf("---------- Thread %d --------------\n", i);
+		// printf("\t\t start_time = %f,    end_time = %f\n", times[i][0], times[i][1]);
 		if (times[i][0] < start)
 		{
 			start_offset_min = i;
@@ -119,7 +119,7 @@ int* calc_max_clock (void **thread2) {
 	int *offset = (int *)calloc(2, sizeof(int));
 	offset[0] = start_offset_min;		// [0]  for start_time
 	offset[1] = finish_offset_max;		// [1]	for finish_time
-	printf("min_offset = %d, max_offset = %d\n", offset[0], offset[1]);
+	// printf("min_offset = %d, max_offset = %d\n", offset[0], offset[1]);
 
 	return offset;
 }
