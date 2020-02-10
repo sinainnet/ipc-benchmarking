@@ -49,7 +49,7 @@ typedef struct thread_tags {
 	struct iovec		*local;
 	struct iovec		*remote;
 	data_input 		input;
-	struct Data		*shm;
+	struct Data		* volatile shm;
 	int 			*lock_count;
 	struct spinlock		*lock;
 } thread_tracker;
@@ -102,21 +102,24 @@ void* thread_routine (void *arg) {
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
+// volatile x;
+// x=x+1;
 	thread_res->nread = process_vm_writev(self->input.pid, 
 		(struct iovec *)&self->local[self->thread_num], \
 		1, self->remote, 1, 0);
 
-	spinlock_lock(self->lock);
+	// spinlock_lock(self->lock);
 	// if (atomic_add_fetch(self->lock_count, 1) > 1) {
         //     fprintf(stderr, "lock is broken\n");
         //     exit(1);
         // }
 	
-	int x = atomic_load(&self->shm->state);
-	atomic_store(&self->shm->state, x + 1);
+	// int x = atomic_load(&self->shm->state);
+	int x = __sync_add_and_fetch(&self->shm->state, 1);
+	// atomic_store(&self->shm->state, x + 1);
 
 	// atomic_add_fetch(self->lock_count, -1);
-        spinlock_unlock(self->lock);
+        // spinlock_unlock(self->lock);
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
 	return (void*)thread_res;
@@ -195,7 +198,7 @@ int main (int argc, char **argv) {
         remote[0].iov_len = inputs.buffer_length;
 
 	// Create Shared Memory
-        struct Data *shm = (struct Data*)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);
+        struct Data * volatile shm = (struct Data* volatile)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);
 
 	/*
 	 * Create a set of threads that will use the barrier.
