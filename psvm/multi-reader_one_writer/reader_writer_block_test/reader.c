@@ -33,7 +33,8 @@ int main(int argc, char **argv) {
 
         // trying to get lock(after writing operation done.)
         ipcb_operate_semaphore(id_wrt, &decrease_threads, 1);
-        ipcb_operate_semaphore(id_wrt, &increase_threads, 1);
+
+        // ipcb_operate_semaphore(id_wrt, &increase_threads, 1);
 
         return 0;
 }
