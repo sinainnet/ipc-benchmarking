@@ -10,10 +10,6 @@
 #include "../../../helper.h"
 
 #define THREADS		2
-#define chunk_sizes	gig_size
-// #define chunk_sizes	(col*col)
-
-bool with_chunks = false;
 
 thread_tracker thread[THREADS];
 
