@@ -100,6 +100,7 @@ typedef struct thread_return_data {
 #define fourteen_gig_file  	"results/fourteen_gig.txt"
 #define sixteen_gig_file  	"results/sixteen_gig.txt"
 #define twenty_gig_file  	"results/twenty_gig.txt"
+#define middleware		"./middleware.txt"
 
 
 int psvm_error_handler (ssize_t nread2);
