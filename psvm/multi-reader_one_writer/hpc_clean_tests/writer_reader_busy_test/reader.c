@@ -7,61 +7,11 @@
 #include <sys/resource.h>
 
 #include "errors.h"
-#include "barrier.h"
-#include "../../header.h"
+#include "../../../header.h"
 
-#define THREADS		80
+#define THREADS		2
 
-typedef enum {true, false} bool;
-
-static inline bool atomic_compare_exchange(int* ptr, int compare, int exchange) {
-    return __atomic_compare_exchange_n(ptr, &compare, exchange,
-            0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-}
-
-static inline void my_atomic_store(int* ptr, int value) {
-    __atomic_store_n(ptr, 0, __ATOMIC_SEQ_CST);
-}
-
-static inline int atomic_add_fetch(int* ptr, int d) {
-    return __atomic_add_fetch(ptr, d, __ATOMIC_SEQ_CST);
-}
-
-void spinlock_lock(struct spinlock* spinlock) {
-    while (!atomic_compare_exchange(&spinlock->locked, 0, 1)) {
-    }
-}
-
-void spinlock_unlock(struct spinlock* spinlock) {
-    my_atomic_store(&spinlock->locked, 0);
-}
-
-/*
- *  Threads Data Structure to keep track of each one
- */
-typedef struct thread_tags {
-	pthread_t		thread_id;
-	int         		thread_num;
-	struct iovec		*local;
-	struct iovec		*remote;
-	data_input 		input;
-	struct Data		*shm;
-	int 			*lock_count;
-	struct spinlock		*lock;
-} thread_tracker;
-
-barrier_t barrier;
 thread_tracker thread[THREADS];
-
-typedef struct thread_return_data {
-	struct timespec 	start;
-	struct timespec 	finish;
-	ssize_t 		nread;
-	bool        		printed;
-	bool 			status;
-	int			min_offset;
-	int 			max_offset;
-} thread_result;
 
 
 void* thread_routine (void *arg) {
@@ -72,7 +22,6 @@ void* thread_routine (void *arg) {
 	cpu_set_t set;
 	CPU_ZERO(&set);
 	long long int cpu_no = (self->thread_num%10) + 2;
-	printf("%lld\n", cpu_no);
 
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
@@ -83,10 +32,10 @@ void* thread_routine (void *arg) {
 
 	thread_res->status = false;
 	thread_res->nread = 0;
-	int status;
+	int status, s;
 
 	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
-	status = barrier_wait (&barrier);
+	s = pthread_barrier_wait(&barrier);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
@@ -94,56 +43,13 @@ void* thread_routine (void *arg) {
 		(struct iovec *)&self->local[self->thread_num], \
 		1, self->remote, 1, 0);
 
-	spinlock_lock(self->lock);
-	// if (atomic_add_fetch(self->lock_count, 1) > 1) {
-        //     fprintf(stderr, "lock is broken\n");
-        //     exit(1);
-        // }
-	
-	int x = atomic_load(&self->shm->state);
-	atomic_store(&self->shm->state, x + 1);
-
-	// atomic_add_fetch(self->lock_count, -1);
-        spinlock_unlock(self->lock);
+	int x = __sync_add_and_fetch(&self->shm->state, 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
 	return (void*)thread_res;
 }
 
-int* calc_max_clock (void **thread2) {
-	thread_result **results = (struct thread_return_data **)thread2;
-	double times [THREADS][2]; 	// [0] for start_time and [1] for end_time
-	
-	for (int i = 0; i < THREADS; i++)
-	{
-		times[i][0] = (double)results[i]->start.tv_sec + ((double)results[i]->start.tv_nsec/(double)1000000000);
-		times[i][1] = (double)results[i]->finish.tv_sec + ((double)results[i]->finish.tv_nsec/(double)1000000000);
-	}
-
-	int 	finish_offset_max = 0;
-	int 	start_offset_min = 0;
-	double 	finish = times[0][1];
-	double 	start = times[0][0];
-	for (int i = 1; i < THREADS; i++)
-	{
-		if (times[i][0] < start)
-		{
-			start_offset_min = i;
-			start = times[i][0];
-		}
-		if (times[i][1] > finish)
-		{
-			finish_offset_max = i;
-			finish = times[i][1];
-		}
-	}
-	int *offset = (int *)calloc(2, sizeof(int));
-	offset[0] = start_offset_min;		// [0]  for start_time
-	offset[1] = finish_offset_max;		// [1]	for finish_time
-
-	return offset;
-}
 
 int main (int argc, char **argv) {
 	set_cpu_scheduler(1, 99);
@@ -153,12 +59,15 @@ int main (int argc, char **argv) {
         get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
-	int status;
+	int status, s;
 	int lock_count = 0;
 	
-	struct spinlock lock = SPINLOCK_INIT;
-	
-	barrier_init(&barrier, THREADS);
+	s = pthread_barrier_init(&barrier, NULL, THREADS);
+	if (s != 0)
+	{
+		/* code */
+		perror("pthread_init\n");
+	}
 	
 	// Build iovec structs
         int local_iov_num = THREADS;
@@ -189,8 +98,6 @@ int main (int argc, char **argv) {
 		thread[thread_count].remote = remote;
 		thread[thread_count].input = inputs;
 		thread[thread_count].shm  = shm;
-		thread[thread_count].lock_count  = &lock_count;
-		thread[thread_count].lock  = &lock;
 		status = pthread_create (&thread[thread_count].thread_id, NULL, thread_routine, (void*)&thread[thread_count]);
 		if (status != 0)
 			err_abort (status, "Create thread");
@@ -222,7 +129,7 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	int *offsets = calc_max_clock((void **)all_threads);
+	int *offsets = calc_max_clock((void **)all_threads, THREADS);
 	struct timespec start = all_threads[offsets[0]]->start;
 	struct timespec finish = all_threads[offsets[1]]->finish;
 	ssize_t nreads = 0;
@@ -232,12 +139,8 @@ int main (int argc, char **argv) {
 			exit(1);
 		nreads += all_threads[i]->nread;
 	}
-	print_results("read", psvm_reader, nreads, start, finish, fourteen_gig_file);
+	print_results("read", psvm_reader, nreads, start, finish, two_gig_file);
 	
-	/*
-	 * To be thorough, destroy the barrier.
-	 */
-	barrier_destroy (&barrier);
 	return 0;
 }
 
