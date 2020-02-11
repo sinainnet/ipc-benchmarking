@@ -18,10 +18,11 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 
+#include "../../../header.h"
+
 #define TEST_NO		2
 #define program1	"./reader"
 #define program2	"./writer"
-#define middleware	"./middleware.txt"
 
 
 void 

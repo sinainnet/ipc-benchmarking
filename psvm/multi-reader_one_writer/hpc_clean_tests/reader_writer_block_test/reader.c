@@ -25,17 +25,13 @@ int main(int argc, char **argv) {
         union semun j;
         j.val = 0;
 
-        char *data = calloc(two_gig_row, col);
-        char *executor_data;
+        char *data = calloc(two_gig_row, col), *executor_data;
         sprintf(executor_data, "./writer %d %p %llu", getpid(), data, data_len);
         
         FILE *file_res = fopen("./middleware.txt", "w+");
-        // printf("before fprintf: %s\n", executor_data);
-        // fprintf(file_res, "sudo ./writer %d %p %llu \n", getpid(), data, data_len);
         fputs(executor_data, file_res);
 
         printf("reader: sudo ./writer %d %p %llu \n", getpid(), data, data_len);
-
 
         int id_wrt = ipcb_get_semaphore(shared_wrt_key, 1, 0666 | IPC_CREAT);
         ipcb_control_semaphore(id_wrt, 0, SETVAL, j);
