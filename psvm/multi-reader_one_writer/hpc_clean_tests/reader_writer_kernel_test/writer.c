@@ -64,7 +64,6 @@ int main (int argc, char **argv) {
 		perror("pthread_init\n");
 	}
 	
-	
 	// Build iovec structs
         int local_iov_num = THREADS;
         int data_len = inputs.buffer_length/local_iov_num;
