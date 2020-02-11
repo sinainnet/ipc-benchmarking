@@ -27,6 +27,37 @@ typedef struct main_inputs {
 
 #define DATA_SIZE (sizeof(struct Data))
 
+
+typedef enum {true, false} bool;
+
+static pthread_barrier_t barrier;
+static int numBarriers;
+
+/*
+ *  Threads Data Structure to keep track of each one
+ */
+typedef struct thread_tags {
+	pthread_t		thread_id;
+	int         		thread_num;
+	int			thread_chunks;
+	struct iovec		*local;
+	struct iovec		*remote;
+	data_input 		input;
+	struct Data		*shm;
+	int 			*lock_count;
+	struct spinlock		*lock;
+} thread_tracker;
+
+typedef struct thread_return_data {
+	struct timespec 	start;
+	struct timespec 	finish;
+	ssize_t 		nread;
+	bool        		printed;
+	bool 			status;
+	int			min_offset;
+	int 			max_offset;
+} thread_result;
+
 #endif  /* PROTOCOL_H */
 
 #define two			2
@@ -61,19 +92,21 @@ typedef struct main_inputs {
 #define shm_cons_flags						// Provider is the first program to run
 #define psvm_writer		"process_vm_writev"
 #define psvm_reader		"process_vm_readv"
-#define one_gig_file  		"one_gig.txt"
-#define two_gig_file  		"two_gig.txt"
-#define four_gig_file  		"four_gig.txt"
-#define seven_gig_file  	"seven_gig.txt"
-#define eight_gig_file  	"eight_gig.txt"
-#define fourteen_gig_file  	"fourteen_gig.txt"
-#define sixteen_gig_file  	"sixteen_gig.txt"
-#define twenty_gig_file  	"twenty_gig.txt"
+#define one_gig_file  		"results/one_gig.txt"
+#define two_gig_file  		"results/two_gig.txt"
+#define four_gig_file  		"results/four_gig.txt"
+#define seven_gig_file  	"results/seven_gig.txt"
+#define eight_gig_file  	"results/eight_gig.txt"
+#define fourteen_gig_file  	"results/fourteen_gig.txt"
+#define sixteen_gig_file  	"results/sixteen_gig.txt"
+#define twenty_gig_file  	"results/twenty_gig.txt"
 
+
+int psvm_error_handler (ssize_t nread2);
 
 void set_cpu_scheduler (int cpu_no, int priority);
 
-int psvm_error_handler (ssize_t nread2);
+int* calc_max_clock (void **thread2, int thread_no);
 
 void get_inputs (data_input *input_var, int argc, char **argv);
 
