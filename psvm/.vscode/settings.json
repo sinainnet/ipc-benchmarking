@@ -10,6 +10,7 @@
         "c++config.h": "c",
         "errors.h": "c",
         "xpmem_test.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "sched.h": "c"
     }
 }
