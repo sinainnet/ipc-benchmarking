@@ -25,10 +25,12 @@ int main(int argc, char **argv) {
         union semun j;
         j.val = 0;
 
-        char *data = calloc(two_gig_row, col), *executor_data;
+        char    *data = calloc(two_gig_row, col), 
+                *executor_data = calloc(512, sizeof(char));
+
         sprintf(executor_data, "./writer %d %p %llu", getpid(), data, data_len);
         
-        FILE *file_res = fopen("./middleware.txt", "w+");
+        FILE *file_res = fopen(middleware, "w+");
         fputs(executor_data, file_res);
 
         printf("reader: sudo ./writer %d %p %llu \n", getpid(), data, data_len);
@@ -39,8 +41,6 @@ int main(int argc, char **argv) {
 
         // trying to get lock(after writing operation done.)
         ipcb_operate_semaphore(id_wrt, &decrease_threads, 1);
-
-        // printf("%s", data);
 
         return 0;
 }
