@@ -8,6 +8,8 @@
         "stdbool.h": "c",
         "cstdbool": "c",
         "c++config.h": "c",
-        "errors.h": "c"
+        "errors.h": "c",
+        "xpmem_test.h": "c",
+        "typeinfo": "c"
     }
 }
