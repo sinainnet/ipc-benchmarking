@@ -61,8 +61,6 @@ int main (int argc, char **argv) {
 	int status, s;
 	int lock_count = 0;
 
-	struct spinlock lock = SPINLOCK_INIT;
-	
 	s = pthread_barrier_init(&barrier, NULL, THREADS);
 	if (s != 0)
 	{
@@ -99,8 +97,6 @@ int main (int argc, char **argv) {
 		thread[thread_count].remote = remote;
 		thread[thread_count].input = inputs;
 		thread[thread_count].shm  = shm;
-		thread[thread_count].lock_count  = &lock_count;
-		thread[thread_count].lock  = &lock;
 		status = pthread_create (&thread[thread_count].thread_id, NULL, thread_routine, (void*)&thread[thread_count]);
 		if (status != 0)
 			err_abort (status, "Create thread");

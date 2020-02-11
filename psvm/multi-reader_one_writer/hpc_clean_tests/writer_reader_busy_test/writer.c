@@ -4,20 +4,22 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/uio.h>
+#include <stdatomic.h>
 #include <sys/resource.h>
-#include "../../header.h"
 
-#define THREADS		80
-#define data_len        fourteen_gig_size
+#include "../../../header.h"
+
+#define THREADS		2
+#define data_len        two_gig_size
 
 
 int main(int argc, char **argv) {
-
         // Changing the process scheduling queue into 
         // real-time and set its priority using <sched.h>.
         set_cpu_scheduler(2,99);
 
-        char *data = calloc(fourteen_gig_row, col);
+        char    *data = calloc(two_gig_row, col),
+                *executor_data = calloc(512, sizeof(char));
         
         // Build iovec structs
         int local_iov_num = THREADS;
@@ -39,13 +41,18 @@ int main(int argc, char **argv) {
         struct Data *shm = (struct Data*)shm_builder( \
                 shm_file_creat_mod, shm_prov_prot, \
                 shm_prov_flags, shm_writer_file);
-        
-        printf("writer: sudo ./reader %d %p %llu\n", \
-                getpid(), data, data_len);
-
         atomic_store(&shm->state, 0);
-        while (atomic_load(&shm->state) != THREADS);
+        
+        sprintf(executor_data, "./reader %d %p %llu", getpid(), data, data_len);
+        
+        FILE *file_res = fopen(middleware, "w+");
+        fputs(executor_data, file_res);
 
+        printf("writer: sudo ./reader %d %p %llu\n", getpid(), data, data_len);
+        fclose(file_res);
+        
+        while (__sync_val_compare_and_swap(&shm->state, THREADS, 0) != THREADS);
+        
         printf("readers just read data. I'm done.\n");
 
         /* remove the shared memory object */
