@@ -2,10 +2,10 @@ CC      := gcc
 CCFLAGS := -I
 LDFLAGS := -lrt -lpthread -ansi -Wall 
 
-TARGETS:= writer reader
+TARGETS:= writer reader master
 MAINS  := $(addsuffix .o, $(TARGETS) )
-OBJ    := barrier.o reader.o writer.o ../../transblocklibbench.o ../../../semaphore_lib/ipcb_semaphore.o ../../../commons/commons.o
-OBJ2   := writer.o barrier.o reader.o
+OBJ    := master.o reader.o writer.o ../../../transblocklibbench.o ../../../../semaphore_lib/ipcb_semaphore.o ../../../../commons/commons.o
+OBJ2   := writer.o reader.o master.o
 DEPS   := #./commons/commons.h
 
 BUILDPATH	:= ./build
