@@ -14,8 +14,3 @@ $   sudo pstate-frequency -S -t 1 -g performance -m 100 -n 100
 ````
 $ sudo pstate-frequency -S -t 1 -g performance -m 100 -n 100
 ````
-
-
-
-## Link
-* http://ptgmedia.pearsoncmg.com/images/0201633922/sourcecode/errors.h
