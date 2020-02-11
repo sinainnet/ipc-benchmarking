@@ -52,7 +52,7 @@ void* thread_routine (void *arg) {
 
 
 int main (int argc, char **argv) {
-	set_cpu_scheduler(1, 99);
+	set_cpu_scheduler(2, 99);
 
         // PARSE CLI ARGS
         data_input inputs;

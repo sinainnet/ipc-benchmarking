@@ -16,7 +16,7 @@
 int main(int argc, char **argv) {
         // Changing the process scheduling queue into 
         // real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(2,99);
+        set_cpu_scheduler(1,99);
 
         char    *data = calloc(two_gig_row, col),
                 *executor_data = calloc(512, sizeof(char));
