@@ -21,7 +21,6 @@ void* thread_routine (void *arg) {
 	cpu_set_t set;
 	CPU_ZERO(&set);
 	long long int cpu_no = (self->thread_num%9) + 3;
-
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
 	{
