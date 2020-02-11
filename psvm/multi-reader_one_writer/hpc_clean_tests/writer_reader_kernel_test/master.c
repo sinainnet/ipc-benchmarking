@@ -1,7 +1,7 @@
 /*
  * master: controller process for various IPCB tests
  *
- * Copyright (c) 2019 IUST-DSLab, Inc.
+ * Copyright (c) 2020 IUST-DSLab, Inc.
  *
  * This file is subject to the terms and conditions of the GNU General Public
  * License.  See the file "COPYING" in the main directory of this archive
