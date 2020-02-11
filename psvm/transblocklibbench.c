@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "header.h"
 
+
 void set_cpu_scheduler (int cpu_no, int priority) {
         cpu_set_t set;
         CPU_ZERO(&set);
@@ -110,6 +111,53 @@ void print_results (char* read_write, char* psvm, ssize_t nread, struct timespec
         printf("nanoseconds: %ld\n", ns);
         printf("total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
 
-		FILE *file_res = fopen(filename, "a");
-		fprintf(file_res, "%ld.%ld\n", seconds, ns);
+        FILE *file_res = fopen(filename, "a");
+        fprintf(file_res, "%ld.%ld\n", seconds, ns);
+}
+
+
+
+int* calc_max_clock (void **thread2, int thread_no) {
+	thread_result **results = (struct thread_return_data **)thread2;
+	double times [thread_no][2]; 	// [0] for start_time and [1] for end_time
+	
+	for (int i = 0; i < thread_no; i++)
+	{
+		// printf("---------- Thread %d --------------\n", i);
+		// printf("\t\t start_time_second = %ld,    start_time_nano = %ld\n", results[i]->start.tv_sec, results[i]->start.tv_nsec);
+		// printf("\t\t end_time_second = %ld,    end_time_nano = %ld\n", results[i]->finish.tv_sec, results[i]->finish.tv_nsec);
+		times[i][0] = (double)results[i]->start.tv_sec + \
+			((double)results[i]->start.tv_nsec/(double)1000000000);
+		times[i][1] = (double)results[i]->finish.tv_sec + \
+			((double)results[i]->finish.tv_nsec/(double)1000000000);
+	}
+
+	int 	finish_offset_max = 0;
+	int 	start_offset_min = 0;
+	double 	finish = times[0][1];
+	double 	start = times[0][0];
+	// printf("\n\n");
+	// printf("---------- Thread %d --------------\n", 0);
+	// printf("\t\t start_time = %f,    end_time = %f\n", times[0][0], times[0][1]);
+	for (int i = 1; i < thread_no; i++)
+	{
+		// printf("---------- Thread %d --------------\n", i);
+		// printf("\t\t start_time = %f,    end_time = %f\n", times[i][0], times[i][1]);
+		if (times[i][0] < start)
+		{
+			start_offset_min = i;
+			start = times[i][0];
+		}
+		if (times[i][1] > finish)
+		{
+			finish_offset_max = i;
+			finish = times[i][1];
+		}
+	}
+	int *offset = (int *)calloc(2, sizeof(int));
+	offset[0] = start_offset_min;		// [0]  for start_time
+	offset[1] = finish_offset_max;		// [1]	for finish_time
+	// printf("min_offset = %d, max_offset = %d\n", offset[0], offset[1]);
+
+	return offset;
 }
