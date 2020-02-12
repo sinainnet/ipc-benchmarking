@@ -6,10 +6,10 @@
 #include <sys/uio.h>
 #include <sys/resource.h>
 
-#include "../../header.h"
-#include "../../helper.h"
+#include "../../../header.h"
+#include "../../../helper.h"
 
-#define THREADS		9
+#define THREADS		8
 #define data_len        fourteen_gig_size
 #define DECREASE_SEM_THREADS { 0, -THREADS, SEM_UNDO}
 #define INCREASE_SEM_THREADS { 0, +THREADS, SEM_UNDO}
