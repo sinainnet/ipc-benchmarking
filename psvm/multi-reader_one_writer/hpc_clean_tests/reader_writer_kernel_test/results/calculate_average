@@ -3,7 +3,7 @@
 count=0;
 total=0; 
 
-for i in $( awk '{ print $1; }' fourteen_gig.txt )
+for i in $( awk '{ print $1; }' two_gig.txt )
    do 
      total=$(echo $total+$i | bc )
      ((count++))
