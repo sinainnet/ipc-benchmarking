@@ -9,7 +9,7 @@
 
 #include "../../../header.h"
 
-#define THREADS		2
+#define THREADS		14
 #define data_len        two_gig_size
 
 
