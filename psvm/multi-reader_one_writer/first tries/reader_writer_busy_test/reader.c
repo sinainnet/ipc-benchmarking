@@ -7,12 +7,11 @@
 #include <stdatomic.h>
 #include <sys/resource.h>
 
-#include "../../header.h"
+#include "../../../header.h"
 
 
-#define THREADS		9
+#define THREADS		8
 #define data_len        fourteen_gig_size
-typedef enum {true, false} bool;
 
 
 int main(int argc, char **argv) {

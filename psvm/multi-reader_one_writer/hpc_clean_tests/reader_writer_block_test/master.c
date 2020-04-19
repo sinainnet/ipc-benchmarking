@@ -20,7 +20,7 @@
 
 #include "../../../header.h"
 
-#define TEST_NO		2
+#define TEST_NO		30
 #define program1	"./reader"
 #define program2	"./writer"
 

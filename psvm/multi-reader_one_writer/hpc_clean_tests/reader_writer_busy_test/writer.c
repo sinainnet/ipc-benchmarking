@@ -9,7 +9,7 @@
 #include "errors.h"
 #include "../../../header.h"
 
-#define THREADS		2
+#define THREADS		14
 
 thread_tracker thread[THREADS];
 
