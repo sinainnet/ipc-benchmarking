@@ -39,7 +39,7 @@ void* thread_routine (void *arg) {
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
 		(struct iovec *)&self->local[self->thread_num], \
-		1, self->remote, 1, 0);
+		1, (struct iovec *)&self->remote[self->thread_num], 1, self->thread_num);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
@@ -65,22 +65,24 @@ int main (int argc, char **argv) {
 	}
 	
 	// Build iovec structs
-        int local_iov_num = THREADS;
-        int data_len = inputs.buffer_length/local_iov_num;
+	int local_iov_num = THREADS;
+	int data_len = inputs.buffer_length/local_iov_num;
 
-        struct iovec local[local_iov_num];
-        for (int i = 0; i < local_iov_num; i++)
-        {
-                char *data = calloc(data_len, sizeof(char));
-                memset(data, 'a' + i, data_len);
-                local[i].iov_base = data;
-                local[i].iov_len = data_len;
+	struct iovec local[local_iov_num];
+	for (int i = 0; i < local_iov_num; i++)
+	{
+			char *data = calloc(data_len, sizeof(char));
+			memset(data, 'a' + i, data_len);
+			local[i].iov_base = data;
+			local[i].iov_len = data_len;
 	}
         
-        struct iovec remote[1];
-        remote[0].iov_base = inputs.remote_ptr;
-        remote[0].iov_len = inputs.buffer_length;
-
+	struct iovec remote[local_iov_num];
+	for (int i = 0; i < local_iov_num; i++)
+	{
+		remote[i].iov_base = inputs.remote_ptr + (data_len * i);
+		remote[i].iov_len = data_len;
+	}
 	/*
 	 * Create a set of threads that will use the barrier.
 	 */

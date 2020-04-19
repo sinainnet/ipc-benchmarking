@@ -52,9 +52,9 @@ void* thread_routine (void *arg) {
 int main (int argc, char **argv) {
 	set_cpu_scheduler(2, 99);
 
-	// PARSE CLI ARGS
-	data_input inputs;
-	get_inputs(&inputs, argc, argv);
+        // PARSE CLI ARGS
+        data_input inputs;
+        get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
 	int status, s;
@@ -68,21 +68,21 @@ int main (int argc, char **argv) {
 	}
 	
 	// Build iovec structs
-	int local_iov_num = THREADS;
-	int data_len = inputs.buffer_length/local_iov_num;
+        int local_iov_num = THREADS;
+        int data_len = inputs.buffer_length/local_iov_num;
 
-	struct iovec local[local_iov_num];
-	for (int i = 0; i < local_iov_num; i++)
-	{
-			char *data = calloc(data_len, sizeof(char));
-			memset(data, 'a' + i, data_len);
-			local[i].iov_base = data;
-			local[i].iov_len = data_len;
+        struct iovec local[local_iov_num];
+        for (int i = 0; i < local_iov_num; i++)
+        {
+                char *data = calloc(data_len, sizeof(char));
+                memset(data, 'a' + i, data_len);
+                local[i].iov_base = data;
+                local[i].iov_len = data_len;
 	}
         
-	struct iovec remote[1];
-	remote[0].iov_base = inputs.remote_ptr;
-	remote[0].iov_len = inputs.buffer_length;
+        struct iovec remote[1];
+        remote[0].iov_base = inputs.remote_ptr;
+        remote[0].iov_len = inputs.buffer_length;
 
 	// Create Shared Memory
         struct Data * volatile shm = (struct Data* volatile)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);

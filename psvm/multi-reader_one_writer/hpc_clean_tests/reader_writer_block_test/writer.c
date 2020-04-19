@@ -36,9 +36,10 @@ void* thread_routine (void *arg) {
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
-	thread_res->nread = process_vm_writev(self->input.pid, 
-		(struct iovec *)&self->local[self->thread_num], \
-		1, self->remote, 1, 0);	
+	thread_res->nread = process_vm_writev(self->input.pid,                                          
+			(struct iovec *)&self->local[self->thread_num], \                                           
+			1, self->remote, 1, 0);
+
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
@@ -77,10 +78,9 @@ int main (int argc, char **argv) {
 		local[i].iov_len = data_len;
 	}
 	
-	struct iovec remote[1];
-	remote[0].iov_base = inputs.remote_ptr;
+	struct iovec remote[1];                                                                         
+	remote[0].iov_base = inputs.remote_ptr;                                                         
 	remote[0].iov_len = inputs.buffer_length;
-
 
 	/*
 	 * Create a set of threads that will use the barrier.
