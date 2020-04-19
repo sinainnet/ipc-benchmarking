@@ -99,6 +99,7 @@ int
 main(int argc, char** argv) {
 	int cpu_no = 0;
 	cpu_set_t set;
+
 	CPU_ZERO(&set);
 	CPU_SET(cpu_no, &set);
 	if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)

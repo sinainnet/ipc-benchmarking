@@ -83,6 +83,7 @@ int main (int argc, char **argv) {
 		remote[i].iov_base = inputs.remote_ptr + (data_len * i);
 		remote[i].iov_len = data_len;
 	}
+
 	/*
 	 * Create a set of threads that will use the barrier.
 	 */

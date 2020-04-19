@@ -36,9 +36,9 @@ void* thread_routine (void *arg) {
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
-	thread_res->nread = process_vm_writev(self->input.pid,                                          
-			(struct iovec *)&self->local[self->thread_num], \                                           
-			1, self->remote, 1, 0);
+	thread_res->nread = process_vm_writev(self->input.pid, 
+		(struct iovec *)&self->local[self->thread_num], \
+		1, self->remote, 1, 0);	
 
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
