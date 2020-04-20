@@ -9,7 +9,7 @@
 #include "errors.h"
 #include "../../../header.h"
 
-#define THREADS		14
+#define THREADS		1
 
 thread_tracker thread[THREADS];
 
@@ -38,8 +38,8 @@ void* thread_routine (void *arg) {
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
-		(struct iovec *)&self->local[self->thread_num], \
-		1, self->remote, 1, 0);
+                (struct iovec *)&self->local[self->thread_num], \
+                1, (struct iovec *)&self->remote[self->thread_num], 1, 0);
 
 	int x = __sync_add_and_fetch(&self->shm->state, 1);
 
@@ -69,23 +69,26 @@ int main (int argc, char **argv) {
 	
 	// Build iovec structs
 	int local_iov_num = THREADS;
-	int data_len = inputs.buffer_length/local_iov_num;
+	long int data_len = inputs.buffer_length/local_iov_num;
 
 	struct iovec local[local_iov_num];
 	for (int i = 0; i < local_iov_num; i++)
 	{
-			char *data = calloc(data_len, sizeof(char));
-			memset(data, 'a' + i, data_len);
-			local[i].iov_base = data;
-			local[i].iov_len = data_len;
+		char *data = calloc(data_len, sizeof(char));
+		memset(data, 'a' + i, data_len);
+		local[i].iov_base = data;
+		local[i].iov_len = data_len;
 	}
         
-	struct iovec remote[1];
-	remote[0].iov_base = inputs.remote_ptr;
-	remote[0].iov_len = inputs.buffer_length;
+	struct iovec remote[local_iov_num];
+	for (int i = 0; i < local_iov_num; i++)
+	{
+		remote[i].iov_base = inputs.remote_ptr + (data_len * i);
+		remote[i].iov_len = data_len;
+	}
 
 	// Create Shared Memory
-        struct Data * volatile shm = (struct Data* volatile)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);
+	struct Data * volatile shm = (struct Data* volatile)shm_builder(shm_file_use_mod, shm_prov_prot, shm_prov_flags,shm_writer_file);
 
 	/*
 	 * Create a set of threads that will use the barrier.

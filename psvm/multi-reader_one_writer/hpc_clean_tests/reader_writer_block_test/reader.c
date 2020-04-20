@@ -9,8 +9,8 @@
 #include "../../../header.h"
 #include "../../../helper.h"
 
-#define THREADS		14
-#define data_len        two_gig_size
+#define THREADS		1
+#define data_len    two_gig_size
 #define DECREASE_SEM_THREADS { 0, -THREADS, SEM_UNDO}
 #define INCREASE_SEM_THREADS { 0, +THREADS, SEM_UNDO}
 

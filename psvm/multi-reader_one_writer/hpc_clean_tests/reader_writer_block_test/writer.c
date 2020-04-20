@@ -9,7 +9,7 @@
 #include "../../../header.h"
 #include "../../../helper.h"
 
-#define THREADS		14
+#define THREADS		1
 
 thread_tracker thread[THREADS];
 
@@ -37,8 +37,8 @@ void* thread_routine (void *arg) {
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
-		(struct iovec *)&self->local[self->thread_num], \
-		1, self->remote, 1, 0);	
+                (struct iovec *)&self->local[self->thread_num], \
+                1, (struct iovec *)&self->remote[self->thread_num], 1, 0);
 
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
@@ -51,9 +51,9 @@ void* thread_routine (void *arg) {
 int main (int argc, char **argv) {
 	set_cpu_scheduler(2, 99);
 
-        // PARSE CLI ARGS
-        data_input inputs;
-        get_inputs(&inputs, argc, argv);
+	// PARSE CLI ARGS
+	data_input inputs;
+	get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
 	int status, s;
@@ -67,7 +67,7 @@ int main (int argc, char **argv) {
 	
 	// Build iovec structs
 	int local_iov_num = THREADS;
-	int data_len = inputs.buffer_length/local_iov_num;
+	long int data_len = inputs.buffer_length/local_iov_num;
 
 	struct iovec local[local_iov_num];
 	for (int i = 0; i < local_iov_num; i++)
@@ -78,10 +78,12 @@ int main (int argc, char **argv) {
 		local[i].iov_len = data_len;
 	}
 	
-	struct iovec remote[1];                                                                         
-	remote[0].iov_base = inputs.remote_ptr;                                                         
-	remote[0].iov_len = inputs.buffer_length;
-
+	struct iovec remote[local_iov_num];
+	for (int i = 0; i < local_iov_num; i++)
+	{
+		remote[i].iov_base = inputs.remote_ptr + (data_len * i);
+		remote[i].iov_len = data_len;
+	}
 	/*
 	 * Create a set of threads that will use the barrier.
 	 */

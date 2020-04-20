@@ -9,7 +9,7 @@
 #include "errors.h"
 #include "../../../header.h"
 
-#define THREADS		2
+#define THREADS		1
 
 thread_tracker thread[THREADS];
 
@@ -38,8 +38,8 @@ void* thread_routine (void *arg) {
 	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
-		(struct iovec *)&self->local[self->thread_num], \
-		1, (struct iovec *)&self->remote[self->thread_num], 1, self->thread_num);
+			(struct iovec *)&self->local[self->thread_num], \
+			1, (struct iovec *)&self->remote[self->thread_num], 1, self->thread_num);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	
@@ -50,9 +50,9 @@ void* thread_routine (void *arg) {
 int main (int argc, char **argv) {
 	set_cpu_scheduler(2, 99);
 
-        // PARSE CLI ARGS
-        data_input inputs;
-        get_inputs(&inputs, argc, argv);
+	// PARSE CLI ARGS
+	data_input inputs;
+	get_inputs(&inputs, argc, argv);
 
 	int thread_count, array_count;
 	int status, s;
@@ -66,15 +66,15 @@ int main (int argc, char **argv) {
 	
 	// Build iovec structs
 	int local_iov_num = THREADS;
-	int data_len = inputs.buffer_length/local_iov_num;
+	long int data_len = inputs.buffer_length/local_iov_num;
 
 	struct iovec local[local_iov_num];
 	for (int i = 0; i < local_iov_num; i++)
 	{
-			char *data = calloc(data_len, sizeof(char));
-			memset(data, 'a' + i, data_len);
-			local[i].iov_base = data;
-			local[i].iov_len = data_len;
+		char *data = calloc(data_len, sizeof(char));
+		memset(data, 'a' + i, data_len);
+		local[i].iov_base = data;
+		local[i].iov_len = data_len;
 	}
         
 	struct iovec remote[local_iov_num];

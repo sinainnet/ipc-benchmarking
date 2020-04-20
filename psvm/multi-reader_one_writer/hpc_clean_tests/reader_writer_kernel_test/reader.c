@@ -8,8 +8,8 @@
 
 #include "../../../header.h"
 
-#define THREADS		2
-#define data_len        two_gig_size
+#define THREADS		1
+#define data_len    two_gig_size
 
 int main(int argc, char **argv) {
         // Changing the process scheduling queue into 
