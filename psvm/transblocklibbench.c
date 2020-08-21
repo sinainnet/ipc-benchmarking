@@ -43,7 +43,7 @@ int psvm_error_handler (ssize_t nread2) {
                                 printf("ERROR: PROCESS DOES NOT EXIST.\n");
                                 break;
                         default:
-                                printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED.\n");
+                                printf("ERROR: AN UNKNOWN ERROR HAS OCCURRED. errno_%d:nread_%ld.\n", errno, nread2);
                 }
                 return -1;
         }

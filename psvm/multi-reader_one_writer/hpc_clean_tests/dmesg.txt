@@ -1,0 +1,213 @@
+[  160.197958] rfkill: input handler disabled
+[  305.339877] reader: seconds without ns: 0
+[  305.339881] reader: nanoseconds: 1752
+[  305.453893] reader: seconds without ns: 0
+[  305.453897] reader: nanoseconds: 2071
+[  305.455136] reader: seconds without ns: 0
+[  305.455138] reader: nanoseconds: 1257
+[  308.983833] reader: seconds without ns: 0
+[  308.983836] reader: nanoseconds: 1744
+[  309.086562] reader: seconds without ns: 0
+[  309.086566] reader: nanoseconds: 1303
+[  309.089304] reader: seconds without ns: 0
+[  309.089306] reader: nanoseconds: 1228
+[  312.583591] reader: seconds without ns: 0
+[  312.583594] reader: nanoseconds: 2062
+[  312.698665] reader: seconds without ns: 0
+[  312.698668] reader: nanoseconds: 2197
+[  312.700892] reader: seconds without ns: 0
+[  312.700894] reader: nanoseconds: 1333
+[  316.331039] reader: seconds without ns: 0
+[  316.331042] reader: nanoseconds: 1967
+[  316.453625] reader: seconds without ns: 0
+[  316.453626] reader: seconds without ns: 0
+[  316.453628] reader: nanoseconds: 1390
+[  316.453629] reader: nanoseconds: 1406
+[  319.945376] reader: seconds without ns: 0
+[  319.945379] reader: nanoseconds: 1787
+[  320.054164] reader: seconds without ns: 0
+[  320.054167] reader: nanoseconds: 2135
+[  320.056574] reader: seconds without ns: 0
+[  320.056576] reader: nanoseconds: 1394
+[  333.631748] reader: seconds without ns: 0
+[  333.631751] reader: nanoseconds: 2816
+[  333.738555] reader: seconds without ns: 0
+[  333.738559] reader: nanoseconds: 2293
+[  333.741979] reader: seconds without ns: 0
+[  333.741982] reader: nanoseconds: 1900
+[  337.733478] reader: seconds without ns: 0
+[  337.733481] reader: nanoseconds: 2290
+[  337.845426] reader: seconds without ns: 0
+[  337.845429] reader: nanoseconds: 2446
+[  337.846666] reader: seconds without ns: 0
+[  337.846668] reader: nanoseconds: 2025
+[  341.826818] reader: seconds without ns: 0
+[  341.826822] reader: nanoseconds: 2286
+[  341.949724] reader: seconds without ns: 0
+[  341.949725] reader: seconds without ns: 0
+[  341.949727] reader: nanoseconds: 1628
+[  341.949728] reader: nanoseconds: 1664
+[  345.922336] reader: seconds without ns: 0
+[  345.922340] reader: nanoseconds: 2741
+[  346.032418] reader: seconds without ns: 0
+[  346.032422] reader: nanoseconds: 2807
+[  346.035612] reader: seconds without ns: 0
+[  346.035614] reader: nanoseconds: 2061
+[  350.023492] reader: seconds without ns: 0
+[  350.023496] reader: nanoseconds: 2955
+[  350.139572] reader: seconds without ns: 0
+[  350.139576] reader: nanoseconds: 2768
+[  350.141721] reader: seconds without ns: 0
+[  350.141723] reader: nanoseconds: 2188
+[  413.058642] reader: seconds without ns: 0
+[  413.058646] reader: nanoseconds: 2691
+[  413.180999] reader: seconds without ns: 0
+[  413.181000] reader: seconds without ns: 0
+[  413.181002] reader: nanoseconds: 1460
+[  413.181003] reader: nanoseconds: 1451
+[  416.676033] reader: seconds without ns: 0
+[  416.676037] reader: nanoseconds: 1962
+[  416.800996] reader: seconds without ns: 0
+[  416.801000] reader: nanoseconds: 2253
+[  416.801146] reader: seconds without ns: 0
+[  416.801148] reader: nanoseconds: 1707
+[  420.311142] reader: seconds without ns: 0
+[  420.311145] reader: nanoseconds: 2198
+[  420.436157] reader: seconds without ns: 0
+[  420.436159] reader: seconds without ns: 0
+[  420.436161] reader: nanoseconds: 1620
+[  420.436162] reader: nanoseconds: 1165
+[  423.955227] reader: seconds without ns: 0
+[  423.955230] reader: nanoseconds: 1846
+[  424.061517] reader: seconds without ns: 0
+[  424.061522] reader: nanoseconds: 2069
+[  424.061756] reader: seconds without ns: 0
+[  424.061758] reader: nanoseconds: 1839
+[  427.546802] reader: seconds without ns: 0
+[  427.546805] reader: nanoseconds: 1931
+[  427.669569] reader: seconds without ns: 0
+[  427.669571] reader: seconds without ns: 0
+[  427.669573] reader: nanoseconds: 401
+[  427.669574] reader: nanoseconds: 1431
+[  467.910909] reader: seconds without ns: 0
+[  467.910912] reader: nanoseconds: 2227
+[  468.034292] reader: seconds without ns: 0
+[  468.034295] reader: nanoseconds: 2901
+[  468.034381] reader: seconds without ns: 0
+[  468.034383] reader: nanoseconds: 1605
+[  471.576295] reader: seconds without ns: 0
+[  471.576299] reader: nanoseconds: 3029
+[  471.682235] reader: seconds without ns: 0
+[  471.682239] reader: nanoseconds: 2533
+[  471.684460] reader: seconds without ns: 0
+[  471.684463] reader: nanoseconds: 1802
+[  475.657105] reader: seconds without ns: 0
+[  475.657108] reader: nanoseconds: 1786
+[  475.779676] reader: seconds without ns: 0
+[  475.779677] reader: seconds without ns: 0
+[  475.779680] reader: nanoseconds: 1722
+[  475.779680] reader: nanoseconds: 1714
+[  479.740655] reader: seconds without ns: 0
+[  479.740658] reader: nanoseconds: 2367
+[  479.845797] reader: seconds without ns: 0
+[  479.845800] reader: nanoseconds: 1678
+[  479.848456] reader: seconds without ns: 0
+[  479.848458] reader: nanoseconds: 1680
+[  483.892067] reader: seconds without ns: 0
+[  483.892070] reader: nanoseconds: 2424
+[  484.013583] reader: seconds without ns: 0
+[  484.013586] reader: seconds without ns: 0
+[  484.013588] reader: nanoseconds: 2135
+[  484.013589] reader: nanoseconds: 569
+[  813.955323] reader: seconds without ns: 0
+[  813.955326] reader: nanoseconds: 2325
+[  814.068965] reader: seconds without ns: 0
+[  814.068968] reader: nanoseconds: 2278
+[  814.071190] reader: seconds without ns: 0
+[  814.071192] reader: nanoseconds: 1972
+[  818.051280] reader: seconds without ns: 0
+[  818.051284] reader: nanoseconds: 3099
+[  818.165480] reader: seconds without ns: 0
+[  818.165483] reader: nanoseconds: 2726
+[  818.167756] reader: seconds without ns: 0
+[  818.167757] reader: nanoseconds: 1598
+[  822.129109] reader: seconds without ns: 0
+[  822.129113] reader: nanoseconds: 2861
+[  822.236244] reader: seconds without ns: 0
+[  822.236248] reader: nanoseconds: 3039
+[  822.238459] reader: seconds without ns: 0
+[  822.238461] reader: nanoseconds: 1774
+[  826.220773] reader: seconds without ns: 0
+[  826.220777] reader: nanoseconds: 2632
+[  826.323605] reader: seconds without ns: 0
+[  826.323609] reader: nanoseconds: 2486
+[  826.328808] reader: seconds without ns: 0
+[  826.328810] reader: nanoseconds: 1679
+[  830.315894] reader: seconds without ns: 0
+[  830.315896] reader: nanoseconds: 2014
+[  830.432928] reader: seconds without ns: 0
+[  830.432932] reader: nanoseconds: 2784
+[  830.434114] reader: seconds without ns: 0
+[  830.434116] reader: nanoseconds: 1508
+[  838.155295] reader: seconds without ns: 0
+[  838.155298] reader: nanoseconds: 2518
+[  838.277946] reader: seconds without ns: 0
+[  838.277947] reader: seconds without ns: 0
+[  838.277949] reader: nanoseconds: 1691
+[  838.277950] reader: nanoseconds: 1672
+[  842.253064] reader: seconds without ns: 0
+[  842.253067] reader: nanoseconds: 2646
+[  842.374926] reader: seconds without ns: 0
+[  842.374930] reader: nanoseconds: 3049
+[  842.375276] reader: seconds without ns: 0
+[  842.375277] reader: nanoseconds: 1578
+[  846.349242] reader: seconds without ns: 0
+[  846.349246] reader: nanoseconds: 2833
+[  846.471541] reader: seconds without ns: 0
+[  846.471542] reader: seconds without ns: 0
+[  846.471544] reader: nanoseconds: 504
+[  846.471545] reader: nanoseconds: 1991
+[  850.450028] reader: seconds without ns: 0
+[  850.450032] reader: nanoseconds: 2320
+[  850.568988] reader: seconds without ns: 0
+[  850.568990] reader: seconds without ns: 0
+[  850.568992] reader: nanoseconds: 2554
+[  850.568993] reader: nanoseconds: 499
+[  854.549702] reader: seconds without ns: 0
+[  854.549705] reader: nanoseconds: 2356
+[  854.672926] reader: seconds without ns: 0
+[  854.672927] reader: seconds without ns: 0
+[  854.672929] reader: nanoseconds: 399
+[  854.672930] reader: nanoseconds: 2510
+[  864.552416] reader: seconds without ns: 0
+[  864.552420] reader: nanoseconds: 2035
+[  864.674951] reader: seconds without ns: 0
+[  864.674952] reader: seconds without ns: 0
+[  864.674955] reader: nanoseconds: 1828
+[  864.674955] reader: nanoseconds: 1032
+[  868.662796] reader: seconds without ns: 0
+[  868.662800] reader: nanoseconds: 2381
+[  868.775049] reader: seconds without ns: 0
+[  868.775052] reader: nanoseconds: 3671
+[  868.777342] reader: seconds without ns: 0
+[  868.777344] reader: nanoseconds: 1530
+[  872.751615] reader: seconds without ns: 0
+[  872.751618] reader: nanoseconds: 2275
+[  872.860324] reader: seconds without ns: 0
+[  872.860327] reader: nanoseconds: 2471
+[  872.862591] reader: seconds without ns: 0
+[  872.862593] reader: nanoseconds: 1597
+[  876.845337] reader: seconds without ns: 0
+[  876.845339] reader: nanoseconds: 2085
+[  876.957129] reader: seconds without ns: 0
+[  876.957132] reader: nanoseconds: 2631
+[  876.959430] reader: seconds without ns: 0
+[  876.959432] reader: nanoseconds: 1534
+[  880.951714] reader: seconds without ns: 0
+[  880.951718] reader: nanoseconds: 2558
+[  881.074511] reader: seconds without ns: 0
+[  881.074513] reader: seconds without ns: 0
+[  881.074515] reader: nanoseconds: 1673
+[  881.074515] reader: nanoseconds: 1707
+
+

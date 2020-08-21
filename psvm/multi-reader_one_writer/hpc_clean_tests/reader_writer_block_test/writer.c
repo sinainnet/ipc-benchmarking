@@ -9,7 +9,7 @@
 #include "../../../header.h"
 #include "../../../helper.h"
 
-#define THREADS		1
+#define THREADS		3
 
 thread_tracker thread[THREADS];
 
@@ -19,7 +19,7 @@ void* thread_routine (void *arg) {
 		(struct thread_return_data*)calloc(1, sizeof(struct thread_return_data));
 	cpu_set_t set;
 	CPU_ZERO(&set);
-	long long int cpu_no = (self->thread_num%9) + 3;
+	long long int cpu_no = (self->thread_num%3) + 1;
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
 	{
@@ -43,7 +43,10 @@ void* thread_routine (void *arg) {
 	ipcb_operate_semaphore(id_wrt, &increase, 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
-	
+
+	//long seconds = thread_res->finish.tv_sec;
+    //long ns = thread_res->finish.tv_nsec;
+	//printf("thread %d: total seconds: %lf, %lf\n", self->thread_num, (double)seconds/1000000000, (double)ns/(double)1000000000);
 	return (void*)thread_res;
 }
 

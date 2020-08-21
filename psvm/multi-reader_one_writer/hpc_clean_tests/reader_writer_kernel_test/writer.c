@@ -9,7 +9,7 @@
 #include "errors.h"
 #include "../../../header.h"
 
-#define THREADS		1
+#define THREADS		3
 
 thread_tracker thread[THREADS];
 
@@ -20,7 +20,8 @@ void* thread_routine (void *arg) {
 
 	cpu_set_t set;
 	CPU_ZERO(&set);
-	long long int cpu_no = (self->thread_num%9) + 3;
+	long long int cpu_no = (self->thread_num%3)+1;
+	//cpu_no = 3;
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
 	{
@@ -39,7 +40,7 @@ void* thread_routine (void *arg) {
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
 			(struct iovec *)&self->local[self->thread_num], \
-			1, (struct iovec *)&self->remote[self->thread_num], 1, self->thread_num);
+			1, (struct iovec *)&self->remote[self->thread_num], 1, 100);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
 	

@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,13 +9,16 @@
 
 #include "../../../header.h"
 
-#define THREADS		1
+#define THREADS		3
 #define data_len    two_gig_size
+
+struct timespec     start;
+struct timespec     finish;
 
 int main(int argc, char **argv) {
         // Changing the process scheduling queue into 
         // real-time and set its priority using <sched.h>.
-        set_cpu_scheduler(1,99);
+        set_cpu_scheduler(0,99);
 
         char    *data = calloc(two_gig_row, col),
                 *executor_data = calloc(512, sizeof(char));
@@ -36,8 +40,21 @@ int main(int argc, char **argv) {
                 getpid(), data, data_len);
 
         fclose(file_res);        
-
+		
+		clock_gettime(CLOCK_REALTIME, &start);
         ssize_t nread = process_vm_readv(getpid(), local, THREADS, remote, 1, 0);
+		clock_gettime(CLOCK_REALTIME, &finish);
+
+        long seconds = finish.tv_sec - start.tv_sec;                                                
+        long ns = finish.tv_nsec - start.tv_nsec;                                                   
+                                                                                                    
+        if (start.tv_nsec > finish.tv_nsec) { // clock underflow                                    
+                --seconds;                                                                          
+                ns += 1000000000;                                                                   
+        }                                                                                           
+        printf("reader: seconds without ns: %ld\n", seconds);                                       
+        printf("reader: nanoseconds: %ld\n", ns);                                                   
+        printf("reader: total seconds: %e\n", (double)seconds + (double)ns/(double)1000000000);
 
         printf("writer just wrote data. I'm done.\n");
         return 0;

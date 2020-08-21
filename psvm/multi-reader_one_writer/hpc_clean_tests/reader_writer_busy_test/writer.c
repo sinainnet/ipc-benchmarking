@@ -9,7 +9,7 @@
 #include "errors.h"
 #include "../../../header.h"
 
-#define THREADS		1
+#define THREADS		9
 
 thread_tracker thread[THREADS];
 
@@ -20,7 +20,7 @@ void* thread_routine (void *arg) {
 
 	cpu_set_t set;
 	CPU_ZERO(&set);
-	long long int cpu_no = (self->thread_num%9) + 3;
+	long long int cpu_no = (self->thread_num%3) + 1;
 	CPU_SET(cpu_no, &set);
 	if (pthread_setaffinity_np(self->thread_id, sizeof(cpu_set_t), &set) == -1)
 	{
@@ -35,15 +35,25 @@ void* thread_routine (void *arg) {
 	// printf("Thread (%d). I am gonna barrier.\n", self->thread_num);
 	s = pthread_barrier_wait(&barrier);
 
-	clock_gettime(CLOCK_REALTIME, &thread_res->start);
 
 	thread_res->nread = process_vm_writev(self->input.pid, 
                 (struct iovec *)&self->local[self->thread_num], \
                 1, (struct iovec *)&self->remote[self->thread_num], 1, 0);
 
+	clock_gettime(CLOCK_REALTIME, &thread_res->start);
+
 	int x = __sync_add_and_fetch(&self->shm->state, 1);
 
 	clock_gettime(CLOCK_REALTIME, &thread_res->finish);
+	long seconds = thread_res->finish.tv_sec - thread_res->start.tv_sec;
+	long ns = thread_res->finish.tv_nsec - thread_res->start.tv_nsec;
+
+	if (thread_res->start.tv_nsec > thread_res->finish.tv_nsec) { // clock underflow
+			--seconds;
+			ns += 1000000000;
+	}
+	printf("thread %d: seconds without ns: %ld\n", self->thread_num, seconds);
+	printf("thread %d: nanoseconds: %ld\n", self->thread_num, ns);
 	
 	return (void*)thread_res;
 }
